@@ -1,0 +1,6 @@
+﻿# JetBrains
+.idea/
+
+# .NET
+bin/
+obj/
