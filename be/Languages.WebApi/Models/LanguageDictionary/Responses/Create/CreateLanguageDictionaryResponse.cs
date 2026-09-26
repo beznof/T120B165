@@ -6,6 +6,5 @@ public sealed record CreateLanguageDictionaryResponse(
     int Id,
     string Name,
     string? BackgroundImageUrl,
-    LanguageSummaryResponse Language,
-    LanguageLevelSummaryResponse? LanguageLevel
+    LanguageSummaryResponse Language
 );

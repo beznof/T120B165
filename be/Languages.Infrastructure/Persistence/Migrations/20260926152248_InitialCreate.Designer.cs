@@ -9,10 +9,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Languages.Infrastructure.Persistence.Migrations
+namespace Languages.Infrastructure.Languages.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(LanguagesDbContext))]
-    [Migration("20260925201359_InitialCreate")]
+    [Migration("20260926152248_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -111,21 +111,15 @@ namespace Languages.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("CreatedAtUTC")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("LanguageFamilyId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("ModifiedAtUTC")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
-                        .HasColumnName("name");
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("LanguageFamilyId");
 
                     b.ToTable("Languages", (string)null);
                 });
@@ -148,9 +142,6 @@ namespace Languages.Infrastructure.Persistence.Migrations
                     b.Property<int>("LanguageId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("LevelId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("ModifiedAtUTC")
                         .HasColumnType("datetime2");
 
@@ -163,62 +154,7 @@ namespace Languages.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("LanguageId");
 
-                    b.HasIndex("LevelId");
-
                     b.ToTable("LanguageDictionaries", (string)null);
-                });
-
-            modelBuilder.Entity("Languages.Domain.Entities.LanguageFamily", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAtUTC")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("ModifiedAtUTC")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("LanguageFamilies", (string)null);
-                });
-
-            modelBuilder.Entity("Languages.Domain.Entities.LanguageLevel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAtUTC")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("LanguageId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("ModifiedAtUTC")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LanguageId");
-
-                    b.ToTable("LanguageLevels", (string)null);
                 });
 
             modelBuilder.Entity("Languages.Domain.Entities.DictionaryEntry", b =>
@@ -241,15 +177,6 @@ namespace Languages.Infrastructure.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Languages.Domain.Entities.Language", b =>
-                {
-                    b.HasOne("Languages.Domain.Entities.LanguageFamily", "LanguageFamily")
-                        .WithMany("Languages")
-                        .HasForeignKey("LanguageFamilyId");
-
-                    b.Navigation("LanguageFamily");
-                });
-
             modelBuilder.Entity("Languages.Domain.Entities.LanguageDictionary", b =>
                 {
                     b.HasOne("Languages.Domain.Entities.Language", "Language")
@@ -258,22 +185,7 @@ namespace Languages.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Languages.Domain.Entities.LanguageLevel", "Level")
-                        .WithMany()
-                        .HasForeignKey("LevelId");
-
                     b.Navigation("Language");
-
-                    b.Navigation("Level");
-                });
-
-            modelBuilder.Entity("Languages.Domain.Entities.LanguageLevel", b =>
-                {
-                    b.HasOne("Languages.Domain.Entities.Language", null)
-                        .WithMany("LanguageLevels")
-                        .HasForeignKey("LanguageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Languages.Domain.Entities.DictionaryEntry", b =>
@@ -284,18 +196,11 @@ namespace Languages.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Languages.Domain.Entities.Language", b =>
                 {
                     b.Navigation("Dictionaries");
-
-                    b.Navigation("LanguageLevels");
                 });
 
             modelBuilder.Entity("Languages.Domain.Entities.LanguageDictionary", b =>
                 {
                     b.Navigation("Entries");
-                });
-
-            modelBuilder.Entity("Languages.Domain.Entities.LanguageFamily", b =>
-                {
-                    b.Navigation("Languages");
                 });
 #pragma warning restore 612, 618
         }

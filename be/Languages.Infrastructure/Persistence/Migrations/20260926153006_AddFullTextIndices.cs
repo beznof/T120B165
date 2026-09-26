@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace Languages.Infrastructure.Persistence.Migrations
+namespace Languages.Infrastructure.Languages.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
     public partial class AddFullTextSearchIndices : Migration

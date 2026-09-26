@@ -5,6 +5,5 @@ namespace Languages.WebApi.Models.Language.Responses.Read;
 public sealed record ReadLanguageResponse(
     int Id,
     string Name,
-    string? BackgroundImageUrl,
-    LanguageFamilySummaryResponse? LanguageFamily
+    string? BackgroundImageUrl
 );

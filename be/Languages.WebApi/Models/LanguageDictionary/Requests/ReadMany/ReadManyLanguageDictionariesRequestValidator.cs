@@ -13,8 +13,5 @@ public class ReadManyLanguageDictionariesRequestValidator : AbstractValidator<Re
             .GreaterThan(0)
             .WithMessage("Language ID must be a positive integer.");
         
-        RuleForEach(d => d.LevelIDs)
-            .GreaterThan(0)
-            .WithMessage("Level ID must be a positive integer.");
     }
 }

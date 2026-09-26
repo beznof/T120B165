@@ -10,8 +10,6 @@ public sealed class LanguagesDbContext(DbContextOptions<LanguagesDbContext> opti
     public DbSet<Language> Languages => Set<Language>();
     public DbSet<LanguageDictionary> Dictionaries => Set<LanguageDictionary>();
     public DbSet<DictionaryEntry> DictionaryEntries => Set<DictionaryEntry>();
-    public DbSet<LanguageFamily> LanguageFamilies => Set<LanguageFamily>();
-    public DbSet<LanguageLevel> LanguageLevels => Set<LanguageLevel>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

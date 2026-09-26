@@ -14,13 +14,6 @@ public class CreateLanguageRequestValidator : AbstractValidator<CreateLanguageRe
             .MaximumLength(100)
             .WithMessage("Name cannot exceed 100 characters.");
 
-        When(l => l.LanguageFamilyID != null, () =>
-        {
-            RuleFor(l => l.LanguageFamilyID)
-                .GreaterThan(0)
-                .WithMessage("LanguageFamily ID must be a positive integer.");
-        });
-
         When(l => l.BackgroundImage != null, () =>
         {
             RuleFor(l => l.BackgroundImage!)

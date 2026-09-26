@@ -15,10 +15,6 @@ internal sealed class LanguageDictionaryConfiguration : BaseEntityConfiguration<
         builder.Property(d => d.Name)
             .HasMaxLength(200)
             .IsRequired();
-        
-        builder.HasOne(d => d.LanguageLevel)
-            .WithMany()
-            .HasForeignKey(dictionary => dictionary.LevelId);
 
         builder.Property(d => d.BackgroundImageUrl)
             .HasMaxLength(2000);

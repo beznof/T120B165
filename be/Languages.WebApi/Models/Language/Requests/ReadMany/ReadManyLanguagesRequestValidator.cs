@@ -9,8 +9,5 @@ public class ReadManyLanguagesRequestValidator : AbstractValidator<ReadManyLangu
     {
         Include(new ReadManyRequestValidator());
         
-        RuleForEach(l => l.LanguageFamilyIDs)
-            .GreaterThan(0)
-            .WithMessage("LanguageFamily ID must be a positive integer.");
     }
 }

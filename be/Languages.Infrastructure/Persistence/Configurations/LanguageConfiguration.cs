@@ -18,13 +18,5 @@ internal sealed class LanguageConfiguration : BaseEntityConfiguration<Language>
 
         builder.Property(l => l.BackgroundImageUrl)
             .HasMaxLength(2000);
-        
-        builder.HasOne(l => l.LanguageFamily)
-            .WithMany(f => f.Languages)
-            .HasForeignKey(l => l.LanguageFamilyId);
-        
-        builder.HasMany(l => l.LanguageLevels)
-            .WithOne()
-            .HasForeignKey(l => l.LanguageId);
     }
 }

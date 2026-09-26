@@ -13,11 +13,8 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Languages.Application\Languages.Application.csproj" />
         <ProjectReference Include="..\Languages.Domain\Languages.Domain.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Persistence\Migrations\" />
     </ItemGroup>
 
 </Project>

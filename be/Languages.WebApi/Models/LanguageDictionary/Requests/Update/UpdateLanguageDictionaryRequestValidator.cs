@@ -19,12 +19,5 @@ public class UpdateLanguageDictionaryRequestValidator : AbstractValidator<Update
                 .OverridePropertyName(nameof(UpdateLanguageDictionaryRequest.Name));
         });
 
-        When(d => d.LevelID.IsSpecified, () =>
-        {
-            RuleFor(d => d.LevelID.Value)
-                .GreaterThan(0)
-                .WithMessage("Level ID must be a positive integer.")
-                .OverridePropertyName(nameof(UpdateLanguageDictionaryRequest.LevelID));
-        });
     }
 }

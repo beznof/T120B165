@@ -17,12 +17,5 @@ public class UpdateLanguageRequestValidator : AbstractValidator<UpdateLanguageRe
                 .OverridePropertyName(nameof(UpdateLanguageRequest.Name));
         });
 
-        When(l => l.LanguageFamilyID.IsSpecified, () =>
-        {
-            RuleFor(l => l.LanguageFamilyID.Value)
-                .GreaterThan(0)
-                .WithMessage("Language family ID must be a positive integer.")
-                .OverridePropertyName(nameof(UpdateLanguageRequest.LanguageFamilyID));
-        });
     }
 }

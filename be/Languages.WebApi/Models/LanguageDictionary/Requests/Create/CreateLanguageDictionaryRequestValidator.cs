@@ -20,13 +20,6 @@ public class CreateLanguageDictionaryRequestValidator : AbstractValidator<Create
             .GreaterThan(0)
             .WithMessage("Language ID must be a positive integer.");
 
-        When(d => d.LevelID.HasValue, () =>
-        {
-            RuleFor(d => d.LevelID)
-                .GreaterThan(0)
-                .WithMessage("Level ID must be a positive integer.");
-        });
-
         When(d => d.BackgroundImage != null, () =>
         {
             RuleFor(d => d.BackgroundImage!)
