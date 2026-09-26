@@ -12,13 +12,11 @@ public class LanguageResponsesMapper : Profile
         CreateMap<Language, CreateLanguageResponse>()
             .ForMember(l => l.Id, o => o.MapFrom(l => l.Id))
             .ForMember(l => l.Name, o => o.MapFrom(l => l.Name))
-            .ForMember(l => l.BackgroundImageUrl, o => o.MapFrom(l => l.BackgroundImageUrl))
-            .ForMember(l => l.LanguageFamily, o => o.MapFrom(l => l.LanguageFamily));
+            .ForMember(l => l.BackgroundImageUrl, o => o.MapFrom(l => l.BackgroundImageUrl));
 
         CreateMap<Language, ReadLanguageResponse>()
             .ForMember(l => l.Id, o => o.MapFrom(l => l.Id))
             .ForMember(l => l.Name, o => o.MapFrom(l => l.Name))
-            .ForMember(l => l.BackgroundImageUrl, o => o.MapFrom(l => l.BackgroundImageUrl))
-            .ForMember(l => l.LanguageFamily, o => o.MapFrom(l => l.LanguageFamily));
+            .ForMember(l => l.BackgroundImageUrl, o => o.MapFrom(l => l.BackgroundImageUrl));
     }
 }

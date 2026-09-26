@@ -13,14 +13,12 @@ public class LanguageDictionaryResponsesMapper : Profile
             .ForMember(d => d.Id, o => o.MapFrom(d => d.Id))
             .ForMember(d => d.Name, o => o.MapFrom(d => d.Name))
             .ForMember(d => d.BackgroundImageUrl, o => o.MapFrom(d => d.BackgroundImageUrl))
-            .ForMember(d => d.Language, o => o.MapFrom(d => d.Language))
-            .ForMember(d => d.LanguageLevel, o => o.MapFrom(d => d.LanguageLevel));
+            .ForMember(d => d.Language, o => o.MapFrom(d => d.Language));
 
         CreateMap<LanguageDictionary, ReadLanguageDictionaryResponse>()
             .ForMember(d => d.Id, o => o.MapFrom(d => d.Id))
             .ForMember(d => d.Name, o => o.MapFrom(d => d.Name))
             .ForMember(d => d.BackgroundImageUrl, o => o.MapFrom(d => d.BackgroundImageUrl))
-            .ForMember(d => d.Language, o => o.MapFrom(d => d.Language))
-            .ForMember(d => d.LanguageLevel, o => o.MapFrom(d => d.LanguageLevel));
+            .ForMember(d => d.Language, o => o.MapFrom(d => d.Language));
     }
 }
