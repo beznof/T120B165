@@ -27,16 +27,16 @@ namespace Languages.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Languages.Domain.Entities.DictionaryEntry", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAtUTC")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("DictionaryID")
+                    b.Property<int>("DictionaryId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("ModifiedAtUTC")
@@ -60,25 +60,25 @@ namespace Languages.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
-                    b.HasIndex("DictionaryID");
+                    b.HasIndex("DictionaryId");
 
                     b.ToTable("DictionaryEntries", (string)null);
                 });
 
             modelBuilder.Entity("Languages.Domain.Entities.DictionaryEntrySynonym", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAtUTC")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("DictionaryEntryID")
+                    b.Property<int>("DictionaryEntryId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("ModifiedAtUTC")
@@ -89,20 +89,20 @@ namespace Languages.Infrastructure.Persistence.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
-                    b.HasIndex("DictionaryEntryID");
+                    b.HasIndex("DictionaryEntryId");
 
                     b.ToTable("DictionaryEntrySynonyms", (string)null);
                 });
 
             modelBuilder.Entity("Languages.Domain.Entities.Language", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("BackgroundImageUrl")
                         .HasMaxLength(2000)
@@ -111,7 +111,7 @@ namespace Languages.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("CreatedAtUTC")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("LanguageFamilyID")
+                    b.Property<int?>("LanguageFamilyId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("ModifiedAtUTC")
@@ -123,20 +123,20 @@ namespace Languages.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(100)")
                         .HasColumnName("name");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
-                    b.HasIndex("LanguageFamilyID");
+                    b.HasIndex("LanguageFamilyId");
 
                     b.ToTable("Languages", (string)null);
                 });
 
             modelBuilder.Entity("Languages.Domain.Entities.LanguageDictionary", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("BackgroundImageUrl")
                         .HasMaxLength(2000)
@@ -145,10 +145,10 @@ namespace Languages.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("CreatedAtUTC")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("LanguageID")
+                    b.Property<int>("LanguageId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("LevelID")
+                    b.Property<int?>("LevelId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("ModifiedAtUTC")
@@ -159,22 +159,22 @@ namespace Languages.Infrastructure.Persistence.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
-                    b.HasIndex("LanguageID");
+                    b.HasIndex("LanguageId");
 
-                    b.HasIndex("LevelID");
+                    b.HasIndex("LevelId");
 
                     b.ToTable("LanguageDictionaries", (string)null);
                 });
 
             modelBuilder.Entity("Languages.Domain.Entities.LanguageFamily", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAtUTC")
                         .HasColumnType("datetime2");
@@ -187,23 +187,23 @@ namespace Languages.Infrastructure.Persistence.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.ToTable("LanguageFamilies", (string)null);
                 });
 
             modelBuilder.Entity("Languages.Domain.Entities.LanguageLevel", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAtUTC")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("LanguageID")
+                    b.Property<int>("LanguageId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("ModifiedAtUTC")
@@ -214,9 +214,9 @@ namespace Languages.Infrastructure.Persistence.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
-                    b.HasIndex("LanguageID");
+                    b.HasIndex("LanguageId");
 
                     b.ToTable("LanguageLevels", (string)null);
                 });
@@ -225,7 +225,7 @@ namespace Languages.Infrastructure.Persistence.Migrations
                 {
                     b.HasOne("Languages.Domain.Entities.LanguageDictionary", "Dictionary")
                         .WithMany("Entries")
-                        .HasForeignKey("DictionaryID")
+                        .HasForeignKey("DictionaryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -236,7 +236,7 @@ namespace Languages.Infrastructure.Persistence.Migrations
                 {
                     b.HasOne("Languages.Domain.Entities.DictionaryEntry", null)
                         .WithMany("Synonyms")
-                        .HasForeignKey("DictionaryEntryID")
+                        .HasForeignKey("DictionaryEntryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -245,7 +245,7 @@ namespace Languages.Infrastructure.Persistence.Migrations
                 {
                     b.HasOne("Languages.Domain.Entities.LanguageFamily", "LanguageFamily")
                         .WithMany("Languages")
-                        .HasForeignKey("LanguageFamilyID");
+                        .HasForeignKey("LanguageFamilyId");
 
                     b.Navigation("LanguageFamily");
                 });
@@ -254,13 +254,13 @@ namespace Languages.Infrastructure.Persistence.Migrations
                 {
                     b.HasOne("Languages.Domain.Entities.Language", "Language")
                         .WithMany("Dictionaries")
-                        .HasForeignKey("LanguageID")
+                        .HasForeignKey("LanguageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Languages.Domain.Entities.LanguageLevel", "Level")
                         .WithMany()
-                        .HasForeignKey("LevelID");
+                        .HasForeignKey("LevelId");
 
                     b.Navigation("Language");
 
@@ -271,7 +271,7 @@ namespace Languages.Infrastructure.Persistence.Migrations
                 {
                     b.HasOne("Languages.Domain.Entities.Language", null)
                         .WithMany("LanguageLevels")
-                        .HasForeignKey("LanguageID")
+                        .HasForeignKey("LanguageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

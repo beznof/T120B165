@@ -21,10 +21,10 @@ internal sealed class LanguageConfiguration : BaseEntityConfiguration<Language>
         
         builder.HasOne(l => l.LanguageFamily)
             .WithMany(f => f.Languages)
-            .HasForeignKey(l => l.LanguageFamilyID);
+            .HasForeignKey(l => l.LanguageFamilyId);
         
         builder.HasMany(l => l.LanguageLevels)
             .WithOne()
-            .HasForeignKey(l => l.LanguageID);
+            .HasForeignKey(l => l.LanguageId);
     }
 }

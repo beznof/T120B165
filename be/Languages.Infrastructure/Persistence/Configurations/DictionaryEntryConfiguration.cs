@@ -26,12 +26,12 @@ internal sealed class DictionaryEntryConfiguration : BaseEntityConfiguration<Dic
         builder.Property(e => e.PhoneticTranscription)
             .HasMaxLength(500);
 
-        builder.Property(e => e.DictionaryID)
+        builder.Property(e => e.DictionaryId)
             .IsRequired();
 
         builder.HasOne(e => e.Dictionary)
             .WithMany(d => d.Entries)
-            .HasForeignKey(e => e.DictionaryID)
+            .HasForeignKey(e => e.DictionaryId)
             .OnDelete(DeleteBehavior.Cascade);
         
         builder.HasMany(e => e.Synonyms)

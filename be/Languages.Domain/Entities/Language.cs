@@ -5,7 +5,7 @@ public sealed class Language : BaseEntity
     public required string Name { get; set; }
     public string? BackgroundImageUrl { get; set; }
     
-    public int? LanguageFamilyID { get; set; }
+    public int? LanguageFamilyId { get; set; }
 
     public LanguageFamily? LanguageFamily { get; set; }
     public ICollection<LanguageDictionary> Dictionaries { get; set; } = [];

@@ -2,7 +2,7 @@
 
 public abstract class BaseEntity
 {
-    public int ID { get; set; }
+    public int Id { get; set; }
     public DateTime CreatedAtUTC { get; set; }
     public DateTime ModifiedAtUTC { get; set; }
 }

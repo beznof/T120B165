@@ -8,9 +8,9 @@ internal abstract class BaseEntityConfiguration<TEntity> : IEntityTypeConfigurat
 {
     public virtual void Configure(EntityTypeBuilder<TEntity> builder)
     {
-        builder.HasKey(e => e.ID);
+        builder.HasKey(e => e.Id);
 
-        builder.Property(e => e.ID)
+        builder.Property(e => e.Id)
             .ValueGeneratedOnAdd();
         
         builder.Property(e => e.CreatedAtUTC)

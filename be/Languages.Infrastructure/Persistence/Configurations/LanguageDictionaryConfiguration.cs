@@ -16,16 +16,16 @@ internal sealed class LanguageDictionaryConfiguration : BaseEntityConfiguration<
             .HasMaxLength(200)
             .IsRequired();
         
-        builder.HasOne(d => d.Level)
+        builder.HasOne(d => d.LanguageLevel)
             .WithMany()
-            .HasForeignKey(dictionary => dictionary.LevelID);
+            .HasForeignKey(dictionary => dictionary.LevelId);
 
         builder.Property(d => d.BackgroundImageUrl)
             .HasMaxLength(2000);
 
         builder.HasOne(d => d.Language)
             .WithMany(l => l.Dictionaries)
-            .HasForeignKey(dictionary => dictionary.LanguageID)
+            .HasForeignKey(dictionary => dictionary.LanguageId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }
