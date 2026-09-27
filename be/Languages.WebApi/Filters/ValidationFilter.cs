@@ -28,13 +28,15 @@ public sealed class ValidationFilter : IAsyncActionFilter
 
         if (errors.Count > 0)
         {
-            context.Result = new BadRequestObjectResult(new ApiResponse
+            context.Result = new ObjectResult(new ApiResponse
             (
-                Success: false,
                 Message: "Invalid request",
-                UserFriendlyMessage: "One or more validation errors occurred.",
                 Errors: errors
-            ));
+            ))
+            {
+                StatusCode = 400
+            };
+            
             return;
         }
 
