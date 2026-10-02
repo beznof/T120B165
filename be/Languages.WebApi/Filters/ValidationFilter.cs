@@ -1,6 +1,6 @@
 using FluentValidation;
-using Languages.WebApi.Models.Common;
-using Microsoft.AspNetCore.Mvc;
+using Languages.Application.Common;
+using Languages.WebApi.Extensions;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Languages.WebApi.Filters;
@@ -9,7 +9,8 @@ public sealed class ValidationFilter : IAsyncActionFilter
 {
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
-        List<string> errors = [];
+        string? errorMessage = null;
+        bool errorEncountered = false;
         
         foreach (var parameter in context.ActionDescriptor.Parameters)
         {
@@ -22,20 +23,31 @@ public sealed class ValidationFilter : IAsyncActionFilter
             foreach (var validator in validators)
             {
                 var result = await validator.ValidateAsync(new ValidationContext<object>(argument), context.HttpContext.RequestAborted);
-                result.Errors.ForEach(e => errors.Add(e.ErrorMessage));
+
+                if (!result.IsValid)
+                {
+                    errorEncountered = true;
+                    errorMessage = result.Errors.FirstOrDefault()?.ErrorMessage;
+                    break;
+                }
+            }
+
+            if (errorEncountered)
+            {
+                break;
             }
         }
 
-        if (errors.Count > 0)
+        if (errorEncountered)
         {
-            context.Result = new ObjectResult(new ApiResponse
+            var result = new Result
             (
-                Message: "Invalid request",
-                Errors: errors
-            ))
-            {
-                StatusCode = 400
-            };
+                Message: errorMessage ?? "Request failed.",
+                IsSuccessful: false,
+                Error: ResultErrorKind.ValidationFailed
+            );
+
+            context.Result = result.ToActionResult();
             
             return;
         }
