@@ -12,4 +12,9 @@
         <ProjectReference Include="..\Languages.Domain\Languages.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Models\DictionaryEntry\" />
+      <Folder Include="Models\LanguageDictionary\" />
+    </ItemGroup>
+
 </Project>

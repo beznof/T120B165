@@ -1,5 +1,5 @@
 using System.Net;
-using Languages.Application.Common;
+using Languages.Application.Models.Common;
 using Languages.WebApi.Models.Common;
 using Microsoft.AspNetCore.Mvc;
 

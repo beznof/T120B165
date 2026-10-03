@@ -1,14 +1,17 @@
+using Languages.Application.Interfaces;
 using Languages.WebApi.Models.Common;
-using Languages.WebApi.Models.DictionaryEntry.Requests;
-using Languages.WebApi.Models.DictionaryEntry.Responses;
+using Languages.WebApi.Models.Requests.DictionaryEntry;
+using Languages.WebApi.Models.Responses.DictionaryEntry;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Languages.WebApi.Controllers;
 
 [ApiController]
 [Route("api/languages/{LanguageId:int}/dictionaries/{DictionaryId:int}/entries")]
-public sealed class DictionaryEntriesController : ControllerBase
+public sealed class DictionaryEntriesController(IDictionaryEntryService dictionaryEntryService) : ControllerBase
 {
+    private readonly IDictionaryEntryService _dictionaryEntryService = dictionaryEntryService;
+    
     [HttpGet]
     public async Task<ActionResult<ApiResponse<ReadManyDictionaryEntriesResponse>>> ReadMany([FromRoute] BaseDictionaryEntryRequest entryRequest, [FromQuery] ReadManyDictionaryEntriesRequest request)
     {

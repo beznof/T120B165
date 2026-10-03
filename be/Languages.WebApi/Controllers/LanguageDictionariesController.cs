@@ -1,14 +1,17 @@
+using Languages.Application.Interfaces;
 using Languages.WebApi.Models.Common;
-using Languages.WebApi.Models.LanguageDictionary.Requests;
-using Languages.WebApi.Models.LanguageDictionary.Responses;
+using Languages.WebApi.Models.Requests.LanguageDictionary;
+using Languages.WebApi.Models.Responses.LanguageDictionary;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Languages.WebApi.Controllers;
 
 [ApiController]
 [Route("api/languages/{LanguageId:int}/dictionaries")]
-public sealed class LanguageDictionariesController : ControllerBase
+public sealed class LanguageDictionariesController(ILanguageDictionaryService languageDictionaryService) : ControllerBase
 {
+    private readonly ILanguageDictionaryService _languageDictionaryService = languageDictionaryService;
+    
     [HttpGet]
     public async Task<ActionResult<ApiResponse<ReadManyLanguageDictionariesResponse>>> ReadMany([FromRoute] BaseLanguageDictionaryRequest dictionaryRequest, [FromQuery] ReadManyLanguageDictionariesRequest request)
     {

@@ -1,12 +1,12 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Languages.WebApi.Models.Common;
+using Languages.Application.Models.Common;
 
 namespace Languages.WebApi.Serialization;
 
 public sealed class PatchFieldJsonConverterFactory : JsonConverterFactory
 {
-    public override bool CanConvert(Type typeToConvert) => typeToConvert.IsGenericType && typeToConvert.GetGenericTypeDefinition() == typeof(PatchField<>);
+    public override bool CanConvert(Type typeToConvert) => typeToConvert.IsGenericType && typeToConvert.GetGenericTypeDefinition() == typeof(Optional<>);
 
     public override JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options)
     {
@@ -15,16 +15,16 @@ public sealed class PatchFieldJsonConverterFactory : JsonConverterFactory
         return (JsonConverter)Activator.CreateInstance(converterType)!;
     }
 
-    private sealed class PatchFieldJsonConverter<T> : JsonConverter<PatchField<T>>
+    private sealed class PatchFieldJsonConverter<T> : JsonConverter<Optional<T>>
     {
         public override bool HandleNull => true;
 
-        public override PatchField<T> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
+        public override Optional<T> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
             new(JsonSerializer.Deserialize<T>(ref reader, options)!);
 
-        public override void Write(Utf8JsonWriter writer, PatchField<T> value, JsonSerializerOptions options)
+        public override void Write(Utf8JsonWriter writer, Optional<T> value, JsonSerializerOptions options)
         {
-            if (!value.IsSpecified)
+            if (!value.IsProvided)
             {
                 throw new JsonException(
                     "Omitted patch fields must be skipped with JsonIgnoreCondition.WhenWritingDefault.");

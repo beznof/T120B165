@@ -1,13 +1,16 @@
+using Languages.Application.Interfaces;
 using Languages.WebApi.Models.Common;
-using Languages.WebApi.Models.Language.Requests;
+using Languages.WebApi.Models.Requests.Language;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Languages.WebApi.Controllers;
 
 [ApiController]
 [Route("api/languages")]
-public sealed class LanguagesController : ControllerBase
+public sealed class LanguagesController(ILanguageService languageService) : ControllerBase
 {
+    private readonly ILanguageService _languageService = languageService;
+    
     [HttpGet]
     public IActionResult ReadMany([FromQuery] ReadManyLanguagesRequest request)
     {
@@ -38,7 +41,7 @@ public sealed class LanguagesController : ControllerBase
         throw new NotImplementedException();
     }
     
-    [HttpDelete("{DictionaryId:int}/background-image")]
+    [HttpDelete("{LanguageId:int}/background-image")]
     public async Task<ActionResult<ApiResponse>> DeleteBackgroundImage([FromRoute] LanguageRequest languageRequest)
     {
         throw new NotImplementedException();

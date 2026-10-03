@@ -1,4 +1,4 @@
-using Languages.Application.Common;
+using Languages.Application.Models.Common;
 using Languages.WebApi.Extensions;
 using Microsoft.AspNetCore.Mvc.Filters;
 
