@@ -33,9 +33,5 @@ internal sealed class DictionaryEntryConfiguration : BaseEntityConfiguration<Dic
             .WithMany(d => d.Entries)
             .HasForeignKey(e => e.DictionaryId)
             .OnDelete(DeleteBehavior.Cascade);
-        
-        builder.HasMany(e => e.Synonyms)
-            .WithOne()
-            .OnDelete(DeleteBehavior.Cascade);
     }
 }

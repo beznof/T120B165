@@ -1,5 +1,5 @@
-using Languages.WebApi.Models.Common;
-using Microsoft.AspNetCore.Mvc;
+using Languages.Application.Common;
+using Languages.WebApi.Extensions;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Languages.WebApi.Filters;
@@ -8,13 +8,14 @@ public sealed class ApiExceptionFilter : IExceptionFilter
 {
     public void OnException(ExceptionContext context)
     {
-        context.Result = new ObjectResult(new ApiResponse
+        var result = new Result
         (
-            Message: "Server couldn't process the request."
-        ))
-        {
-            StatusCode = 500
-        };
+            Message: "Server couldn't process the request.",
+            IsSuccessful: false,
+            Error: ResultErrorKind.ServerErrorOccured
+        );
+        
+        context.Result = result.ToActionResult();
         
         context.ExceptionHandled = true;
     }

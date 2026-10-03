@@ -7,4 +7,5 @@ public enum ResultErrorKind
     AuthorizationFailed,
     ResourceNotFound,
     ConflictOccured,
+    ServerErrorOccured,
 }
