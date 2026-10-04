@@ -1,8 +1,8 @@
 using Languages.Domain.Enums;
 
-namespace Languages.WebApi.Models.Requests.DictionaryEntry;
+namespace Languages.WebApi.Models.Requests.Entry;
 
-public sealed class CreateDictionaryEntryRequest
+public sealed class CreateEntryRequest
 {
     public required string Text { get; set; }
     public required string Translation { get; set; }

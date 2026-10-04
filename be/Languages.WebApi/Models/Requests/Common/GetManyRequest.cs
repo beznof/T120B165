@@ -1,6 +1,6 @@
-namespace Languages.WebApi.Models.Requests;
+namespace Languages.WebApi.Models.Requests.Common;
 
-public class ReadManyRequest
+public class GetManyRequest
 {
     public int Page { get; set; }
     public int PageSize { get; set; }

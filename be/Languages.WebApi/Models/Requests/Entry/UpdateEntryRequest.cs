@@ -1,9 +1,9 @@
 using Languages.Application.Models.Common;
 using Languages.Domain.Enums;
 
-namespace Languages.WebApi.Models.Requests.DictionaryEntry;
+namespace Languages.WebApi.Models.Requests.Entry;
 
-public sealed class UpdateDictionaryEntryRequest
+public sealed class UpdateEntryRequest
 {
     public Optional<string?> Text { get; set; }
     public Optional<string?> Translation { get; set; }

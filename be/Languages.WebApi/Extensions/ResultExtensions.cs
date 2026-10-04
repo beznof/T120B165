@@ -7,9 +7,14 @@ namespace Languages.WebApi.Extensions;
 
 public static class ResultExtensions
 {
-    public static ActionResult ToActionResult<T>(this Result<T> result, HttpStatusCode? statusCode = null)
+    public static ActionResult ToActionResult<T>(this Result<T> result, HttpStatusCode? statusCode = null, IReadOnlyDictionary<string, string>? links = null)
     {
-        var response = new ApiResponse<T>(Message: result.Message, Data: result.Data);
+        var response = new ApiResponse<T>(Message: result.Message)
+        {
+            Data = result.Data,
+            Links = links
+        };
+        
         var finalStatusCode = DetermineStatusCode(result, statusCode);
         
         return new ObjectResult(value: response)
@@ -18,9 +23,13 @@ public static class ResultExtensions
         };
     }
     
-    public static ActionResult ToActionResult(this Result result, HttpStatusCode? statusCode = null) 
+    public static ActionResult ToActionResult(this Result result, HttpStatusCode? statusCode = null, IReadOnlyDictionary<string, string>? links = null) 
     {
-        var response = new ApiResponse(Message: result.Message);
+        var response = new ApiResponse(Message: result.Message)
+        {
+            Links = links
+        };
+        
         var finalStatusCode = DetermineStatusCode(result, statusCode);
         
         return new ObjectResult(value: response)

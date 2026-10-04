@@ -1,6 +1,6 @@
-﻿namespace Languages.WebApi.Models.Requests.DictionaryEntry;
+﻿namespace Languages.WebApi.Models.Requests.Entry;
 
-public class BaseDictionaryEntryRequest
+public class BaseEntryRequest
 {
     public required int LanguageId { get; set; }
     public required int DictionaryId { get; set; }
