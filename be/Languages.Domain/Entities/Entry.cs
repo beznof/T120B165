@@ -1,0 +1,15 @@
+using Languages.Domain.Enums;
+
+namespace Languages.Domain.Entities;
+
+public sealed class Entry : BaseEntity
+{
+    public required string Text { get; set; }
+    public required string Translation { get; set; }
+    public required DictionaryEntryType Type { get; set; }
+    public string? PhoneticTranscription { get; set; }
+    
+    public int DictionaryId { get; set; }
+
+    public Dictionary Dictionary { get; set; } = null!;
+}

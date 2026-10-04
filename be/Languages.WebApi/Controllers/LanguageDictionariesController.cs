@@ -8,9 +8,9 @@ namespace Languages.WebApi.Controllers;
 
 [ApiController]
 [Route("api/languages/{LanguageId:int}/dictionaries")]
-public sealed class LanguageDictionariesController(ILanguageDictionaryService languageDictionaryService) : ControllerBase
+public sealed class LanguageDictionariesController(IDictionaryService dictionaryService) : ControllerBase
 {
-    private readonly ILanguageDictionaryService _languageDictionaryService = languageDictionaryService;
+    private readonly IDictionaryService _dictionaryService = dictionaryService;
     
     [HttpGet]
     public async Task<ActionResult<ApiResponse<ReadManyLanguageDictionariesResponse>>> ReadMany([FromRoute] BaseLanguageDictionaryRequest dictionaryRequest, [FromQuery] ReadManyLanguageDictionariesRequest request)

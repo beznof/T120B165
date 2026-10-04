@@ -1,5 +1,4 @@
 using FluentValidation;
-using Languages.WebApi.Models.Common;
 
 namespace Languages.WebApi.Models.Requests.Language;
 
@@ -12,7 +11,8 @@ public class SetLanguageBackgroundImageRequestValidator : AbstractValidator<SetL
 {
     public SetLanguageBackgroundImageRequestValidator()
     {
-        RuleFor(l => l.BackgroundImage!)
-            .SetValidator(new ImageFileValidator());
+        RuleFor(l => l.BackgroundImage)
+            .NotNull()
+            .WithMessage("Background image is required.");
     }
 }

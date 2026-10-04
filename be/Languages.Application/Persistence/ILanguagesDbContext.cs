@@ -6,8 +6,8 @@ namespace Languages.Application.Persistence;
 public interface ILanguagesDbContext
 {
     public DbSet<Language> Languages { get; }
-    public DbSet<LanguageDictionary> Dictionaries { get; }
-    public DbSet<DictionaryEntry> DictionaryEntries { get; }
+    public DbSet<Dictionary> Dictionaries { get; }
+    public DbSet<Entry> Entries { get; }
     
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

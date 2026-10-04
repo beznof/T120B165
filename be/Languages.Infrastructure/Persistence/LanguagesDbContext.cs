@@ -7,8 +7,8 @@ namespace Languages.Infrastructure.Persistence;
 public sealed class LanguagesDbContext(DbContextOptions<LanguagesDbContext> options) : DbContext(options), ILanguagesDbContext
 {
     public DbSet<Language> Languages => Set<Language>();
-    public DbSet<LanguageDictionary> Dictionaries => Set<LanguageDictionary>();
-    public DbSet<DictionaryEntry> DictionaryEntries => Set<DictionaryEntry>();
+    public DbSet<Dictionary> Dictionaries => Set<Dictionary>();
+    public DbSet<Entry> Entries => Set<Entry>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

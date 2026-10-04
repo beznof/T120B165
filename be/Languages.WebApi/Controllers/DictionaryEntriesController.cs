@@ -8,9 +8,9 @@ namespace Languages.WebApi.Controllers;
 
 [ApiController]
 [Route("api/languages/{LanguageId:int}/dictionaries/{DictionaryId:int}/entries")]
-public sealed class DictionaryEntriesController(IDictionaryEntryService dictionaryEntryService) : ControllerBase
+public sealed class DictionaryEntriesController(IEntryService entryService) : ControllerBase
 {
-    private readonly IDictionaryEntryService _dictionaryEntryService = dictionaryEntryService;
+    private readonly IEntryService _entryService = entryService;
     
     [HttpGet]
     public async Task<ActionResult<ApiResponse<ReadManyDictionaryEntriesResponse>>> ReadMany([FromRoute] BaseDictionaryEntryRequest entryRequest, [FromQuery] ReadManyDictionaryEntriesRequest request)

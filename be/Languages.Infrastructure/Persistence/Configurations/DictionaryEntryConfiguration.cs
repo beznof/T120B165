@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Languages.Infrastructure.Persistence.Configurations;
 
-internal sealed class DictionaryEntryConfiguration : BaseEntityConfiguration<DictionaryEntry>
+internal sealed class DictionaryEntryConfiguration : BaseEntityConfiguration<Entry>
 {
-    public override void Configure(EntityTypeBuilder<DictionaryEntry> builder)
+    public override void Configure(EntityTypeBuilder<Entry> builder)
     {
         base.Configure(builder);
         
