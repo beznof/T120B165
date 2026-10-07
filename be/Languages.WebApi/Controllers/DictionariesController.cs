@@ -12,7 +12,7 @@ namespace Languages.WebApi.Controllers;
 
 [ApiController]
 [Route("api/languages/{LanguageId:int}/dictionaries")]
-public sealed class DictionariesController(IDictionaryService dictionaryService) : ControllerBase
+public sealed partial class DictionariesController(IDictionaryService dictionaryService) : ControllerBase
 {
     [HttpGet]
     public async Task<ActionResult<ApiResponse<GetManyDictionariesOutput?>>> GetMany([FromRoute] BaseDictionaryRequest dictionaryRequest, [FromQuery] GetManyDictionariesRequest request, CancellationToken cancellationToken)
@@ -28,9 +28,12 @@ public sealed class DictionariesController(IDictionaryService dictionaryService)
             }
         }, cancellationToken);
 
-        var links = result.IsSuccessful && result.Data is not null
-            ? GetPaginationLinks(result.Data, dictionaryRequest, request)
-            : null;
+        var links = new Dictionary<string, string>();
+        if (result.IsSuccessful && result.Data != null)
+        {
+            AddParentLanguageLink(links, dictionaryRequest.LanguageId);
+            AddPaginationLinks(links, dictionaryRequest.LanguageId, result.Data.TotalCount, request.Page, request.PageSize, request.Search);
+        }
 
         return result.ToActionResult(links: links);
     }
@@ -44,9 +47,14 @@ public sealed class DictionariesController(IDictionaryService dictionaryService)
             DictionaryId = dictionaryRequest.DictionaryId
         }, cancellationToken);
         
-        var links = result.IsSuccessful && result.Data is not null
-            ? GetResourceLinks(dictionaryRequest.LanguageId, result.Data.Id)
-            : null;
+        var links = new Dictionary<string, string>();
+        if (result.IsSuccessful && result.Data != null)
+        {
+            AddParentLanguageLink(links, dictionaryRequest.LanguageId);
+            AddSelfResourceLinks(links, dictionaryRequest.LanguageId, dictionaryRequest.DictionaryId);
+            AddSetBackgroundImageLink(links, dictionaryRequest.LanguageId, dictionaryRequest.DictionaryId);
+            AddDeleteBackgroundImageLink(links, dictionaryRequest.LanguageId, dictionaryRequest.DictionaryId);
+        }
 
         return result.ToActionResult(links: links);
     }
@@ -60,9 +68,13 @@ public sealed class DictionariesController(IDictionaryService dictionaryService)
             Name = request.Name,
         }, cancellationToken);
         
-        var links = result.IsSuccessful && result.Data is not null
-            ? GetResourceLinks(dictionaryRequest.LanguageId, result.Data.Id)
-            : null;
+        var links = new Dictionary<string, string>();
+        if (result.IsSuccessful && result.Data != null)
+        {
+            AddParentLanguageLink(links, dictionaryRequest.LanguageId);
+            AddSelfResourceLinks(links, dictionaryRequest.LanguageId, result.Data.Id);
+            AddSetBackgroundImageLink(links, dictionaryRequest.LanguageId, result.Data.Id);
+        }
 
         return result.ToActionResult(statusCode: result.IsSuccessful ? HttpStatusCode.Created : null, links: links);
     }
@@ -77,7 +89,14 @@ public sealed class DictionariesController(IDictionaryService dictionaryService)
             Name = request.Name,
         }, cancellationToken);
         
-        var links = result.IsSuccessful ? GetResourceLinks(dictionaryRequest.LanguageId, dictionaryRequest.DictionaryId) : null;
+        var links = new Dictionary<string, string>();
+        if (result.IsSuccessful)
+        {
+            AddParentLanguageLink(links, dictionaryRequest.LanguageId);
+            AddSelfResourceLinks(links, dictionaryRequest.LanguageId, dictionaryRequest.DictionaryId);
+            AddSetBackgroundImageLink(links, dictionaryRequest.LanguageId, dictionaryRequest.DictionaryId);
+            AddDeleteBackgroundImageLink(links, dictionaryRequest.LanguageId, dictionaryRequest.DictionaryId);
+        }
 
         return result.ToActionResult(links: links);
     }
@@ -97,7 +116,13 @@ public sealed class DictionariesController(IDictionaryService dictionaryService)
             }
         }, cancellationToken);
         
-        var links = result.IsSuccessful ? GetResourceLinks(dictionaryRequest.LanguageId, dictionaryRequest.DictionaryId) : null;
+        var links = new Dictionary<string, string>();
+        if (result.IsSuccessful)
+        {
+            AddImageParentLink(links, dictionaryRequest.LanguageId, dictionaryRequest.DictionaryId);
+            AddDeleteBackgroundImageLink(links, dictionaryRequest.LanguageId, dictionaryRequest.DictionaryId);
+            AddSetBackgroundImageLink(links, dictionaryRequest.LanguageId, dictionaryRequest.DictionaryId);
+        }
 
         return result.ToActionResult(links: links);
     }
@@ -111,7 +136,12 @@ public sealed class DictionariesController(IDictionaryService dictionaryService)
             DictionaryId = dictionaryRequest.DictionaryId
         }, cancellationToken);
         
-        var links = result.IsSuccessful ? GetResourceLinks(dictionaryRequest.LanguageId, dictionaryRequest.DictionaryId) : null;
+        var links = new Dictionary<string, string>();
+        if (result.IsSuccessful)
+        {
+            AddImageParentLink(links, dictionaryRequest.LanguageId, dictionaryRequest.DictionaryId);
+            AddSetBackgroundImageLink(links, dictionaryRequest.LanguageId, dictionaryRequest.DictionaryId);
+        }
 
         return result.ToActionResult(links: links);
     }
@@ -125,44 +155,14 @@ public sealed class DictionariesController(IDictionaryService dictionaryService)
             DictionaryId = dictionaryRequest.DictionaryId
         }, cancellationToken);
         
-        var links = result.IsSuccessful ? GetCollectionLinks(dictionaryRequest.LanguageId) : null;
+        var links = new Dictionary<string, string>();
+        if (result.IsSuccessful)
+        {
+            AddParentLanguageLink(links, dictionaryRequest.LanguageId);
+            AddParentLanguageCollectionLink(links, dictionaryRequest.LanguageId);
+            AddCreateLink(links, dictionaryRequest.LanguageId);
+        }
 
         return result.ToActionResult(links: links);
-    }
-
-    private Dictionary<string, string> GetCollectionLinks(int languageId) => new()
-    {
-        ["collection"] = Url.Action(nameof(GetMany), new { LanguageId = languageId, Page = 1, PageSize = 20 })!,
-        ["language"] = Url.Action(nameof(LanguagesController.GetOne), "Languages", new { LanguageId = languageId })!
-    };
-
-    private Dictionary<string, string> GetResourceLinks(int languageId, int dictionaryId)
-    {
-        var links = GetCollectionLinks(languageId);
-        links["self"] = Url.Action(nameof(GetOne), new { LanguageId = languageId, DictionaryId = dictionaryId })!;
-        links["entries"] = Url.Action(nameof(EntriesController.GetMany), "Entries",
-            new { LanguageId = languageId, DictionaryId = dictionaryId, Page = 1, PageSize = 20 })!;
-        return links;
-    }
-
-    private Dictionary<string, string> GetPaginationLinks(GetManyOutput output, BaseDictionaryRequest scope, GetManyDictionariesRequest request)
-    {
-        string PageUrl(int page) => Url.Action(nameof(GetMany),
-            new { scope.LanguageId, Page = page, output.PageSize, request.Search })!;
-
-        var links = new Dictionary<string, string>
-        {
-            ["self"] = PageUrl(output.Page),
-            ["language"] = Url.Action(nameof(LanguagesController.GetOne), "Languages", new { scope.LanguageId })!
-        };
-
-        if (output.Page > 1)
-            links["prev"] = PageUrl(output.Page - 1);
-
-        // Stay within the page limit enforced by GetManyInputValidator.
-        if (output.Page < 10000 && (long)output.Page * output.PageSize < output.TotalCount)
-            links["next"] = PageUrl(output.Page + 1);
-
-        return links;
     }
 }

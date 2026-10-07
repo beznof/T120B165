@@ -1,9 +1,11 @@
 ﻿using System.Text.Json;
 using Languages.Application.Interfaces;
+using Languages.Application.Models.Common;
 using Languages.Application.Persistence;
 using Languages.Application.Services;
 using Languages.Infrastructure.ImageStorage;
 using Languages.Infrastructure.Persistence;
+using Languages.WebApi.Extensions;
 using Languages.WebApi.Filters;
 using Languages.WebApi.Serialization;
 
@@ -17,6 +19,19 @@ internal static class ServiceRegistration
         services.AddControllers(options =>
         {
             options.Filters.Add<ApiExceptionFilter>();
+        })
+        .ConfigureApiBehaviorOptions(options =>
+        {
+            options.InvalidModelStateResponseFactory = context =>
+            {
+                var message = context.ModelState.Values
+                    .SelectMany(value => value.Errors)
+                    .Select(error => error.ErrorMessage)
+                    .FirstOrDefault(message => !string.IsNullOrWhiteSpace(message))
+                    ?? "Invalid request.";
+
+                return Result.Failure(message, ResultErrorKind.ValidationFailed).ToActionResult();
+            };
         })
         .AddJsonOptions(options =>
         {
