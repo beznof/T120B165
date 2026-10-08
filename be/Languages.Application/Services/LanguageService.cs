@@ -14,11 +14,11 @@ public class LanguageService(
     IImageStorage imageStorage,
     IInputValidation validation) : ILanguageService
 {
-    public async Task<Result<GetManyLanguagesOutput?>> GetMany(GetManyLanguagesInput input, CancellationToken cancellationToken)
+    public async Task<Result<GetManyLanguagesOutput>> GetMany(GetManyLanguagesInput input, CancellationToken cancellationToken)
     {
         var inputValidation = await validation.ValidateAsync(input, cancellationToken);
         if (!inputValidation.IsValid)
-            return inputValidation.ToFailureResult<GetManyLanguagesOutput?>();
+            return inputValidation.ToFailureResult<GetManyLanguagesOutput>();
 
         var query = dbContext.Languages
             .AsNoTracking()
@@ -32,7 +32,7 @@ public class LanguageService(
             .Take(input.Pagination.PageSize)
             .ToListAsync(cancellationToken);
 
-        return Result.Success<GetManyLanguagesOutput?>("Languages were retrieved successfully.", new GetManyLanguagesOutput(
+        return Result.Success<GetManyLanguagesOutput>("Languages were retrieved successfully.", new GetManyLanguagesOutput(
             Items: result.Select(l => new GetOneLanguageOutput(
                 Id: l.Id,
                 Name: l.Name,
@@ -44,31 +44,31 @@ public class LanguageService(
         ));
     }
 
-    public async Task<Result<GetOneLanguageOutput?>> GetOne(GetOneLanguageInput input, CancellationToken cancellationToken)
+    public async Task<Result<GetOneLanguageOutput>> GetOne(GetOneLanguageInput input, CancellationToken cancellationToken)
     {
         var inputValidation = await validation.ValidateAsync(input, cancellationToken);
         if (!inputValidation.IsValid)
-            return inputValidation.ToFailureResult<GetOneLanguageOutput?>();
+            return inputValidation.ToFailureResult<GetOneLanguageOutput>();
 
         var language = await dbContext.Languages
             .AsNoTracking()
             .FirstOrDefaultAsync(l => l.Id == input.LanguageId, cancellationToken);
 
         if (language == null)
-            return Result.Failure<GetOneLanguageOutput?>("Language not found.", ResultErrorKind.ResourceNotFound);
+            return Result.Failure<GetOneLanguageOutput>("Language not found.", ResultErrorKind.ResourceNotFound);
 
-        return Result.Success<GetOneLanguageOutput?>("Language was retrieved successfully.", new GetOneLanguageOutput(
+        return Result.Success<GetOneLanguageOutput>("Language was retrieved successfully.", new GetOneLanguageOutput(
             Id: language.Id,
             Name: language.Name,
             BackgroundImageUrl: language.BackgroundImageUrl
         ));
     }
 
-    public async Task<Result<CreateLanguageOutput?>> Create(CreateLanguageInput input, CancellationToken cancellationToken)
+    public async Task<Result<CreateLanguageOutput>> Create(CreateLanguageInput input, CancellationToken cancellationToken)
     {
         var inputValidation = await validation.ValidateAsync(input, cancellationToken);
         if (!inputValidation.IsValid)
-            return inputValidation.ToFailureResult<CreateLanguageOutput?>();
+            return inputValidation.ToFailureResult<CreateLanguageOutput>();
 
         var newLanguage = new Language
         {
@@ -79,7 +79,7 @@ public class LanguageService(
         
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        return Result.Success<CreateLanguageOutput?>("Language was created successfully", new CreateLanguageOutput(
+        return Result.Success<CreateLanguageOutput>("Language was created successfully", new CreateLanguageOutput(
             Id: newLanguage.Id,
             Name: newLanguage.Name,
             BackgroundImageUrl: newLanguage.BackgroundImageUrl
@@ -142,17 +142,17 @@ public class LanguageService(
         return Result.Success("Language was deleted successfully.");
     }
 
-    public async Task<Result<SetLanguageBackgroundImageOutput?>> SetBackgroundImage(SetLanguageBackgroundImageInput input, CancellationToken cancellationToken)
+    public async Task<Result<SetLanguageBackgroundImageOutput>> SetBackgroundImage(SetLanguageBackgroundImageInput input, CancellationToken cancellationToken)
     {
         var inputValidation = await validation.ValidateAsync(input, cancellationToken);
         if (!inputValidation.IsValid)
-            return inputValidation.ToFailureResult<SetLanguageBackgroundImageOutput?>();
+            return inputValidation.ToFailureResult<SetLanguageBackgroundImageOutput>();
         
         var language = await dbContext.Languages
             .FirstOrDefaultAsync(l => l.Id == input.LanguageId, cancellationToken);
 
         if (language == null)
-            return Result.Failure<SetLanguageBackgroundImageOutput?>("Language not found.", ResultErrorKind.ResourceNotFound);
+            return Result.Failure<SetLanguageBackgroundImageOutput>("Language not found.", ResultErrorKind.ResourceNotFound);
 
         var image = input.Image;
 
@@ -175,7 +175,7 @@ public class LanguageService(
         if (!string.IsNullOrWhiteSpace(tempBackgroundImageUrl))
             await imageStorage.DeleteImageAsync(tempBackgroundImageUrl, cancellationToken);
         
-        return Result.Success<SetLanguageBackgroundImageOutput?>("Image uploaded successfully.", new SetLanguageBackgroundImageOutput(
+        return Result.Success<SetLanguageBackgroundImageOutput>("Image uploaded successfully.", new SetLanguageBackgroundImageOutput(
             ImageUrl: imageUrl    
         ));
         

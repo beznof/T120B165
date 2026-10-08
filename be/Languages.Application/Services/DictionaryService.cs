@@ -14,14 +14,14 @@ public class DictionaryService(
     IImageStorage imageStorage,
     IInputValidation validation) : IDictionaryService
 {
-    public async Task<Result<GetManyDictionariesOutput?>> GetMany(GetManyDictionariesInput input, CancellationToken cancellationToken)
+    public async Task<Result<GetManyDictionariesOutput>> GetMany(GetManyDictionariesInput input, CancellationToken cancellationToken)
     {
         var inputValidation = await validation.ValidateAsync(input, cancellationToken);
         if (!inputValidation.IsValid)
-            return inputValidation.ToFailureResult<GetManyDictionariesOutput?>();
+            return inputValidation.ToFailureResult<GetManyDictionariesOutput>();
         
         if(!(await VerifyScope(input, cancellationToken)))
-            return Result.Failure<GetManyDictionariesOutput?>("Language not found.", ResultErrorKind.ResourceNotFound);
+            return Result.Failure<GetManyDictionariesOutput>("Language not found.", ResultErrorKind.ResourceNotFound);
 
         var query = dbContext.Dictionaries
             .AsNoTracking()
@@ -37,7 +37,7 @@ public class DictionaryService(
             .Take(input.Pagination.PageSize)
             .ToListAsync(cancellationToken);
 
-        return Result.Success<GetManyDictionariesOutput?>("Dictionaries were retrieved successfully.", new GetManyDictionariesOutput(
+        return Result.Success<GetManyDictionariesOutput>("Dictionaries were retrieved successfully.", new GetManyDictionariesOutput(
             Items: result.Select(d => new GetOneDictionaryOutput(
                 Id: d.Id,
                 Name: d.Name,
@@ -53,11 +53,11 @@ public class DictionaryService(
         ));
     }
 
-    public async Task<Result<GetOneDictionaryOutput?>> GetOne(GetOneDictionaryInput input, CancellationToken cancellationToken)
+    public async Task<Result<GetOneDictionaryOutput>> GetOne(GetOneDictionaryInput input, CancellationToken cancellationToken)
     {
         var inputValidation = await validation.ValidateAsync(input, cancellationToken);
         if (!inputValidation.IsValid)
-            return inputValidation.ToFailureResult<GetOneDictionaryOutput?>();
+            return inputValidation.ToFailureResult<GetOneDictionaryOutput>();
 
         var dictionary = await dbContext.Dictionaries
             .AsNoTracking()
@@ -66,9 +66,9 @@ public class DictionaryService(
             .FirstOrDefaultAsync(cancellationToken);
         
         if (dictionary == null)
-            return Result.Failure<GetOneDictionaryOutput?>("Dictionary not found.", ResultErrorKind.ResourceNotFound);
+            return Result.Failure<GetOneDictionaryOutput>("Dictionary not found.", ResultErrorKind.ResourceNotFound);
 
-        return Result.Success<GetOneDictionaryOutput?>("Dictionary was retrieved successfully.", new GetOneDictionaryOutput(
+        return Result.Success<GetOneDictionaryOutput>("Dictionary was retrieved successfully.", new GetOneDictionaryOutput(
             Id: dictionary.Id,
             Name: dictionary.Name,
             BackgroundImageUrl: dictionary.BackgroundImageUrl,
@@ -79,7 +79,7 @@ public class DictionaryService(
         ));
     }
 
-    public async Task<Result<CreateDictionaryOutput?>> Create(CreateDictionaryInput input, CancellationToken cancellationToken)
+    public async Task<Result<CreateDictionaryOutput>> Create(CreateDictionaryInput input, CancellationToken cancellationToken)
     {
         var inputValidation = await validation.ValidateAsync(input, cancellationToken);
         if (!inputValidation.IsValid)
@@ -104,7 +104,7 @@ public class DictionaryService(
         
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        return Result.Success<CreateDictionaryOutput?>("Dictionary was created successfully", new CreateDictionaryOutput(
+        return Result.Success<CreateDictionaryOutput>("Dictionary was created successfully", new CreateDictionaryOutput(
             Id: newDictionary.Id,
             Name: newDictionary.Name,
             BackgroundImageUrl: newDictionary.BackgroundImageUrl,
@@ -170,18 +170,18 @@ public class DictionaryService(
         return Result.Success("Dictionary was deleted successfully.");
     }
 
-    public async Task<Result<SetDictionaryBackgroundImageOutput?>> SetBackgroundImage(SetDictionaryBackgroundImageInput input, CancellationToken cancellationToken)
+    public async Task<Result<SetDictionaryBackgroundImageOutput>> SetBackgroundImage(SetDictionaryBackgroundImageInput input, CancellationToken cancellationToken)
     {
         var inputValidation = await validation.ValidateAsync(input, cancellationToken);
         if (!inputValidation.IsValid)
-            return inputValidation.ToFailureResult<SetDictionaryBackgroundImageOutput?>();
+            return inputValidation.ToFailureResult<SetDictionaryBackgroundImageOutput>();
         
         var dictionary = await dbContext.Dictionaries
             .Where(d => d.LanguageId == input.LanguageId && d.Id == input.DictionaryId)
             .FirstOrDefaultAsync(cancellationToken);
 
         if (dictionary == null)
-            return Result.Failure<SetDictionaryBackgroundImageOutput?>("Dictionary not found.", ResultErrorKind.ResourceNotFound);
+            return Result.Failure<SetDictionaryBackgroundImageOutput>("Dictionary not found.", ResultErrorKind.ResourceNotFound);
 
         var image = input.Image;
 
@@ -204,7 +204,7 @@ public class DictionaryService(
         if(!string.IsNullOrWhiteSpace(tempBackgroundImageUrl))
             await imageStorage.DeleteImageAsync(tempBackgroundImageUrl, cancellationToken);
         
-        return Result.Success<SetDictionaryBackgroundImageOutput?>("Image uploaded successfully.", new SetDictionaryBackgroundImageOutput(
+        return Result.Success<SetDictionaryBackgroundImageOutput>("Image uploaded successfully.", new SetDictionaryBackgroundImageOutput(
             ImageUrl: imageUrl    
         ));
     }

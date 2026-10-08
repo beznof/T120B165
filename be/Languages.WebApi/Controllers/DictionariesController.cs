@@ -15,7 +15,7 @@ namespace Languages.WebApi.Controllers;
 public sealed partial class DictionariesController(IDictionaryService dictionaryService) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<ApiResponse<GetManyDictionariesOutput?>>> GetMany([FromRoute] BaseDictionaryRequest dictionaryRequest, [FromQuery] GetManyDictionariesRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult> GetMany([FromRoute] BaseDictionaryRequest dictionaryRequest, [FromQuery] GetManyDictionariesRequest request, CancellationToken cancellationToken)
     {
         var result = await dictionaryService.GetMany(new GetManyDictionariesInput
         {
@@ -119,7 +119,7 @@ public sealed partial class DictionariesController(IDictionaryService dictionary
         }, cancellationToken);
         
         var links = new Dictionary<string, string>();
-        if (result.IsSuccessful)
+        if (result.IsSuccessful && result.Data != null)
         {
             AddImageParentLink(links, dictionaryRequest.LanguageId, dictionaryRequest.DictionaryId);
             AddDeleteBackgroundImageLink(links, dictionaryRequest.LanguageId, dictionaryRequest.DictionaryId);

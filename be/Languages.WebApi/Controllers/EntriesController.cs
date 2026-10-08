@@ -15,7 +15,7 @@ namespace Languages.WebApi.Controllers;
 public sealed partial class EntriesController(IEntryService entryService) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<ApiResponse<GetManyEntriesOutput?>>> GetMany([FromRoute] BaseEntryRequest entryRequest, [FromQuery] GetManyEntriesRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<ApiResponse<GetManyEntriesOutput>>> GetMany([FromRoute] BaseEntryRequest entryRequest, [FromQuery] GetManyEntriesRequest request, CancellationToken cancellationToken)
     {
         var result = await entryService.GetMany(new GetManyEntriesInput
         {
@@ -41,7 +41,7 @@ public sealed partial class EntriesController(IEntryService entryService) : Cont
     }
 
     [HttpGet("{EntryId:int}")]
-    public async Task<ActionResult<ApiResponse<GetOneEntryOutput?>>> GetOne([FromRoute] EntryRequest entryRequest, CancellationToken cancellationToken)
+    public async Task<ActionResult<ApiResponse<GetOneEntryOutput>>> GetOne([FromRoute] EntryRequest entryRequest, CancellationToken cancellationToken)
     {
         var result = await entryService.GetOne(new GetOneEntryInput
         {

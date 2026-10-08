@@ -14,14 +14,14 @@ public class EntryService(
     ILanguagesDbContext dbContext,
     IInputValidation validation) : IEntryService
 {
-    public async Task<Result<GetManyEntriesOutput?>> GetMany(GetManyEntriesInput input, CancellationToken cancellationToken)
+    public async Task<Result<GetManyEntriesOutput>> GetMany(GetManyEntriesInput input, CancellationToken cancellationToken)
     {
         var inputValidation = await validation.ValidateAsync(input, cancellationToken);
         if (!inputValidation.IsValid)
-            return inputValidation.ToFailureResult<GetManyEntriesOutput?>();
+            return inputValidation.ToFailureResult<GetManyEntriesOutput>();
         
         if(!(await VerifyScope(input, cancellationToken)))
-            return Result.Failure<GetManyEntriesOutput?>("Dictionary not found.", ResultErrorKind.ResourceNotFound);
+            return Result.Failure<GetManyEntriesOutput>("Dictionary not found.", ResultErrorKind.ResourceNotFound);
 
         var query = dbContext.Entries
             .AsNoTracking()
@@ -38,7 +38,7 @@ public class EntryService(
             .Take(input.Pagination.PageSize)
             .ToListAsync(cancellationToken);
 
-        return Result.Success<GetManyEntriesOutput?>("Entries were retrieved successfully.", new GetManyEntriesOutput(
+        return Result.Success<GetManyEntriesOutput>("Entries were retrieved successfully.", new GetManyEntriesOutput(
             Items: result.Select(e => new GetOneEntryOutput(
                 Id: e.Id,
                 Text: e.Text,
@@ -56,11 +56,11 @@ public class EntryService(
         ));
     }
 
-    public async Task<Result<GetOneEntryOutput?>> GetOne(GetOneEntryInput input, CancellationToken cancellationToken)
+    public async Task<Result<GetOneEntryOutput>> GetOne(GetOneEntryInput input, CancellationToken cancellationToken)
     {
         var inputValidation = await validation.ValidateAsync(input, cancellationToken);
         if (!inputValidation.IsValid)
-            return inputValidation.ToFailureResult<GetOneEntryOutput?>();
+            return inputValidation.ToFailureResult<GetOneEntryOutput>();
 
         var entry = await dbContext.Entries
             .AsNoTracking()
@@ -68,9 +68,9 @@ public class EntryService(
             .FirstOrDefaultAsync(e => e.DictionaryId == input.DictionaryId && e.Dictionary.LanguageId == input.LanguageId && e.Id == input.EntryId, cancellationToken);
         
         if (entry == null)
-            return Result.Failure<GetOneEntryOutput?>("Entry not found.", ResultErrorKind.ResourceNotFound);
+            return Result.Failure<GetOneEntryOutput>("Entry not found.", ResultErrorKind.ResourceNotFound);
 
-        return Result.Success<GetOneEntryOutput?>("Entry was retrieved successfully.", new GetOneEntryOutput(
+        return Result.Success<GetOneEntryOutput>("Entry was retrieved successfully.", new GetOneEntryOutput(
             Id: entry.Id,
             Text: entry.Text,
             Translation: entry.Translation,
@@ -83,11 +83,11 @@ public class EntryService(
         ));
     }
 
-    public async Task<Result<CreateEntryOutput?>> Create(CreateEntryInput input, CancellationToken cancellationToken)
+    public async Task<Result<CreateEntryOutput>> Create(CreateEntryInput input, CancellationToken cancellationToken)
     {
         var inputValidation = await validation.ValidateAsync(input, cancellationToken);
         if (!inputValidation.IsValid)
-            return inputValidation.ToFailureResult<CreateEntryOutput?>();
+            return inputValidation.ToFailureResult<CreateEntryOutput>();
         
         if(!(await VerifyScope(input, cancellationToken)))
             return Result.Failure<CreateEntryOutput?>("Dictionary not found.", ResultErrorKind.ResourceNotFound);
@@ -111,7 +111,7 @@ public class EntryService(
         
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        return Result.Success<CreateEntryOutput?>("Entry was created successfully", new CreateEntryOutput(
+        return Result.Success<CreateEntryOutput>("Entry was created successfully", new CreateEntryOutput(
             Id: newEntry.Id,
             Text: newEntry.Text,
             Translation: newEntry.Translation,

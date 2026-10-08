@@ -15,7 +15,7 @@ namespace Languages.WebApi.Controllers;
 public sealed partial class LanguagesController(ILanguageService languageService) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<ApiResponse<GetManyLanguagesOutput?>>> GetMany([FromQuery] GetManyLanguagesRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<ApiResponse<GetManyLanguagesOutput>>> GetMany([FromQuery] GetManyLanguagesRequest request, CancellationToken cancellationToken)
     {
         var result = await languageService.GetMany(new GetManyLanguagesInput
         {
@@ -35,7 +35,7 @@ public sealed partial class LanguagesController(ILanguageService languageService
     }
 
     [HttpGet("{LanguageId:int}")]
-    public async Task<ActionResult<ApiResponse<GetOneLanguageOutput?>>> GetOne([FromRoute] LanguageRequest languageRequest, CancellationToken cancellationToken)
+    public async Task<ActionResult<ApiResponse<GetOneLanguageOutput>>> GetOne([FromRoute] LanguageRequest languageRequest, CancellationToken cancellationToken)
     {
         var result = await languageService.GetOne(new GetOneLanguageInput
         {
@@ -94,23 +94,21 @@ public sealed partial class LanguagesController(ILanguageService languageService
     }
 
     [HttpPut("{LanguageId:int}/background-image")]
-    public async Task<ActionResult<ApiResponse<SetLanguageBackgroundImageOutput?>>> SetBackgroundImage([FromRoute] LanguageRequest languageRequest, [FromForm] SetLanguageBackgroundImageRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<ApiResponse<SetLanguageBackgroundImageOutput>>> SetBackgroundImage([FromRoute] LanguageRequest languageRequest, [FromForm] SetLanguageBackgroundImageRequest request, CancellationToken cancellationToken)
     {
-        using var imageStream = request.BackgroundImage.OpenReadStream();
-
         var result = await languageService.SetBackgroundImage(new SetLanguageBackgroundImageInput
         {
             LanguageId = languageRequest.LanguageId,
             Image = new SetImageInput
             {
                 ContentType = request.BackgroundImage.ContentType,
-                ImageStream = imageStream,
+                ImageStream = request.BackgroundImage.OpenReadStream(),
                 Length = request.BackgroundImage.Length,
             }
         }, cancellationToken);
 
         var links = new Dictionary<string, string>();
-        if (result.IsSuccessful)
+        if (result.IsSuccessful && result.Data != null)
         {
             AddImageParentLink(links, languageRequest.LanguageId);
             AddDeleteBackgroundImageLink(links, languageRequest.LanguageId);
