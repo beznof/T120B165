@@ -86,17 +86,17 @@ public class LanguageService(
         ));
     }
 
-    public async Task<Result> Update(UpdateLanguageInput input, CancellationToken cancellationToken)
+    public async Task<Result<UpdateLanguageOutput>> Update(UpdateLanguageInput input, CancellationToken cancellationToken)
     {
         var inputValidation = await validation.ValidateAsync(input, cancellationToken);
         if (!inputValidation.IsValid)
-            return inputValidation.ToFailureResult();
+            return inputValidation.ToFailureResult<UpdateLanguageOutput>();
         
         var language = await dbContext.Languages
             .FirstOrDefaultAsync(l => l.Id == input.LanguageId, cancellationToken);
 
         if (language == null)
-            return Result.Failure("Language not found.", ResultErrorKind.ResourceNotFound);
+            return Result.Failure<UpdateLanguageOutput>("Language not found.", ResultErrorKind.ResourceNotFound);
 
         if (input.Name.IsProvided)
         {
@@ -105,7 +105,11 @@ public class LanguageService(
         
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        return Result.Success("Language was updated successfully.");
+        return Result.Success<UpdateLanguageOutput>("Language was updated successfully", new UpdateLanguageOutput(
+            Id: language.Id,
+            Name: language.Name,
+            BackgroundImageUrl: language.BackgroundImageUrl
+        ));
     }
 
     public async Task<Result> Delete(DeleteLanguageInput input, CancellationToken cancellationToken)

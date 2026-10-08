@@ -20,6 +20,15 @@ public sealed record GetOneEntryOutput(
     DictionarySummaryOutput Dictionary
 );
 
+public sealed record UpdateEntryOutput(
+    int Id,
+    string Text,
+    string Translation,
+    DictionaryEntryType Type,
+    string? PhoneticTranscription,
+    DictionarySummaryOutput Dictionary
+);
+
 public sealed record GetManyEntriesOutput(
     IReadOnlyList<GetOneEntryOutput> Items,
     int Page,

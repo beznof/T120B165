@@ -12,7 +12,7 @@ namespace Languages.WebApi.Controllers;
 
 [ApiController]
 [Route("api/languages")]
-public sealed class LanguagesController(ILanguageService languageService) : ControllerBase
+public sealed partial class LanguagesController(ILanguageService languageService) : ControllerBase
 {
     [HttpGet]
     public async Task<ActionResult<ApiResponse<GetManyLanguagesOutput?>>> GetMany([FromQuery] GetManyLanguagesRequest request, CancellationToken cancellationToken)
@@ -27,9 +27,9 @@ public sealed class LanguagesController(ILanguageService languageService) : Cont
             }
         }, cancellationToken);
 
-        var links = result.IsSuccessful && result.Data is not null
-            ? GetPaginationLinks(result.Data, request)
-            : null;
+        var links = new Dictionary<string, string>();
+        if (result.IsSuccessful && result.Data != null)
+            AddPaginationLinks(links, result.Data.TotalCount, result.Data.Page, result.Data.PageSize, request.Search);
 
         return result.ToActionResult(links: links);
     }
@@ -42,9 +42,14 @@ public sealed class LanguagesController(ILanguageService languageService) : Cont
             LanguageId = languageRequest.LanguageId
         }, cancellationToken);
 
-        var links = result.IsSuccessful && result.Data is not null
-            ? GetResourceLinks(result.Data.Id)
-            : null;
+        var links = new Dictionary<string, string>();
+        if (result.IsSuccessful && result.Data != null)
+        {
+            AddSelfResourceLinks(links, result.Data.Id);
+            AddSetBackgroundImageLink(links, result.Data.Id);
+            if (!string.IsNullOrWhiteSpace(result.Data.BackgroundImageUrl))
+                AddDeleteBackgroundImageLink(links, result.Data.Id);
+        }
 
         return result.ToActionResult(links: links);
     }
@@ -57,15 +62,18 @@ public sealed class LanguagesController(ILanguageService languageService) : Cont
             Name = request.Name,
         }, cancellationToken);
 
-        var links = result.IsSuccessful && result.Data is not null
-            ? GetResourceLinks(result.Data.Id)
-            : null;
+        var links = new Dictionary<string, string>();
+        if (result.IsSuccessful && result.Data is not null)
+        {
+            AddSelfResourceLinks(links, result.Data.Id);
+            AddSetBackgroundImageLink(links, result.Data.Id);
+        }
 
         return result.ToActionResult(statusCode: result.IsSuccessful ? HttpStatusCode.Created : null, links: links);
     }
 
     [HttpPatch("{LanguageId:int}")]
-    public async Task<ActionResult<ApiResponse>> Update([FromRoute] LanguageRequest languageRequest, [FromBody] UpdateLanguageRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<ApiResponse<UpdateLanguageOutput>>> Update([FromRoute] LanguageRequest languageRequest, [FromBody] UpdateLanguageRequest request, CancellationToken cancellationToken)
     {
         var result = await languageService.Update(new UpdateLanguageInput
         {
@@ -73,7 +81,14 @@ public sealed class LanguagesController(ILanguageService languageService) : Cont
             Name = request.Name,
         }, cancellationToken);
 
-        var links = result.IsSuccessful ? GetResourceLinks(languageRequest.LanguageId) : null;
+        var links = new Dictionary<string, string>();
+        if (result.IsSuccessful && result.Data != null)
+        {
+            AddSelfResourceLinks(links, languageRequest.LanguageId);
+            AddSetBackgroundImageLink(links, languageRequest.LanguageId);
+            if (!string.IsNullOrWhiteSpace(result.Data.BackgroundImageUrl))
+                AddDeleteBackgroundImageLink(links, languageRequest.LanguageId);
+        }
 
         return result.ToActionResult(links: links);
     }
@@ -94,7 +109,13 @@ public sealed class LanguagesController(ILanguageService languageService) : Cont
             }
         }, cancellationToken);
 
-        var links = result.IsSuccessful ? GetResourceLinks(languageRequest.LanguageId) : null;
+        var links = new Dictionary<string, string>();
+        if (result.IsSuccessful)
+        {
+            AddImageParentLink(links, languageRequest.LanguageId);
+            AddDeleteBackgroundImageLink(links, languageRequest.LanguageId);
+            AddSetBackgroundImageLink(links, languageRequest.LanguageId);
+        }
 
         return result.ToActionResult(links: links);
     }
@@ -107,7 +128,12 @@ public sealed class LanguagesController(ILanguageService languageService) : Cont
             LanguageId = languageRequest.LanguageId
         }, cancellationToken);
 
-        var links = result.IsSuccessful ? GetResourceLinks(languageRequest.LanguageId) : null;
+        var links = new Dictionary<string, string>();
+        if (result.IsSuccessful)
+        {
+            AddImageParentLink(links, languageRequest.LanguageId);
+            AddSetBackgroundImageLink(links, languageRequest.LanguageId);
+        }
 
         return result.ToActionResult(links: links);
     }
@@ -120,39 +146,14 @@ public sealed class LanguagesController(ILanguageService languageService) : Cont
             LanguageId = languageRequest.LanguageId
         }, cancellationToken);
 
-        var links = result.IsSuccessful ? GetCollectionLinks() : null;
+        var links = new Dictionary<string, string>();
+        if (result.IsSuccessful)
+        {
+            AddCollectionLink(links);
+            AddCreateLink(links);
+        }
 
         return result.ToActionResult(links: links);
     }
 
-    private Dictionary<string, string> GetCollectionLinks() => new()
-    {
-        ["collection"] = Url.Action(nameof(GetMany), new { Page = 1, PageSize = 20 })!
-    };
-
-    private Dictionary<string, string> GetResourceLinks(int languageId)
-    {
-        var links = GetCollectionLinks();
-        links["self"] = Url.Action(nameof(GetOne), new { LanguageId = languageId })!;
-        links["dictionaries"] = Url.Action(nameof(DictionariesController.GetMany), "Dictionaries",
-            new { LanguageId = languageId, Page = 1, PageSize = 20 })!;
-        return links;
-    }
-
-    private Dictionary<string, string> GetPaginationLinks(GetManyOutput output, GetManyLanguagesRequest request)
-    {
-        string PageUrl(int page) => Url.Action(nameof(GetMany),
-            new { Page = page, output.PageSize, request.Search })!;
-
-        var links = new Dictionary<string, string> { ["self"] = PageUrl(output.Page) };
-
-        if (output.Page > 1)
-            links["prev"] = PageUrl(output.Page - 1);
-
-        // Stay within the page limit enforced by GetManyInputValidator.
-        if (output.Page < 10000 && (long)output.Page * output.PageSize < output.TotalCount)
-            links["next"] = PageUrl(output.Page + 1);
-
-        return links;
-    }
 }

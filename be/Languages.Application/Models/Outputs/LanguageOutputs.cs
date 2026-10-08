@@ -12,6 +12,12 @@ public sealed record GetOneLanguageOutput(
     string? BackgroundImageUrl
 );
 
+public sealed record UpdateLanguageOutput(
+    int Id,
+    string Name,
+    string? BackgroundImageUrl
+);
+
 public sealed record GetManyLanguagesOutput(
     IReadOnlyList<GetOneLanguageOutput> Items,
     int Page,

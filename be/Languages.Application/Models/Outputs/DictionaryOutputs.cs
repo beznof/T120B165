@@ -14,6 +14,13 @@ public sealed record GetOneDictionaryOutput(
     LanguageSummaryOutput Language
 );
 
+public sealed record UpdateDictionaryOutput(
+    int Id,
+    string Name,
+    string? BackgroundImageUrl,
+    LanguageSummaryOutput Language
+);
+
 public sealed record GetManyDictionariesOutput(
     IReadOnlyList<GetOneDictionaryOutput> Items,
     int Page,

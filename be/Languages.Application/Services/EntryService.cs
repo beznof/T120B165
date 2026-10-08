@@ -124,17 +124,18 @@ public class EntryService(
         ));
     }
 
-    public async Task<Result> Update(UpdateEntryInput input, CancellationToken cancellationToken)
+    public async Task<Result<UpdateEntryOutput>> Update(UpdateEntryInput input, CancellationToken cancellationToken)
     {
         var inputValidation = await validation.ValidateAsync(input, cancellationToken);
         if (!inputValidation.IsValid)
-            return inputValidation.ToFailureResult();
+            return inputValidation.ToFailureResult<UpdateEntryOutput>();
 
         var entry = await dbContext.Entries
+            .Include(e => e.Dictionary)
             .FirstOrDefaultAsync(e => e.DictionaryId == input.DictionaryId && e.Dictionary.LanguageId == input.LanguageId && e.Id == input.EntryId, cancellationToken);
 
         if (entry == null)
-            return Result.Failure("Entry not found.", ResultErrorKind.ResourceNotFound);
+            return Result.Failure<UpdateEntryOutput>("Entry not found.", ResultErrorKind.ResourceNotFound);
 
         if (input.Text.IsProvided)
         {
@@ -157,8 +158,18 @@ public class EntryService(
         }
         
         await dbContext.SaveChangesAsync(cancellationToken);
-
-        return Result.Success("Entry was updated successfully.");
+        
+        return Result.Success<UpdateEntryOutput>("Entry was updated successfully", new UpdateEntryOutput(
+            Id: entry.Id,
+            Text: entry.Text,
+            Translation: entry.Translation,
+            Type: entry.Type,
+            PhoneticTranscription: entry.PhoneticTranscription,
+            Dictionary: new DictionarySummaryOutput(
+                Id: entry.Dictionary.Id,
+                Name: entry.Dictionary.Name    
+            )
+        ));
     }
 
     public async Task<Result> Delete(DeleteEntryInput input, CancellationToken cancellationToken)

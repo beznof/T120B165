@@ -115,18 +115,19 @@ public class DictionaryService(
         ));
     }
 
-    public async Task<Result> Update(UpdateDictionaryInput input, CancellationToken cancellationToken)
+    public async Task<Result<UpdateDictionaryOutput>> Update(UpdateDictionaryInput input, CancellationToken cancellationToken)
     {
         var inputValidation = await validation.ValidateAsync(input, cancellationToken);
         if (!inputValidation.IsValid)
-            return inputValidation.ToFailureResult();
+            return inputValidation.ToFailureResult<UpdateDictionaryOutput>();
 
         var dictionary = await dbContext.Dictionaries
+            .Include(d => d.Language)
             .Where(d => d.LanguageId == input.LanguageId && d.Id == input.DictionaryId)
             .FirstOrDefaultAsync(cancellationToken);
 
         if (dictionary == null)
-            return Result.Failure("Dictionary not found.", ResultErrorKind.ResourceNotFound);
+            return Result.Failure<UpdateDictionaryOutput>("Dictionary not found.", ResultErrorKind.ResourceNotFound);
 
         if (input.Name.IsProvided)
         {
@@ -134,8 +135,16 @@ public class DictionaryService(
         }
         
         await dbContext.SaveChangesAsync(cancellationToken);
-
-        return Result.Success("Dictionary was updated successfully.");
+        
+        return Result.Success<UpdateDictionaryOutput>("Dictionary was updated successfully", new UpdateDictionaryOutput(
+            Id: dictionary.Id,
+            Name: dictionary.Name,
+            BackgroundImageUrl: dictionary.BackgroundImageUrl,
+            Language: new LanguageSummaryOutput(
+                Id: dictionary.Language.Id,
+                Name: dictionary.Language.Name 
+            )
+        ));
     }
 
     public async Task<Result> Delete(DeleteDictionaryInput input, CancellationToken cancellationToken)

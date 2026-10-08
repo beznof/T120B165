@@ -7,13 +7,13 @@ namespace Languages.WebApi.Controllers;
 
 public sealed partial class DictionariesController
 {
-    private const int BASE_PAGE_SIZE = 100;
-    private const int BASE_PAGE_NO = 1;
+    private const int BasePageSize = 100;
+    private const int BasePageNo = 1;
     
     private static object LanguageUrlParams(int languageId) => new { LanguageId = languageId };
     private static object DictionaryUrlParams(int languageId, int dictionaryId) => new { LanguageId = languageId, DictionaryId = dictionaryId };
-    private static object EntriesPaginationUrlParams(int languageId, int dictionaryId, int page, int pageSize, string? search = null) => 
-        new { LanguageId = languageId, DictionaryId = dictionaryId, Page = page, PageSize = pageSize, Search = search };
+    private static object EntriesPaginationUrlParams(int languageId, int dictionaryId, int page, int pageSize) => 
+        new { LanguageId = languageId, DictionaryId = dictionaryId, Page = page, PageSize = pageSize};
     private static object PaginationUrlParams(int languageId, int page, int pageSize, string? search = null) => 
         new { LanguageId = languageId, Page = page, PageSize = pageSize, Search = search };
     
@@ -61,7 +61,7 @@ public sealed partial class DictionariesController
     private void AddSelfResourceLinks(Dictionary<string, string> parentDictionary, int languageId, int dictionaryId)
     {
         parentDictionary.Add("self", GetOneUrl(languageId, dictionaryId));
-        parentDictionary.Add("child-entries", GetManyEntriesUrl(languageId, dictionaryId, BASE_PAGE_NO, BASE_PAGE_SIZE));
+        parentDictionary.Add("child-entries", GetManyEntriesUrl(languageId, dictionaryId, BasePageNo, BasePageSize));
         parentDictionary.Add("update", UpdateUrl(languageId, dictionaryId));
         parentDictionary.Add("delete", DeleteUrl(languageId, dictionaryId));
     }
@@ -73,24 +73,24 @@ public sealed partial class DictionariesController
 
     private void AddParentLanguageCollectionLink(Dictionary<string, string> parentDictionary, int languageId)
     {
-        parentDictionary.Add("dictionaries-collection", GetManyUrl(languageId, BASE_PAGE_NO, BASE_PAGE_SIZE));
+        parentDictionary.Add("dictionaries-collection", GetManyUrl(languageId, BasePageNo, BasePageSize));
     }
 
     private void AddPaginationLinks(Dictionary<string, string> parentDictionary, int languageId, int totalResultsCount,
-        int page = BASE_PAGE_NO, int pageSize = BASE_PAGE_SIZE, string? search = null)
+        int page = BasePageNo, int pageSize = BasePageSize, string? search = null)
     {
         parentDictionary.Add("self", GetManyUrl(languageId, page, pageSize, search));
         
         if (page > 1)
         {
-            parentDictionary.Add("first", GetManyUrl(languageId, BASE_PAGE_NO, pageSize, search));
+            parentDictionary.Add("first", GetManyUrl(languageId, BasePageNo, pageSize, search));
             parentDictionary.Add("prev", GetManyUrl(languageId, page - 1, pageSize, search));
         }
 
         if (page < 10000 && page * pageSize < totalResultsCount)
             parentDictionary.Add("next", GetManyUrl(languageId, page + 1, pageSize, search));
 
-        var lastPage = Math.Max((int)Math.Ceiling((double)totalResultsCount / pageSize), BASE_PAGE_NO);
+        var lastPage = Math.Clamp((int)Math.Ceiling((double)totalResultsCount / pageSize), BasePageNo, 10000);
         if (lastPage != page)
             parentDictionary.Add("last", GetManyUrl(languageId, lastPage, pageSize, search));
     }

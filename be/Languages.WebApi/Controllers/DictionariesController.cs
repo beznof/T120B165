@@ -53,7 +53,8 @@ public sealed partial class DictionariesController(IDictionaryService dictionary
             AddParentLanguageLink(links, dictionaryRequest.LanguageId);
             AddSelfResourceLinks(links, dictionaryRequest.LanguageId, dictionaryRequest.DictionaryId);
             AddSetBackgroundImageLink(links, dictionaryRequest.LanguageId, dictionaryRequest.DictionaryId);
-            AddDeleteBackgroundImageLink(links, dictionaryRequest.LanguageId, dictionaryRequest.DictionaryId);
+            if (!string.IsNullOrWhiteSpace(result.Data.BackgroundImageUrl))
+                AddDeleteBackgroundImageLink(links, dictionaryRequest.LanguageId, dictionaryRequest.DictionaryId);
         }
 
         return result.ToActionResult(links: links);
@@ -80,7 +81,7 @@ public sealed partial class DictionariesController(IDictionaryService dictionary
     }
 
     [HttpPatch("{DictionaryId:int}")]
-    public async Task<ActionResult<ApiResponse>> Update([FromRoute] DictionaryRequest dictionaryRequest, [FromBody] UpdateDictionaryRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<ApiResponse<UpdateDictionaryOutput>>> Update([FromRoute] DictionaryRequest dictionaryRequest, [FromBody] UpdateDictionaryRequest request, CancellationToken cancellationToken)
     {
         var result = await dictionaryService.Update(new UpdateDictionaryInput
         {
@@ -90,12 +91,13 @@ public sealed partial class DictionariesController(IDictionaryService dictionary
         }, cancellationToken);
         
         var links = new Dictionary<string, string>();
-        if (result.IsSuccessful)
+        if (result.IsSuccessful && result.Data != null)
         {
             AddParentLanguageLink(links, dictionaryRequest.LanguageId);
             AddSelfResourceLinks(links, dictionaryRequest.LanguageId, dictionaryRequest.DictionaryId);
             AddSetBackgroundImageLink(links, dictionaryRequest.LanguageId, dictionaryRequest.DictionaryId);
-            AddDeleteBackgroundImageLink(links, dictionaryRequest.LanguageId, dictionaryRequest.DictionaryId);
+            if (!string.IsNullOrWhiteSpace(result.Data.BackgroundImageUrl))
+                AddDeleteBackgroundImageLink(links, dictionaryRequest.LanguageId, dictionaryRequest.DictionaryId);
         }
 
         return result.ToActionResult(links: links);
