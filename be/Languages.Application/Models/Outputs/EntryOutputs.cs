@@ -8,7 +8,8 @@ public sealed record CreateEntryOutput(
     string Translation,
     DictionaryEntryType Type,
     string? PhoneticTranscription,
-    DictionarySummaryOutput Dictionary
+    DictionarySummaryOutput Dictionary,
+    DateTime CreatedAtUTC
 );
 
 public sealed record GetOneEntryOutput(
@@ -17,7 +18,9 @@ public sealed record GetOneEntryOutput(
     string Translation,
     DictionaryEntryType Type,
     string? PhoneticTranscription,
-    DictionarySummaryOutput Dictionary
+    DictionarySummaryOutput Dictionary,
+    DateTime CreatedAtUTC,
+    DateTime LastUpdatedAtUTC
 );
 
 public sealed record UpdateEntryOutput(
@@ -26,7 +29,8 @@ public sealed record UpdateEntryOutput(
     string Translation,
     DictionaryEntryType Type,
     string? PhoneticTranscription,
-    DictionarySummaryOutput Dictionary
+    DictionarySummaryOutput Dictionary,
+    DateTime LastUpdatedAtUTC
 );
 
 public sealed record GetManyEntriesOutput(

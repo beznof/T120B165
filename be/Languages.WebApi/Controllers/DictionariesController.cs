@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Languages.WebApi.Controllers;
 
 [ApiController]
-[Route("api/languages/{LanguageId:int}/dictionaries")]
+[Route("api/languages/{LanguageId}/dictionaries")]
 public sealed partial class DictionariesController(IDictionaryService dictionaryService) : ControllerBase
 {
     [HttpGet]
@@ -38,7 +38,7 @@ public sealed partial class DictionariesController(IDictionaryService dictionary
         return result.ToActionResult(links: links);
     }
 
-    [HttpGet("{DictionaryId:int}")]
+    [HttpGet("{DictionaryId}")]
     public async Task<ActionResult<ApiResponse<GetOneDictionaryOutput?>>> GetOne([FromRoute] DictionaryRequest dictionaryRequest, CancellationToken cancellationToken)
     {
         var result = await dictionaryService.GetOne(new GetOneDictionaryInput
@@ -80,7 +80,7 @@ public sealed partial class DictionariesController(IDictionaryService dictionary
         return result.ToActionResult(statusCode: result.IsSuccessful ? HttpStatusCode.Created : null, links: links);
     }
 
-    [HttpPatch("{DictionaryId:int}")]
+    [HttpPatch("{DictionaryId}")]
     public async Task<ActionResult<ApiResponse<UpdateDictionaryOutput>>> Update([FromRoute] DictionaryRequest dictionaryRequest, [FromBody] UpdateDictionaryRequest request, CancellationToken cancellationToken)
     {
         var result = await dictionaryService.Update(new UpdateDictionaryInput
@@ -103,7 +103,7 @@ public sealed partial class DictionariesController(IDictionaryService dictionary
         return result.ToActionResult(links: links);
     }
 
-    [HttpPut("{DictionaryId:int}/background-image")]
+    [HttpPut("{DictionaryId}/background-image")]
     public async Task<ActionResult<ApiResponse>> SetBackgroundImage([FromRoute] DictionaryRequest dictionaryRequest, [FromForm] SetDictionaryBackgroundImageRequest request, CancellationToken cancellationToken)
     {
         var result = await dictionaryService.SetBackgroundImage(new SetDictionaryBackgroundImageInput
@@ -129,7 +129,7 @@ public sealed partial class DictionariesController(IDictionaryService dictionary
         return result.ToActionResult(links: links);
     }
     
-    [HttpDelete("{DictionaryId:int}/background-image")]
+    [HttpDelete("{DictionaryId}/background-image")]
     public async Task<ActionResult<ApiResponse>> DeleteBackgroundImage([FromRoute] DictionaryRequest dictionaryRequest, CancellationToken cancellationToken)
     {
         var result = await dictionaryService.DeleteBackgroundImage(new DeleteDictionaryBackgroundImageInput
@@ -148,7 +148,7 @@ public sealed partial class DictionariesController(IDictionaryService dictionary
         return result.ToActionResult(links: links);
     }
 
-    [HttpDelete("{DictionaryId:int}")]
+    [HttpDelete("{DictionaryId}")]
     public async Task<ActionResult<ApiResponse>> Delete([FromRoute] DictionaryRequest dictionaryRequest, CancellationToken cancellationToken)
     {
         var result = await dictionaryService.Delete(new DeleteDictionaryInput

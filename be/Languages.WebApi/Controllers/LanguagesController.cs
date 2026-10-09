@@ -34,7 +34,7 @@ public sealed partial class LanguagesController(ILanguageService languageService
         return result.ToActionResult(links: links);
     }
 
-    [HttpGet("{LanguageId:int}")]
+    [HttpGet("{LanguageId}")]
     public async Task<ActionResult<ApiResponse<GetOneLanguageOutput>>> GetOne([FromRoute] LanguageRequest languageRequest, CancellationToken cancellationToken)
     {
         var result = await languageService.GetOne(new GetOneLanguageInput
@@ -72,7 +72,7 @@ public sealed partial class LanguagesController(ILanguageService languageService
         return result.ToActionResult(statusCode: result.IsSuccessful ? HttpStatusCode.Created : null, links: links);
     }
 
-    [HttpPatch("{LanguageId:int}")]
+    [HttpPatch("{LanguageId}")]
     public async Task<ActionResult<ApiResponse<UpdateLanguageOutput>>> Update([FromRoute] LanguageRequest languageRequest, [FromBody] UpdateLanguageRequest request, CancellationToken cancellationToken)
     {
         var result = await languageService.Update(new UpdateLanguageInput
@@ -93,7 +93,7 @@ public sealed partial class LanguagesController(ILanguageService languageService
         return result.ToActionResult(links: links);
     }
 
-    [HttpPut("{LanguageId:int}/background-image")]
+    [HttpPut("{LanguageId}/background-image")]
     public async Task<ActionResult<ApiResponse<SetLanguageBackgroundImageOutput>>> SetBackgroundImage([FromRoute] LanguageRequest languageRequest, [FromForm] SetLanguageBackgroundImageRequest request, CancellationToken cancellationToken)
     {
         var result = await languageService.SetBackgroundImage(new SetLanguageBackgroundImageInput
@@ -118,7 +118,7 @@ public sealed partial class LanguagesController(ILanguageService languageService
         return result.ToActionResult(links: links);
     }
     
-    [HttpDelete("{LanguageId:int}/background-image")]
+    [HttpDelete("{LanguageId}/background-image")]
     public async Task<ActionResult<ApiResponse>> DeleteBackgroundImage([FromRoute] LanguageRequest languageRequest, CancellationToken cancellationToken)
     {
         var result = await languageService.DeleteBackgroundImage(new DeleteLanguageBackgroundImageInput
@@ -136,7 +136,7 @@ public sealed partial class LanguagesController(ILanguageService languageService
         return result.ToActionResult(links: links);
     }
 
-    [HttpDelete("{LanguageId:int}")]
+    [HttpDelete("{LanguageId}")]
     public async Task<ActionResult<ApiResponse>> Delete([FromRoute] LanguageRequest languageRequest, CancellationToken cancellationToken)
     {
         var result = await languageService.Delete(new DeleteLanguageInput

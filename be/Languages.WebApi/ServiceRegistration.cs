@@ -7,6 +7,7 @@ using Languages.Infrastructure.ImageStorage;
 using Languages.Infrastructure.Persistence;
 using Languages.WebApi.Extensions;
 using Languages.WebApi.Filters;
+using Languages.WebApi.ModelBinding;
 using Languages.WebApi.Serialization;
 
 namespace Languages.WebApi;
@@ -19,16 +20,41 @@ internal static class ServiceRegistration
         services.AddControllers(options =>
         {
             options.Filters.Add<ApiExceptionFilter>();
+
+            // Custom binding error messages
+            options.ModelMetadataDetailsProviders.Add(new ApiBindingMetadataProvider());
         })
         .ConfigureApiBehaviorOptions(options =>
         {
-            options.InvalidModelStateResponseFactory = context =>
+            // Custom binding error response formatting
+            options.InvalidModelStateResponseFactory = (context) =>
             {
-                var message = context.ModelState.Values
-                    .SelectMany(value => value.Errors)
-                    .Select(error => error.ErrorMessage)
-                    .FirstOrDefault(message => !string.IsNullOrWhiteSpace(message))
-                    ?? "Invalid request.";
+                var isJsonDeserializationExceptionPresent = context.ModelState.Values
+                    .SelectMany(e => e.Errors)
+                    .Select(e => e.Exception)
+                    .OfType<JsonException>()
+                    .Any();
+
+                var invalidParamModelStateMessage = context.ModelState
+                    .Where(p => p.Value != null)
+                    .SelectMany(p => p.Value!.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .FirstOrDefault(errorMessage => !string.IsNullOrWhiteSpace(errorMessage));
+
+                string message;
+
+                if (isJsonDeserializationExceptionPresent)
+                {
+                    message = "Invalid JSON request body.";
+                }
+                else if (invalidParamModelStateMessage != null)
+                {
+                    message = invalidParamModelStateMessage;
+                }
+                else
+                {
+                    message = "Invalid request.";
+                }
 
                 return Result.Failure(message, ResultErrorKind.ValidationFailed).ToActionResult();
             };
@@ -40,6 +66,7 @@ internal static class ServiceRegistration
             options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             options.JsonSerializerOptions.AllowDuplicateProperties = false;
             options.JsonSerializerOptions.Converters.Add(new PatchFieldJsonConverterFactory());
+            options.AllowInputFormatterExceptionMessages = false;
         });
 
         // DbContext

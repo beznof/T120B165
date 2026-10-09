@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Languages.WebApi.Controllers;
 
 [ApiController]
-[Route("api/languages/{languageId:int}/dictionaries/{dictionaryId:int}/entries")]
+[Route("api/languages/{languageId}/dictionaries/{dictionaryId}/entries")]
 public sealed partial class EntriesController(IEntryService entryService) : ControllerBase
 {
     [HttpGet]
@@ -40,7 +40,7 @@ public sealed partial class EntriesController(IEntryService entryService) : Cont
         return result.ToActionResult(links: links);
     }
 
-    [HttpGet("{EntryId:int}")]
+    [HttpGet("{EntryId}")]
     public async Task<ActionResult<ApiResponse<GetOneEntryOutput>>> GetOne([FromRoute] EntryRequest entryRequest, CancellationToken cancellationToken)
     {
         var result = await entryService.GetOne(new GetOneEntryInput
@@ -83,7 +83,7 @@ public sealed partial class EntriesController(IEntryService entryService) : Cont
         return result.ToActionResult(statusCode: result.IsSuccessful ? HttpStatusCode.Created : null, links: links);
     }
 
-    [HttpPatch("{EntryId:int}")]
+    [HttpPatch("{EntryId}")]
     public async Task<ActionResult<ApiResponse<UpdateEntryOutput>>> Update([FromRoute] EntryRequest entryRequest, [FromBody] UpdateEntryRequest request, CancellationToken cancellationToken)
     {
         var result = await entryService.Update(new UpdateEntryInput
@@ -107,7 +107,7 @@ public sealed partial class EntriesController(IEntryService entryService) : Cont
         return result.ToActionResult(links: links);
     }
 
-    [HttpDelete("{EntryId:int}")]
+    [HttpDelete("{EntryId}")]
     public async Task<ActionResult<ApiResponse>> Delete([FromRoute] EntryRequest entryRequest, CancellationToken cancellationToken)
     {
         var result = await entryService.Delete(new DeleteEntryInput

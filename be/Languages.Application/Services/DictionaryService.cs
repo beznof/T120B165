@@ -45,7 +45,9 @@ public class DictionaryService(
                 Language: new LanguageSummaryOutput(
                     Id: d.LanguageId,
                     Name: d.Language.Name    
-                )
+                ),
+                CreatedAtUTC: d.ModifiedAtUTC,
+                LastUpdatedAtUTC: d.ModifiedAtUTC
             )).ToList(),
             Page: input.Pagination.Page,
             PageSize: input.Pagination.PageSize,
@@ -75,7 +77,9 @@ public class DictionaryService(
             Language: new LanguageSummaryOutput(
                 Id: dictionary.LanguageId,
                 Name: dictionary.Language.Name 
-            )
+            ),
+            CreatedAtUTC: dictionary.ModifiedAtUTC,
+            LastUpdatedAtUTC: dictionary.ModifiedAtUTC
         ));
     }
 
@@ -111,7 +115,8 @@ public class DictionaryService(
             Language: new LanguageSummaryOutput(
                 Id: language.Id,
                 Name: language.Name 
-            )
+            ),
+            CreatedAtUTC: newDictionary.ModifiedAtUTC
         ));
     }
 
@@ -143,7 +148,8 @@ public class DictionaryService(
             Language: new LanguageSummaryOutput(
                 Id: dictionary.Language.Id,
                 Name: dictionary.Language.Name 
-            )
+            ),
+            LastUpdatedAtUTC: dictionary.ModifiedAtUTC
         ));
     }
 

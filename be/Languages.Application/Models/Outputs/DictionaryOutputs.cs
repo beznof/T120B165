@@ -4,21 +4,25 @@ public sealed record CreateDictionaryOutput(
     int Id,
     string Name,
     string? BackgroundImageUrl,
-    LanguageSummaryOutput Language
+    LanguageSummaryOutput Language,
+    DateTime CreatedAtUTC
 );
 
 public sealed record GetOneDictionaryOutput(
     int Id,
     string Name,
     string? BackgroundImageUrl,
-    LanguageSummaryOutput Language
+    LanguageSummaryOutput Language,
+    DateTime CreatedAtUTC,
+    DateTime LastUpdatedAtUTC
 );
 
 public sealed record UpdateDictionaryOutput(
     int Id,
     string Name,
     string? BackgroundImageUrl,
-    LanguageSummaryOutput Language
+    LanguageSummaryOutput Language,
+    DateTime LastUpdatedAtUTC
 );
 
 public sealed record GetManyDictionariesOutput(

@@ -36,7 +36,9 @@ public class LanguageService(
             Items: result.Select(l => new GetOneLanguageOutput(
                 Id: l.Id,
                 Name: l.Name,
-                BackgroundImageUrl: l.BackgroundImageUrl
+                BackgroundImageUrl: l.BackgroundImageUrl,
+                CreatedAtUTC: l.CreatedAtUTC,
+                LastUpdatedAtUTC: l.ModifiedAtUTC
             )).ToList(),
             Page: input.Pagination.Page,
             PageSize: input.Pagination.PageSize,
@@ -60,7 +62,9 @@ public class LanguageService(
         return Result.Success<GetOneLanguageOutput>("Language was retrieved successfully.", new GetOneLanguageOutput(
             Id: language.Id,
             Name: language.Name,
-            BackgroundImageUrl: language.BackgroundImageUrl
+            BackgroundImageUrl: language.BackgroundImageUrl,
+            CreatedAtUTC: language.CreatedAtUTC,
+            LastUpdatedAtUTC: language.ModifiedAtUTC
         ));
     }
 
@@ -82,7 +86,8 @@ public class LanguageService(
         return Result.Success<CreateLanguageOutput>("Language was created successfully", new CreateLanguageOutput(
             Id: newLanguage.Id,
             Name: newLanguage.Name,
-            BackgroundImageUrl: newLanguage.BackgroundImageUrl
+            BackgroundImageUrl: newLanguage.BackgroundImageUrl,
+            CreatedAtUTC: newLanguage.CreatedAtUTC
         ));
     }
 
@@ -108,7 +113,8 @@ public class LanguageService(
         return Result.Success<UpdateLanguageOutput>("Language was updated successfully", new UpdateLanguageOutput(
             Id: language.Id,
             Name: language.Name,
-            BackgroundImageUrl: language.BackgroundImageUrl
+            BackgroundImageUrl: language.BackgroundImageUrl,
+            LastUpdatedAtUTC: language.ModifiedAtUTC
         ));
     }
 

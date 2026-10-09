@@ -48,7 +48,9 @@ public class EntryService(
                 Dictionary: new DictionarySummaryOutput(
                     Id: e.DictionaryId,
                     Name: e.Dictionary.Name    
-                )
+                ),
+                CreatedAtUTC: e.CreatedAtUTC,
+                LastUpdatedAtUTC: e.ModifiedAtUTC
             )).ToList(),
             Page: input.Pagination.Page,
             PageSize: input.Pagination.PageSize,
@@ -79,7 +81,9 @@ public class EntryService(
             Dictionary: new DictionarySummaryOutput(
                 Id: entry.DictionaryId,
                 Name: entry.Dictionary.Name    
-            )
+            ),
+            CreatedAtUTC: entry.CreatedAtUTC,
+            LastUpdatedAtUTC: entry.ModifiedAtUTC
         ));
     }
 
@@ -120,7 +124,8 @@ public class EntryService(
             Dictionary: new DictionarySummaryOutput(
                 Id: dictionary.Id,
                 Name: dictionary.Name    
-            )
+            ),
+            CreatedAtUTC: newEntry.CreatedAtUTC
         ));
     }
 
@@ -168,7 +173,8 @@ public class EntryService(
             Dictionary: new DictionarySummaryOutput(
                 Id: entry.Dictionary.Id,
                 Name: entry.Dictionary.Name    
-            )
+            ),
+            LastUpdatedAtUTC: entry.ModifiedAtUTC
         ));
     }
 

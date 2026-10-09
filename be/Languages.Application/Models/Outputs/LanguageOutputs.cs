@@ -3,19 +3,23 @@ namespace Languages.Application.Models.Outputs;
 public sealed record CreateLanguageOutput(
     int Id,
     string Name,
-    string? BackgroundImageUrl
+    string? BackgroundImageUrl,
+    DateTime CreatedAtUTC
 );
 
 public sealed record GetOneLanguageOutput(
     int Id,
     string Name,
-    string? BackgroundImageUrl
+    string? BackgroundImageUrl,
+    DateTime CreatedAtUTC,
+    DateTime LastUpdatedAtUTC
 );
 
 public sealed record UpdateLanguageOutput(
     int Id,
     string Name,
-    string? BackgroundImageUrl
+    string? BackgroundImageUrl,
+    DateTime LastUpdatedAtUTC
 );
 
 public sealed record GetManyLanguagesOutput(
