@@ -32,7 +32,7 @@ public static class ServiceRegistration
         // DbContext
         services.AddDbContext<LanguagesDbContext>((serviceProvider, options) =>
         {
-            var connectionString = "a";//configuration.GetConnectionString("LanguageDatabase") ?? throw new InvalidOperationException("LanguageDatabase connection string not set.");
+            var connectionString = configuration.GetConnectionString("LanguagesDatabase") ?? throw new InvalidOperationException("LanguagesDatabase connection string not set.");
             options.UseSqlServer(connectionString);
             options.AddInterceptors(serviceProvider.GetRequiredService<EntityAuditInterceptor>());
         });

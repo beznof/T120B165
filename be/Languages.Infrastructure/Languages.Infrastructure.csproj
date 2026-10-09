@@ -20,4 +20,8 @@
         <ProjectReference Include="..\Languages.Domain\Languages.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Persistence\Migrations\" />
+    </ItemGroup>
+
 </Project>

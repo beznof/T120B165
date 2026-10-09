@@ -46,7 +46,7 @@ public class DictionaryService(
                     Id: d.LanguageId,
                     Name: d.Language.Name    
                 ),
-                CreatedAtUTC: d.ModifiedAtUTC,
+                CreatedAtUTC: d.CreatedAtUTC,
                 LastUpdatedAtUTC: d.ModifiedAtUTC
             )).ToList(),
             Page: input.Pagination.Page,
@@ -78,7 +78,7 @@ public class DictionaryService(
                 Id: dictionary.LanguageId,
                 Name: dictionary.Language.Name 
             ),
-            CreatedAtUTC: dictionary.ModifiedAtUTC,
+            CreatedAtUTC: dictionary.CreatedAtUTC,
             LastUpdatedAtUTC: dictionary.ModifiedAtUTC
         ));
     }
@@ -116,7 +116,7 @@ public class DictionaryService(
                 Id: language.Id,
                 Name: language.Name 
             ),
-            CreatedAtUTC: newDictionary.ModifiedAtUTC
+            CreatedAtUTC: newDictionary.CreatedAtUTC
         ));
     }
 
