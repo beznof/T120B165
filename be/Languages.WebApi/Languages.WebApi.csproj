@@ -5,6 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <UserSecretsId>55aafbc5-17c4-4c27-aa7a-c216111d4d8d</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
@@ -15,6 +16,8 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="Microsoft.OpenApi" Version="2.7.5" />
+        <PackageReference Include="Scalar.AspNetCore" Version="2.17.14" />
     </ItemGroup>
 
     <ItemGroup>
