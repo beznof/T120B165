@@ -125,6 +125,85 @@ namespace Languages.Infrastructure.Persistence.Migrations
                     b.ToTable("Languages", (string)null);
                 });
 
+            modelBuilder.Entity("Languages.Domain.Entities.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAtUTC")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsAccountApproved")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("ModifiedAtUTC")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Username")
+                        .IsUnique();
+
+                    b.ToTable("Users", "identity");
+                });
+
+            modelBuilder.Entity("Languages.Domain.Entities.UserSession", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAtUTC")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpiresAtUTC")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ModifiedAtUTC")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RefreshTokenHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(64)");
+
+                    b.Property<DateTime?>("RevokedAtUTC")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RefreshTokenHash")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserSessions", "identity");
+                });
+
             modelBuilder.Entity("Languages.Domain.Entities.Dictionary", b =>
                 {
                     b.HasOne("Languages.Domain.Entities.Language", "Language")
@@ -147,6 +226,17 @@ namespace Languages.Infrastructure.Persistence.Migrations
                     b.Navigation("Dictionary");
                 });
 
+            modelBuilder.Entity("Languages.Domain.Entities.UserSession", b =>
+                {
+                    b.HasOne("Languages.Domain.Entities.User", "User")
+                        .WithMany("UserSessions")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Languages.Domain.Entities.Dictionary", b =>
                 {
                     b.Navigation("Entries");
@@ -155,6 +245,11 @@ namespace Languages.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Languages.Domain.Entities.Language", b =>
                 {
                     b.Navigation("Dictionaries");
+                });
+
+            modelBuilder.Entity("Languages.Domain.Entities.User", b =>
+                {
+                    b.Navigation("UserSessions");
                 });
 #pragma warning restore 612, 618
         }

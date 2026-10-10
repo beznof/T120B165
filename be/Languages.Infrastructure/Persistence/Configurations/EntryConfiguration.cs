@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Languages.Infrastructure.Persistence.Configurations;
 
-internal sealed class DictionaryEntryConfiguration : BaseEntityConfiguration<Entry>
+internal sealed class EntryConfiguration : BaseEntityConfiguration<Entry>
 {
     public override void Configure(EntityTypeBuilder<Entry> builder)
     {
@@ -21,7 +21,8 @@ internal sealed class DictionaryEntryConfiguration : BaseEntityConfiguration<Ent
             .IsRequired();
 
         builder.Property(e => e.Type)
-            .HasConversion<string>();
+            .HasConversion<string>()
+            .IsRequired();
 
         builder.Property(e => e.PhoneticTranscription)
             .HasMaxLength(500);

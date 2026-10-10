@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Languages.Infrastructure.Persistence.Configurations;
 
-internal sealed class LanguageDictionaryConfiguration : BaseEntityConfiguration<Dictionary>
+internal sealed class DictionaryConfiguration : BaseEntityConfiguration<Dictionary>
 {
     public override void Configure(EntityTypeBuilder<Dictionary> builder)
     {
