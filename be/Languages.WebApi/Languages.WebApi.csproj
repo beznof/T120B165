@@ -4,6 +4,9 @@
         <TargetFramework>net10.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <!-- Allow documentation to be added incrementally to the remaining API types. -->
+        <NoWarn>$(NoWarn);CS1591</NoWarn>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <UserSecretsId>55aafbc5-17c4-4c27-aa7a-c216111d4d8d</UserSecretsId>
     </PropertyGroup>

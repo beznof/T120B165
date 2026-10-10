@@ -8,7 +8,9 @@ using Languages.Infrastructure.Persistence;
 using Languages.WebApi.Extensions;
 using Languages.WebApi.Filters;
 using Languages.WebApi.ModelBinding;
+using Languages.WebApi.OpenApi;
 using Languages.WebApi.Serialization;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 namespace Languages.WebApi;
 
@@ -78,8 +80,13 @@ internal static class ServiceRegistration
         services.AddScoped<IEntryService, EntryService>();
         services.AddScoped<IImageStorage, AzureBlobImageStorage>();
 
-        // Extras
-        services.AddOpenApi();
+        // OpenAPI
+        services.AddOpenApi(options =>
+        {
+            options.AddOperationTransformer(new InheritedParameterDocumentationTransformer());
+            options.AddSchemaTransformer<OptionalSchemaTransformer>();
+        });
+        services.AddTransient<IApiDescriptionProvider, RequiredParameterMetadataProvider>();
 
         return services;
     }

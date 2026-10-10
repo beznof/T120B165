@@ -14,7 +14,20 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    app.MapScalarApiReference();
+    app.MapScalarApiReference("api/docs", (options) =>
+    {
+        options.WithTitle("Language Dictionaries API")
+            .HideModels()
+            .WithClassicLayout()
+            .ForceDarkMode()
+            .WithTheme(ScalarTheme.DeepSpace)
+            .WithDefaultHttpClient(ScalarTarget.Http, ScalarClient.Http11)
+            .WithYamlDocumentDownload()
+            .HideDeveloperTools()
+            .HideSearch()
+            .SortTagsAlphabetically()
+            .SortOperationsByMethod();
+    });
 }
 
 app.UseHttpsRedirection();

@@ -9,15 +9,28 @@ public static class ResultExtensions
 {
     public static ActionResult ToActionResult<T>(this Result<T> result, HttpStatusCode? statusCode = null, IReadOnlyDictionary<string, string>? links = null)
     {
-        var response = new ApiResponse<T>(Message: result.Message)
+        ApiResponse response;
+
+        if (result.Data != null)
         {
-            Data = result.Data,
-            Links = links
-        };
+            response = new ApiResponse<T>(Message: result.Message)
+            {
+                Data = result.Data,
+            };
+        }
+        else
+        {
+            response = new ApiResponse(Message: result.Message);
+        }
+
+        if (links != null)
+        {
+            response.Links = links;
+        }
         
         var finalStatusCode = DetermineStatusCode(result, statusCode);
         
-        return new ObjectResult(value: response)
+        return new ObjectResult(value: response is ApiResponse<T> ? (response as ApiResponse<T>) : response)
         {
             StatusCode = (int)finalStatusCode
         };
@@ -25,10 +38,12 @@ public static class ResultExtensions
     
     public static ActionResult ToActionResult(this Result result, HttpStatusCode? statusCode = null, IReadOnlyDictionary<string, string>? links = null) 
     {
-        var response = new ApiResponse(Message: result.Message)
+        var response = new ApiResponse(Message: result.Message);
+        
+        if (links != null)
         {
-            Links = links
-        };
+            response.Links = links;
+        }
         
         var finalStatusCode = DetermineStatusCode(result, statusCode);
         
