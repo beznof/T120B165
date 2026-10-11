@@ -6,8 +6,8 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 builder.Services
-    .AddWebApi(configuration)
-    .AddInfrastructure(configuration);
+    .AddInfrastructure(configuration)
+    .AddWebApi(configuration);
 
 var app = builder.Build();
 
@@ -31,6 +31,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 

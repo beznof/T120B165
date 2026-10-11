@@ -4,13 +4,17 @@ using Languages.Application.Models.Common;
 using Languages.Application.Persistence;
 using Languages.Application.Services;
 using Languages.Infrastructure.ImageStorage;
+using Languages.Infrastructure.Options;
 using Languages.Infrastructure.Persistence;
 using Languages.WebApi.Extensions;
 using Languages.WebApi.Filters;
 using Languages.WebApi.ModelBinding;
 using Languages.WebApi.OpenApi;
 using Languages.WebApi.Serialization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Languages.WebApi;
 
@@ -78,7 +82,43 @@ internal static class ServiceRegistration
         services.AddScoped<ILanguageService, LanguageService>();
         services.AddScoped<IDictionaryService, DictionaryService>();
         services.AddScoped<IEntryService, EntryService>();
+        services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IImageStorage, AzureBlobImageStorage>();
+
+        // Authentication
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer();
+        
+        services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
+            .Configure<IOptions<AuthOptions>>((options, authOptions) =>
+            {
+                var _authOptions = authOptions.Value;
+                
+                options.MapInboundClaims = false;
+                options.IncludeErrorDetails = false;
+                options.SaveToken = false;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    // Token signature
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(_authOptions.JwtSigningKey)),
+                    RequireSignedTokens = true,
+                    // Token validation
+                    ValidateIssuer = true,
+                    ValidIssuer = _authOptions.JwtIssuer,
+                    ValidateAudience = true,
+                    ValidAudience = _authOptions.JwtAudience,
+                    ValidateLifetime = true,
+                    RequireExpirationTime = true,
+                    ValidAlgorithms = [SecurityAlgorithms.HmacSha256],
+                    ClockSkew = TimeSpan.Zero,
+                    // Claim mapping
+                    NameClaimType = "name",
+                    RoleClaimType = "role"
+                };
+            });
+        
+        services.AddAuthorization();
 
         // OpenAPI
         services.AddOpenApi(options =>

@@ -2,14 +2,17 @@
 using Azure.Storage.Blobs;
 using FluentValidation;
 using Languages.Application.Interfaces;
+using Languages.Infrastructure.Authentication;
 using Languages.Infrastructure.ImageStorage;
 using Languages.Infrastructure.Options;
 using Languages.Infrastructure.Persistence;
 using Languages.Infrastructure.Persistence.Interceptors;
 using Languages.Infrastructure.Validation;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
 namespace Languages.Infrastructure;
@@ -21,6 +24,13 @@ public static class ServiceRegistration
         // Configuration
         services.AddOptions<AzureBlobStorageOptions>()
             .Bind(configuration.GetSection(AzureBlobStorageOptions.AppSettingsSectionName));
+        services.AddOptions<AuthOptions>()
+            .Bind(configuration.GetSection(AuthOptions.AppSettingsSectionName));
+        
+        // Authentication
+        services.AddSingleton<PasswordHasher<object>>();
+        services.AddSingleton<IPasswordHashingService, PasswordHashingService>();
+        services.AddSingleton<IAuthTokenService, AuthTokenService>();
         
         // Application Input DTOs validators
         services.AddScoped<IInputValidation, InputValidation>();
