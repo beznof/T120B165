@@ -6,7 +6,9 @@ public sealed class Dictionary : BaseEntity
     public string? BackgroundImageUrl { get; set; }
     
     public int LanguageId { get; set; }
+    public int OwnerId { get; init; }
 
     public Language Language { get; set; } = null!;
     public ICollection<Entry> Entries { get; set; } = [];
+    public User Owner { get; set; } = null!;
 }

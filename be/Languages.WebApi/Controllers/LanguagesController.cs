@@ -3,9 +3,11 @@ using Languages.Application.Interfaces;
 using Languages.Application.Models.Inputs.Common;
 using Languages.Application.Models.Inputs.Language;
 using Languages.Application.Models.Outputs;
+using Languages.Domain.Enums;
 using Languages.WebApi.Extensions;
 using Languages.WebApi.Models.Common;
 using Languages.WebApi.Models.Requests.Language;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Languages.WebApi.Controllers;
@@ -14,6 +16,7 @@ namespace Languages.WebApi.Controllers;
 [ApiController]
 [Route("api/languages")]
 [Produces("application/json")]
+[Authorize(Roles = $"{nameof(UserRole.Learner)},{nameof(UserRole.Teacher)},{nameof(UserRole.Admin)}")]
 public sealed partial class LanguagesController(ILanguageService languageService) : ControllerBase
 {
     /// <summary>List languages.</summary>
@@ -82,6 +85,7 @@ public sealed partial class LanguagesController(ILanguageService languageService
     /// <response code="201">The language was created successfully.</response>
     /// <response code="400">The JSON body was malformed or incorrect.</response>
     [HttpPost]
+    [Authorize(Roles = $"{nameof(UserRole.Admin)}")]
     [ProducesResponseType<ApiResponse<CreateLanguageOutput>>(StatusCodes.Status201Created)]
     [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<ApiResponse<CreateLanguageOutput>>> Create([FromBody] CreateLanguageRequest request, CancellationToken cancellationToken)
@@ -109,6 +113,7 @@ public sealed partial class LanguagesController(ILanguageService languageService
     /// <response code="400">The path parameters were missing or incorrect or the JSON body was malformed or incorrect.</response>
     /// <response code="404">The requested language was not found.</response>
     [HttpPatch("{LanguageId}")]
+    [Authorize(Roles = $"{nameof(UserRole.Admin)}")]
     [ProducesResponseType<ApiResponse<UpdateLanguageOutput>>(StatusCodes.Status200OK)]
     [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ApiResponse>(StatusCodes.Status404NotFound)]
@@ -140,6 +145,7 @@ public sealed partial class LanguagesController(ILanguageService languageService
     /// <response code="400">The path parameters were missing or incorrect or the uploaded image was invalid.</response>
     /// <response code="404">The requested language was not found.</response>
     [HttpPut("{LanguageId}/background-image")]
+    [Authorize(Roles = $"{nameof(UserRole.Admin)}")]
     [Consumes("multipart/form-data")]
     [ProducesResponseType<ApiResponse<SetLanguageBackgroundImageOutput>>(StatusCodes.Status200OK)]
     [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
@@ -176,6 +182,7 @@ public sealed partial class LanguagesController(ILanguageService languageService
     /// <response code="400">The path parameters were missing or incorrect.</response>
     /// <response code="404">The requested language was not found or it didn't have a background image set.</response>
     [HttpDelete("{LanguageId}/background-image")]
+    [Authorize(Roles = $"{nameof(UserRole.Admin)}")]
     [ProducesResponseType<ApiResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ApiResponse>(StatusCodes.Status404NotFound)]
@@ -204,6 +211,7 @@ public sealed partial class LanguagesController(ILanguageService languageService
     /// <response code="400">The path parameters were missing or incorrect.</response>
     /// <response code="404">The requested language was not found.</response>
     [HttpDelete("{LanguageId}")]
+    [Authorize(Roles = $"{nameof(UserRole.Admin)}")]
     [ProducesResponseType<ApiResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ApiResponse>(StatusCodes.Status404NotFound)]

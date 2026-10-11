@@ -1,6 +1,7 @@
 ﻿using Languages.Application.Extensions;
 using Languages.Application.Interfaces;
 using Languages.Application.Models.Common;
+using Languages.Application.Models.Inputs.Common;
 using Languages.Application.Models.Inputs.Dictionary;
 using Languages.Application.Models.Outputs;
 using Languages.Application.Persistence;
@@ -83,14 +84,14 @@ public class DictionaryService(
         ));
     }
 
-    public async Task<Result<CreateDictionaryOutput>> Create(CreateDictionaryInput input, CancellationToken cancellationToken)
+    public async Task<Result<CreateDictionaryOutput>> Create(CreateDictionaryInput input, AuthorInput authorInput, CancellationToken cancellationToken)
     {
         var inputValidation = await validation.ValidateAsync(input, cancellationToken);
         if (!inputValidation.IsValid)
-            return inputValidation.ToFailureResult<CreateDictionaryOutput?>();
+            return inputValidation.ToFailureResult<CreateDictionaryOutput>();
         
         if(!(await VerifyScope(input, cancellationToken)))
-            return Result.Failure<CreateDictionaryOutput?>("Language not found.", ResultErrorKind.ResourceNotFound);
+            return Result.Failure<CreateDictionaryOutput>("Language not found.", ResultErrorKind.ResourceNotFound);
         
         var language = await dbContext.Languages.FirstOrDefaultAsync(l => l.Id == input.LanguageId, cancellationToken);
         if (language == null)
@@ -102,6 +103,7 @@ public class DictionaryService(
         {
             Name = input.Name,
             LanguageId = language.Id,
+            OwnerId = authorInput.AuthorId
         };
         
         dbContext.Dictionaries.Add(newDictionary);
@@ -120,7 +122,7 @@ public class DictionaryService(
         ));
     }
 
-    public async Task<Result<UpdateDictionaryOutput>> Update(UpdateDictionaryInput input, CancellationToken cancellationToken)
+    public async Task<Result<UpdateDictionaryOutput>> Update(UpdateDictionaryInput input, AuthorInput authorInput, CancellationToken cancellationToken)
     {
         var inputValidation = await validation.ValidateAsync(input, cancellationToken);
         if (!inputValidation.IsValid)
@@ -133,6 +135,9 @@ public class DictionaryService(
 
         if (dictionary == null)
             return Result.Failure<UpdateDictionaryOutput>("Dictionary not found.", ResultErrorKind.ResourceNotFound);
+        
+        if (dictionary.OwnerId != authorInput.AuthorId && !authorInput.IsAdmin)
+            return Result.Failure<UpdateDictionaryOutput>("Action not allowed for this user.", ResultErrorKind.AuthorizationFailed);
 
         if (input.Name.IsProvided)
         {
@@ -153,7 +158,7 @@ public class DictionaryService(
         ));
     }
 
-    public async Task<Result> Delete(DeleteDictionaryInput input, CancellationToken cancellationToken)
+    public async Task<Result> Delete(DeleteDictionaryInput input, AuthorInput authorInput, CancellationToken cancellationToken)
     {
         var inputValidation = await validation.ValidateAsync(input, cancellationToken);
         if (!inputValidation.IsValid)
@@ -166,6 +171,9 @@ public class DictionaryService(
         if (dictionary == null)
             return Result.Failure("Dictionary not found.", ResultErrorKind.ResourceNotFound);
         
+        if (dictionary.OwnerId != authorInput.AuthorId && !authorInput.IsAdmin)
+            return Result.Failure("Action not allowed for this user.", ResultErrorKind.AuthorizationFailed);
+        
         dbContext.Dictionaries.Remove(dictionary);
         
         await dbContext.SaveChangesAsync(cancellationToken);
@@ -176,7 +184,7 @@ public class DictionaryService(
         return Result.Success("Dictionary was deleted successfully.");
     }
 
-    public async Task<Result<SetDictionaryBackgroundImageOutput>> SetBackgroundImage(SetDictionaryBackgroundImageInput input, CancellationToken cancellationToken)
+    public async Task<Result<SetDictionaryBackgroundImageOutput>> SetBackgroundImage(SetDictionaryBackgroundImageInput input, AuthorInput authorInput, CancellationToken cancellationToken)
     {
         var inputValidation = await validation.ValidateAsync(input, cancellationToken);
         if (!inputValidation.IsValid)
@@ -188,6 +196,9 @@ public class DictionaryService(
 
         if (dictionary == null)
             return Result.Failure<SetDictionaryBackgroundImageOutput>("Dictionary not found.", ResultErrorKind.ResourceNotFound);
+        
+        if (dictionary.OwnerId != authorInput.AuthorId && !authorInput.IsAdmin)
+            return Result.Failure<SetDictionaryBackgroundImageOutput>("Action not allowed for this user.", ResultErrorKind.AuthorizationFailed);
 
         var image = input.Image;
 
@@ -215,7 +226,7 @@ public class DictionaryService(
         ));
     }
 
-    public async Task<Result> DeleteBackgroundImage(DeleteDictionaryBackgroundImageInput input, CancellationToken cancellationToken)
+    public async Task<Result> DeleteBackgroundImage(DeleteDictionaryBackgroundImageInput input, AuthorInput authorInput, CancellationToken cancellationToken)
     {
         var inputValidation = await validation.ValidateAsync(input, cancellationToken);
         if (!inputValidation.IsValid)
@@ -227,6 +238,9 @@ public class DictionaryService(
 
         if (dictionary == null)
             return Result.Failure("Dictionary not found.", ResultErrorKind.ResourceNotFound);
+        
+        if (dictionary.OwnerId != authorInput.AuthorId && !authorInput.IsAdmin)
+            return Result.Failure("Action not allowed for this user.", ResultErrorKind.AuthorizationFailed);
         
         if (string.IsNullOrWhiteSpace(dictionary.BackgroundImageUrl))
             return Result.Failure("Dictionary background image was not found.", ResultErrorKind.ResourceNotFound);

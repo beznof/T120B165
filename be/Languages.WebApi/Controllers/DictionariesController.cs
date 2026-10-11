@@ -1,11 +1,14 @@
 using System.Net;
+using System.Security.Claims;
 using Languages.Application.Interfaces;
 using Languages.Application.Models.Inputs.Common;
 using Languages.Application.Models.Inputs.Dictionary;
 using Languages.Application.Models.Outputs;
+using Languages.Domain.Enums;
 using Languages.WebApi.Extensions;
 using Languages.WebApi.Models.Common;
 using Languages.WebApi.Models.Requests.Dictionary;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Languages.WebApi.Controllers;
@@ -14,8 +17,14 @@ namespace Languages.WebApi.Controllers;
 [ApiController]
 [Route("api/languages/{LanguageId}/dictionaries")]
 [Produces("application/json")]
+[Authorize(Roles = $"{nameof(UserRole.Learner)},{nameof(UserRole.Teacher)},{nameof(UserRole.Admin)}")]
 public sealed partial class DictionariesController(IDictionaryService dictionaryService) : ControllerBase
 {
+    private int UserId => int.TryParse(User.FindFirstValue("sub"), out var userId) 
+        ? userId 
+        : throw new InvalidDataException("Couldn't retrieve the user's ID");
+    private bool IsAdmin => User.IsInRole(nameof(UserRole.Admin));
+    
     /// <summary>List dictionaries.</summary>
     /// <remarks>
     /// List dictionaries within the specified language in paginated manner by supplying the page size, the page number, and optionally a name search filter.
@@ -91,16 +100,23 @@ public sealed partial class DictionariesController(IDictionaryService dictionary
     /// <response code="400">The path parameters were missing or incorrect or the JSON body was malformed or incorrect.</response>
     /// <response code="404">The requested language was not found.</response>
     [HttpPost]
+    [Authorize(Roles = $"{nameof(UserRole.Teacher)},{nameof(UserRole.Admin)}")]
     [ProducesResponseType<ApiResponse<CreateDictionaryOutput>>(StatusCodes.Status201Created)]
     [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ApiResponse>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ApiResponse<CreateDictionaryOutput>>> Create([FromRoute] BaseDictionaryRequest dictionaryRequest, [FromBody] CreateDictionaryRequest request, CancellationToken cancellationToken)
     {
         var result = await dictionaryService.Create(new CreateDictionaryInput
-        {
-            LanguageId = dictionaryRequest.LanguageId,
-            Name = request.Name,
-        }, cancellationToken);
+            {
+                LanguageId = dictionaryRequest.LanguageId,
+                Name = request.Name,
+            }, 
+            new AuthorInput
+            {
+                AuthorId = UserId,
+                IsAdmin = IsAdmin
+            }
+            , cancellationToken);
         
         var links = new Dictionary<string, string>();
         if (result.IsSuccessful && result.Data != null)
@@ -121,17 +137,24 @@ public sealed partial class DictionariesController(IDictionaryService dictionary
     /// <response code="400">The path parameters were missing or incorrect or the JSON body was malformed or incorrect.</response>
     /// <response code="404">The requested dictionary was not found in the specified language.</response>
     [HttpPatch("{DictionaryId}")]
+    [Authorize(Roles = $"{nameof(UserRole.Teacher)},{nameof(UserRole.Admin)}")]
     [ProducesResponseType<ApiResponse<UpdateDictionaryOutput>>(StatusCodes.Status200OK)]
     [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ApiResponse>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ApiResponse<UpdateDictionaryOutput>>> Update([FromRoute] DictionaryRequest dictionaryRequest, [FromBody] UpdateDictionaryRequest request, CancellationToken cancellationToken)
     {
         var result = await dictionaryService.Update(new UpdateDictionaryInput
-        {
-            LanguageId = dictionaryRequest.LanguageId,
-            DictionaryId = dictionaryRequest.DictionaryId,
-            Name = request.Name,
-        }, cancellationToken);
+            {
+                LanguageId = dictionaryRequest.LanguageId,
+                DictionaryId = dictionaryRequest.DictionaryId,
+                Name = request.Name,
+            }, 
+            new AuthorInput
+            {
+                AuthorId = UserId,
+                IsAdmin = IsAdmin
+            }
+            , cancellationToken);
         
         var links = new Dictionary<string, string>();
         if (result.IsSuccessful && result.Data != null)
@@ -154,6 +177,7 @@ public sealed partial class DictionariesController(IDictionaryService dictionary
     /// <response code="400">The path parameters were missing or incorrect or the uploaded image was invalid.</response>
     /// <response code="404">The requested dictionary was not found in the specified language.</response>
     [HttpPut("{DictionaryId}/background-image")]
+    [Authorize(Roles = $"{nameof(UserRole.Teacher)},{nameof(UserRole.Admin)}")]
     [Consumes("multipart/form-data")]
     [ProducesResponseType<ApiResponse<SetDictionaryBackgroundImageOutput>>(StatusCodes.Status200OK)]
     [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
@@ -161,16 +185,22 @@ public sealed partial class DictionariesController(IDictionaryService dictionary
     public async Task<ActionResult<ApiResponse<SetDictionaryBackgroundImageOutput>>> SetBackgroundImage([FromRoute] DictionaryRequest dictionaryRequest, [FromForm] SetDictionaryBackgroundImageRequest request, CancellationToken cancellationToken)
     {
         var result = await dictionaryService.SetBackgroundImage(new SetDictionaryBackgroundImageInput
-        {
-            LanguageId = dictionaryRequest.LanguageId,
-            DictionaryId = dictionaryRequest.DictionaryId,
-            Image = new SetImageInput
             {
-                ContentType = request.BackgroundImage.ContentType,
-                ImageStream = request.BackgroundImage.OpenReadStream(),
-                Length = request.BackgroundImage.Length,
+                LanguageId = dictionaryRequest.LanguageId,
+                DictionaryId = dictionaryRequest.DictionaryId,
+                Image = new SetImageInput
+                {
+                    ContentType = request.BackgroundImage.ContentType,
+                    ImageStream = request.BackgroundImage.OpenReadStream(),
+                    Length = request.BackgroundImage.Length,
+                }
+            }, 
+            new AuthorInput
+            {
+                AuthorId = UserId,
+                IsAdmin = IsAdmin
             }
-        }, cancellationToken);
+            , cancellationToken);
         
         var links = new Dictionary<string, string>();
         if (result.IsSuccessful && result.Data != null)
@@ -191,16 +221,23 @@ public sealed partial class DictionariesController(IDictionaryService dictionary
     /// <response code="400">The path parameters were missing or incorrect.</response>
     /// <response code="404">The requested dictionary was not found in the specified language or it didn't have a background image set.</response>
     [HttpDelete("{DictionaryId}/background-image")]
+    [Authorize(Roles = $"{nameof(UserRole.Teacher)},{nameof(UserRole.Admin)}")]
     [ProducesResponseType<ApiResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ApiResponse>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ApiResponse>> DeleteBackgroundImage([FromRoute] DictionaryRequest dictionaryRequest, CancellationToken cancellationToken)
     {
         var result = await dictionaryService.DeleteBackgroundImage(new DeleteDictionaryBackgroundImageInput
-        {
-            LanguageId = dictionaryRequest.LanguageId,
-            DictionaryId = dictionaryRequest.DictionaryId
-        }, cancellationToken);
+            {
+                LanguageId = dictionaryRequest.LanguageId,
+                DictionaryId = dictionaryRequest.DictionaryId
+            }, 
+            new AuthorInput
+            {
+                AuthorId = UserId,
+                IsAdmin = IsAdmin
+            }
+            , cancellationToken);
         
         var links = new Dictionary<string, string>();
         if (result.IsSuccessful)
@@ -220,16 +257,23 @@ public sealed partial class DictionariesController(IDictionaryService dictionary
     /// <response code="400">The path parameters were missing or incorrect.</response>
     /// <response code="404">The requested dictionary was not found in the specified language.</response>
     [HttpDelete("{DictionaryId}")]
+    [Authorize(Roles = $"{nameof(UserRole.Teacher)},{nameof(UserRole.Admin)}")]
     [ProducesResponseType<ApiResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ApiResponse>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ApiResponse>> Delete([FromRoute] DictionaryRequest dictionaryRequest, CancellationToken cancellationToken)
     {
         var result = await dictionaryService.Delete(new DeleteDictionaryInput
-        {
-            LanguageId = dictionaryRequest.LanguageId,
-            DictionaryId = dictionaryRequest.DictionaryId
-        }, cancellationToken);
+            {
+                LanguageId = dictionaryRequest.LanguageId,
+                DictionaryId = dictionaryRequest.DictionaryId
+            }, 
+            new AuthorInput
+            {
+                AuthorId = UserId,
+                IsAdmin = IsAdmin
+            }
+            , cancellationToken);
         
         var links = new Dictionary<string, string>();
         if (result.IsSuccessful)

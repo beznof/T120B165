@@ -48,9 +48,14 @@ namespace Languages.Infrastructure.Persistence.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<int>("OwnerId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("LanguageId");
+
+                    b.HasIndex("OwnerId");
 
                     b.ToTable("LanguageDictionaries", (string)null);
                 });
@@ -212,7 +217,15 @@ namespace Languages.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Languages.Domain.Entities.User", "Owner")
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Language");
+
+                    b.Navigation("Owner");
                 });
 
             modelBuilder.Entity("Languages.Domain.Entities.Entry", b =>

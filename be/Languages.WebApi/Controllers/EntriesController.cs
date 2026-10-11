@@ -1,11 +1,14 @@
 using System.Net;
+using System.Security.Claims;
 using Languages.Application.Interfaces;
 using Languages.Application.Models.Inputs.Common;
 using Languages.Application.Models.Inputs.Entry;
 using Languages.Application.Models.Outputs;
+using Languages.Domain.Enums;
 using Languages.WebApi.Extensions;
 using Languages.WebApi.Models.Common;
 using Languages.WebApi.Models.Requests.Entry;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Languages.WebApi.Controllers;
@@ -14,8 +17,14 @@ namespace Languages.WebApi.Controllers;
 [ApiController]
 [Route("api/languages/{LanguageId}/dictionaries/{DictionaryId}/entries")]
 [Produces("application/json")]
+[Authorize(Roles = $"{nameof(UserRole.Learner)},{nameof(UserRole.Teacher)},{nameof(UserRole.Admin)}")]
 public sealed partial class EntriesController(IEntryService entryService) : ControllerBase
 {
+    private int UserId => int.TryParse(User.FindFirstValue("sub"), out var userId) 
+        ? userId 
+        : throw new InvalidDataException("Couldn't retrieve the user's ID");
+    private bool IsAdmin => User.IsInRole(nameof(UserRole.Admin));
+    
     /// <summary>List entries.</summary>
     /// <remarks>
     /// List entries within the specified dictionary and language in paginated manner by supplying the page size, the page number, and optionally a text search filter and an entry type filter.
@@ -91,20 +100,27 @@ public sealed partial class EntriesController(IEntryService entryService) : Cont
     /// <response code="400">The path parameters were missing or incorrect or the JSON body was malformed or incorrect.</response>
     /// <response code="404">The requested dictionary was not found in the specified language.</response>
     [HttpPost]
+    [Authorize(Roles = $"{nameof(UserRole.Teacher)},{nameof(UserRole.Admin)}")]
     [ProducesResponseType<ApiResponse<CreateEntryOutput>>(StatusCodes.Status201Created)]
     [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ApiResponse>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ApiResponse<CreateEntryOutput>>> Create([FromRoute] BaseEntryRequest entryRequest, [FromBody] CreateEntryRequest request, CancellationToken cancellationToken)
     {
         var result = await entryService.Create(new CreateEntryInput
-        {
+            {
             LanguageId = entryRequest.LanguageId,
             DictionaryId = entryRequest.DictionaryId,
             Text = request.Text,
             Translation = request.Translation,
             Type = request.Type,
-            PhoneticTranscription = request.PhoneticTranscription,
-        }, cancellationToken);
+            PhoneticTranscription = request.PhoneticTranscription
+            }, 
+            new AuthorInput
+            {
+                AuthorId = UserId,
+                IsAdmin = IsAdmin
+            }
+            , cancellationToken);
 
         var links = new Dictionary<string, string>();
         if (result.IsSuccessful && result.Data != null)
@@ -124,21 +140,28 @@ public sealed partial class EntriesController(IEntryService entryService) : Cont
     /// <response code="400">The path parameters were missing or incorrect or the JSON body was malformed or incorrect.</response>
     /// <response code="404">The requested entry was not found in the specified dictionary and language.</response>
     [HttpPatch("{EntryId}")]
+    [Authorize(Roles = $"{nameof(UserRole.Teacher)},{nameof(UserRole.Admin)}")]
     [ProducesResponseType<ApiResponse<UpdateEntryOutput>>(StatusCodes.Status200OK)]
     [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ApiResponse>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ApiResponse<UpdateEntryOutput>>> Update([FromRoute] EntryRequest entryRequest, [FromBody] UpdateEntryRequest request, CancellationToken cancellationToken)
     {
         var result = await entryService.Update(new UpdateEntryInput
-        {
+            {
             LanguageId = entryRequest.LanguageId,
             DictionaryId = entryRequest.DictionaryId,
             EntryId = entryRequest.EntryId,
             Text = request.Text,
             Translation = request.Translation,
             Type = request.Type,
-            PhoneticTranscription = request.PhoneticTranscription,
-        }, cancellationToken);
+            PhoneticTranscription = request.PhoneticTranscription
+            }, 
+            new AuthorInput
+            {
+                AuthorId = UserId,
+                IsAdmin = IsAdmin
+            }
+            , cancellationToken);
 
         var links = new Dictionary<string, string>();
         if (result.IsSuccessful && result.Data != null)
@@ -158,17 +181,24 @@ public sealed partial class EntriesController(IEntryService entryService) : Cont
     /// <response code="400">The path parameters were missing or incorrect.</response>
     /// <response code="404">The requested entry was not found in the specified dictionary and language.</response>
     [HttpDelete("{EntryId}")]
+    [Authorize(Roles = $"{nameof(UserRole.Teacher)},{nameof(UserRole.Admin)}")]
     [ProducesResponseType<ApiResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ApiResponse>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ApiResponse>> Delete([FromRoute] EntryRequest entryRequest, CancellationToken cancellationToken)
     {
         var result = await entryService.Delete(new DeleteEntryInput
-        {
-            LanguageId = entryRequest.LanguageId,
-            DictionaryId = entryRequest.DictionaryId,
-            EntryId = entryRequest.EntryId
-        }, cancellationToken);
+            {
+                LanguageId = entryRequest.LanguageId,
+                DictionaryId = entryRequest.DictionaryId,
+                EntryId = entryRequest.EntryId
+            }, 
+            new AuthorInput
+            {
+                AuthorId = UserId,
+                IsAdmin = IsAdmin
+            }
+            , cancellationToken);
 
         var links = new Dictionary<string, string>();
         if (result.IsSuccessful)

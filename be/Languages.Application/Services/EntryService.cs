@@ -1,7 +1,7 @@
 ﻿using Languages.Application.Extensions;
 using Languages.Application.Interfaces;
 using Languages.Application.Models.Common;
-using Languages.Application.Models.Inputs.Dictionary;
+using Languages.Application.Models.Inputs.Common;
 using Languages.Application.Models.Inputs.Entry;
 using Languages.Application.Models.Outputs;
 using Languages.Application.Persistence;
@@ -87,20 +87,21 @@ public class EntryService(
         ));
     }
 
-    public async Task<Result<CreateEntryOutput>> Create(CreateEntryInput input, CancellationToken cancellationToken)
+    public async Task<Result<CreateEntryOutput>> Create(CreateEntryInput input, AuthorInput authorInput, CancellationToken cancellationToken)
     {
         var inputValidation = await validation.ValidateAsync(input, cancellationToken);
         if (!inputValidation.IsValid)
             return inputValidation.ToFailureResult<CreateEntryOutput>();
         
         if(!(await VerifyScope(input, cancellationToken)))
-            return Result.Failure<CreateEntryOutput?>("Dictionary not found.", ResultErrorKind.ResourceNotFound);
+            return Result.Failure<CreateEntryOutput>("Dictionary not found.", ResultErrorKind.ResourceNotFound);
         
         var dictionary = await dbContext.Dictionaries.FirstOrDefaultAsync(d => d.Id == input.DictionaryId, cancellationToken);
         if (dictionary == null)
-        {
             throw new InvalidDataException("Dictionary not found.");
-        }
+        
+        if (dictionary.OwnerId != authorInput.AuthorId && !authorInput.IsAdmin)
+            return Result.Failure<CreateEntryOutput>("Action not allowed for this user.", ResultErrorKind.AuthorizationFailed);
 
         var newEntry = new Entry
         {
@@ -129,7 +130,7 @@ public class EntryService(
         ));
     }
 
-    public async Task<Result<UpdateEntryOutput>> Update(UpdateEntryInput input, CancellationToken cancellationToken)
+    public async Task<Result<UpdateEntryOutput>> Update(UpdateEntryInput input, AuthorInput authorInput, CancellationToken cancellationToken)
     {
         var inputValidation = await validation.ValidateAsync(input, cancellationToken);
         if (!inputValidation.IsValid)
@@ -141,6 +142,9 @@ public class EntryService(
 
         if (entry == null)
             return Result.Failure<UpdateEntryOutput>("Entry not found.", ResultErrorKind.ResourceNotFound);
+
+        if (entry.Dictionary.OwnerId != authorInput.AuthorId && !authorInput.IsAdmin)
+            return Result.Failure<UpdateEntryOutput>("Action not allowed for this user.", ResultErrorKind.AuthorizationFailed);
 
         if (input.Text.IsProvided)
         {
@@ -178,7 +182,7 @@ public class EntryService(
         ));
     }
 
-    public async Task<Result> Delete(DeleteEntryInput input, CancellationToken cancellationToken)
+    public async Task<Result> Delete(DeleteEntryInput input, AuthorInput authorInput, CancellationToken cancellationToken)
     {
         var inputValidation = await validation.ValidateAsync(input, cancellationToken);
         if (!inputValidation.IsValid)
@@ -186,10 +190,14 @@ public class EntryService(
         
         var entry = await dbContext.Entries
             .AsNoTracking()
+            .Include(e => e.Dictionary)
             .FirstOrDefaultAsync(e => e.DictionaryId == input.DictionaryId && e.Dictionary.LanguageId == input.LanguageId && e.Id == input.EntryId, cancellationToken);
 
         if (entry == null)
             return Result.Failure("Entry not found.", ResultErrorKind.ResourceNotFound);
+        
+        if (entry.Dictionary.OwnerId != authorInput.AuthorId && !authorInput.IsAdmin)
+            return Result.Failure("Action not allowed for this user.", ResultErrorKind.AuthorizationFailed);
 
         dbContext.Entries.Remove(entry);
         
