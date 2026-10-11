@@ -24,8 +24,6 @@ public sealed class RegisterRequest
     /// <summary>
     /// The requested role. Learner is 0 and Teacher is 1.
     /// Required.
-    /// Learners are approved automatically; teachers require approval.
-    /// Admin registration is not allowed.
     /// </summary>
     /// <example>0</example>
     public required UserRole Role { get; set; }

@@ -141,9 +141,6 @@ namespace Languages.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("CreatedAtUTC")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsAccountApproved")
-                        .HasColumnType("bit");
-
                     b.Property<DateTime>("ModifiedAtUTC")
                         .HasColumnType("datetime2");
 

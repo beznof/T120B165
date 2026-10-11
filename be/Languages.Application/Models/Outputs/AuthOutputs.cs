@@ -6,14 +6,12 @@ namespace Languages.Application.Models.Outputs;
 /// <param name="Id">The user's identifier.</param>
 /// <param name="Username">The username of the user.</param>
 /// <param name="Role">The role of the user. Learner is 0 and Teacher is 1.</param>
-/// <param name="IsAccountApproved">Whether the user's account has been approved. True by default for Learners.</param>
 /// <param name="CreatedAtUTC">The date and time when the user was created, in UTC.</param>
 /// <example>
 /// {
 ///   "id": 1,
 ///   "username": "Captain Rex",
 ///   "role": 0,
-///   "isAccountApproved": true,
 ///   "createdAtUTC": "2026-10-11T10:00:00Z"
 /// }
 /// </example>
@@ -21,7 +19,6 @@ public sealed record RegisterOutput(
     int Id,
     string Username,
     UserRole Role,
-    bool IsAccountApproved,
     DateTime CreatedAtUTC
 );
 

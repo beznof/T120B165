@@ -30,8 +30,7 @@ public sealed class AuthService(
         {
             Username = username,
             PasswordHash = passwordHashingService.HashPassword(input.Password),
-            Role = input.Role,
-            IsAccountApproved = input.Role == UserRole.Learner
+            Role = input.Role
         };
 
         dbContext.Users.Add(user);
@@ -41,7 +40,6 @@ public sealed class AuthService(
             Id: user.Id,
             Username: user.Username,
             Role: user.Role,
-            IsAccountApproved: user.IsAccountApproved,
             CreatedAtUTC: user.CreatedAtUTC
         ));
     }
@@ -57,9 +55,6 @@ public sealed class AuthService(
         
         if (user == null || !passwordHashingService.VerifyPasswordHash(user.PasswordHash, input.Password))
             return Result.Failure<AuthTokensOutput>("Username or password is incorrect.", ResultErrorKind.AuthenticationFailed);
-
-        if (!user.IsAccountApproved)
-            return Result.Failure<AuthTokensOutput>("Account has not been approved yet.", ResultErrorKind.AuthorizationFailed);
 
         var refreshToken = tokenService.CreateRefreshToken();
         var session = new UserSession
@@ -109,9 +104,6 @@ public sealed class AuthService(
 
         if (session == null)
             return Result.Failure<AuthTokensOutput>("Refresh token is invalid or has expired.", ResultErrorKind.AuthenticationFailed);
-        
-        if (!session.User.IsAccountApproved)
-            return Result.Failure<AuthTokensOutput>("Account has not been approved yet.", ResultErrorKind.AuthorizationFailed);
 
         var refreshToken = tokenService.CreateRefreshToken(session.ExpiresAtUTC);
         var accessToken = tokenService.CreateAccessToken(session.User);
