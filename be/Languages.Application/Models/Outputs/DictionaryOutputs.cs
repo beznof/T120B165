@@ -7,6 +7,7 @@ namespace Languages.Application.Models.Outputs;
 /// The URL of the dictionary's background image.
 /// </param>
 /// <param name="Language">The identifier and name of the language the dictionary belongs to.</param>
+/// <param name="Owner">The identifier and username of the user who owns the dictionary.</param>
 /// <param name="CreatedAtUTC">The date and time when the dictionary was created, in UTC.</param>
 /// <example>
 /// {
@@ -17,6 +18,10 @@ namespace Languages.Application.Models.Outputs;
 ///     "id": 1,
 ///     "name": "Ewokese"
 ///   },
+///   "owner": {
+///     "id": 1,
+///     "username": "Captain Rex"
+///   },
 ///   "createdAtUTC": "2026-10-10T10:00:00Z"
 /// }
 /// </example>
@@ -25,6 +30,7 @@ public sealed record CreateDictionaryOutput(
     string Name,
     string? BackgroundImageUrl,
     LanguageSummaryOutput Language,
+    OwnerSummaryOutput Owner,
     DateTime CreatedAtUTC
 );
 
@@ -35,6 +41,7 @@ public sealed record CreateDictionaryOutput(
 /// The URL of the dictionary's background image.
 /// </param>
 /// <param name="Language">The identifier and name of the language the dictionary belongs to.</param>
+/// <param name="Owner">The identifier and username of the user who owns the dictionary.</param>
 /// <param name="CreatedAtUTC">The date and time when the dictionary was created, in UTC.</param>
 /// <param name="LastUpdatedAtUTC">The date and time when the dictionary was last updated, in UTC.</param>
 /// <example>
@@ -46,6 +53,10 @@ public sealed record CreateDictionaryOutput(
 ///     "id": 1,
 ///     "name": "Ewokese"
 ///   },
+///   "owner": {
+///     "id": 1,
+///     "username": "Captain Rex"
+///   },
 ///   "createdAtUTC": "2026-10-10T10:00:00Z",
 ///   "lastUpdatedAtUTC": "2026-10-10T12:00:00Z"
 /// }
@@ -55,6 +66,7 @@ public sealed record GetOneDictionaryOutput(
     string Name,
     string? BackgroundImageUrl,
     LanguageSummaryOutput Language,
+    OwnerSummaryOutput Owner,
     DateTime CreatedAtUTC,
     DateTime LastUpdatedAtUTC
 );
@@ -66,6 +78,7 @@ public sealed record GetOneDictionaryOutput(
 /// The URL of the dictionary's background image.
 /// </param>
 /// <param name="Language">The identifier and name of the language the dictionary belongs to.</param>
+/// <param name="Owner">The identifier and username of the user who owns the dictionary.</param>
 /// <param name="LastUpdatedAtUTC">The date and time when the dictionary was last updated, in UTC.</param>
 /// <example>
 /// {
@@ -76,6 +89,10 @@ public sealed record GetOneDictionaryOutput(
 ///     "id": 1,
 ///     "name": "Ewokese"
 ///   },
+///   "owner": {
+///     "id": 1,
+///     "username": "Captain Rex"
+///   },
 ///   "lastUpdatedAtUTC": "2026-10-10T12:00:00Z"
 /// }
 /// </example>
@@ -84,6 +101,7 @@ public sealed record UpdateDictionaryOutput(
     string Name,
     string? BackgroundImageUrl,
     LanguageSummaryOutput Language,
+    OwnerSummaryOutput Owner,
     DateTime LastUpdatedAtUTC
 );
 
@@ -102,6 +120,10 @@ public sealed record UpdateDictionaryOutput(
 ///       "language": {
 ///         "id": 1,
 ///         "name": "Ewokese"
+///       },
+///       "owner": {
+///         "id": 1,
+///         "username": "Captain Rex"
 ///       },
 ///       "createdAtUTC": "2026-10-10T10:00:00Z",
 ///       "lastUpdatedAtUTC": "2026-10-10T12:00:00Z"

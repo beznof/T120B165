@@ -27,6 +27,7 @@ public class DictionaryService(
         var query = dbContext.Dictionaries
             .AsNoTracking()
             .Include(d => d.Language)
+            .Include(d => d.Owner)
             .Where(d => d.LanguageId == input.LanguageId && 
                         (input.Pagination.Search == null || d.Name.Contains(input.Pagination.Search)))
             .OrderBy(d => d.Id);
@@ -47,6 +48,10 @@ public class DictionaryService(
                     Id: d.LanguageId,
                     Name: d.Language.Name    
                 ),
+                Owner: new OwnerSummaryOutput(
+                    Id: d.Owner.Id,
+                    Username: d.Owner.Username
+                ),
                 CreatedAtUTC: d.CreatedAtUTC,
                 LastUpdatedAtUTC: d.ModifiedAtUTC
             )).ToList(),
@@ -65,6 +70,7 @@ public class DictionaryService(
         var dictionary = await dbContext.Dictionaries
             .AsNoTracking()
             .Include(d => d.Language)
+            .Include(d => d.Owner)
             .Where(d => d.LanguageId == input.LanguageId && d.Id == input.DictionaryId)
             .FirstOrDefaultAsync(cancellationToken);
         
@@ -78,6 +84,10 @@ public class DictionaryService(
             Language: new LanguageSummaryOutput(
                 Id: dictionary.LanguageId,
                 Name: dictionary.Language.Name 
+            ),
+            Owner: new OwnerSummaryOutput(
+                Id: dictionary.Owner.Id,
+                Username: dictionary.Owner.Username
             ),
             CreatedAtUTC: dictionary.CreatedAtUTC,
             LastUpdatedAtUTC: dictionary.ModifiedAtUTC
@@ -109,6 +119,13 @@ public class DictionaryService(
         dbContext.Dictionaries.Add(newDictionary);
         
         await dbContext.SaveChangesAsync(cancellationToken);
+        
+        var user = await dbContext.Users
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Id == authorInput.AuthorId, cancellationToken);
+
+        if (user == null)
+            throw new InvalidDataException("User was not found.");
 
         return Result.Success<CreateDictionaryOutput>("Dictionary was created successfully", new CreateDictionaryOutput(
             Id: newDictionary.Id,
@@ -117,6 +134,10 @@ public class DictionaryService(
             Language: new LanguageSummaryOutput(
                 Id: language.Id,
                 Name: language.Name 
+            ),
+            Owner: new OwnerSummaryOutput(
+                Id: user.Id,
+                Username: user.Username
             ),
             CreatedAtUTC: newDictionary.CreatedAtUTC
         ));
@@ -130,6 +151,7 @@ public class DictionaryService(
 
         var dictionary = await dbContext.Dictionaries
             .Include(d => d.Language)
+            .Include(d => d.Owner)
             .Where(d => d.LanguageId == input.LanguageId && d.Id == input.DictionaryId)
             .FirstOrDefaultAsync(cancellationToken);
 
@@ -153,6 +175,10 @@ public class DictionaryService(
             Language: new LanguageSummaryOutput(
                 Id: dictionary.Language.Id,
                 Name: dictionary.Language.Name 
+            ),
+            Owner: new OwnerSummaryOutput(
+                Id: dictionary.Owner.Id,
+                Username: dictionary.Owner.Username
             ),
             LastUpdatedAtUTC: dictionary.ModifiedAtUTC
         ));

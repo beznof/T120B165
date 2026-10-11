@@ -23,9 +23,19 @@ public static class ServiceRegistration
     {
         // Configuration
         services.AddOptions<AzureBlobStorageOptions>()
-            .Bind(configuration.GetSection(AzureBlobStorageOptions.AppSettingsSectionName));
+            .Bind(configuration.GetSection(AzureBlobStorageOptions.AppSettingsSectionName))
+                .Validate(o => !string.IsNullOrWhiteSpace(o.ServiceUri), "ServiceUri must be a non-empty string.")
+                .Validate(o => !string.IsNullOrWhiteSpace(o.ContainerName), "ContainerName must be a non-empty string.")
+            .ValidateOnStart();
+        
         services.AddOptions<AuthOptions>()
-            .Bind(configuration.GetSection(AuthOptions.AppSettingsSectionName));
+            .Bind(configuration.GetSection(AuthOptions.AppSettingsSectionName))
+                .Validate(o => o.JwtAccessTokenLifetimeMinutes > 0, "JwtAccessTokenLifetimeMinutes must be a positive integer.")
+                .Validate(o => o.JwtRefreshTokenLifetimeDays > 0, "JwtRefreshTokenLifetimeDays must be a positive integer.")
+                .Validate(o => !string.IsNullOrWhiteSpace(o.JwtSigningKey), "JwtSigningKey must be a non-empty string.")
+                .Validate(o => !string.IsNullOrWhiteSpace(o.JwtIssuer), "JwtIssuer must be a non-empty string.")
+                .Validate(o => !string.IsNullOrWhiteSpace(o.JwtAudience), "JwtAudience must be a non-empty string.")
+            .ValidateOnStart();
         
         // Authentication
         services.AddSingleton<PasswordHasher<object>>();
