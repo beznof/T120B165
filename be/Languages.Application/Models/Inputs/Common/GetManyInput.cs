@@ -22,12 +22,5 @@ public class GetManyInputValidator : AbstractValidator<GetManyInput>
         RuleFor(r => r.PageSize)
             .InclusiveBetween(1, 100)
             .WithMessage("Page size must be between 1 and 100.");
-
-        When(r => r.Search != null, () =>
-        {
-            RuleFor(r => r.Search)
-                .MaximumLength(500)
-                .WithMessage("Search cannot exceed 500 characters.");
-        });
     }
 }

@@ -4,10 +4,12 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Languages.WebApi.Filters;
 
-public sealed class ApiExceptionFilter : IExceptionFilter
+public sealed class ApiExceptionFilter(ILogger<ApiExceptionFilter> logger) : IExceptionFilter
 {
     public void OnException(ExceptionContext context)
     {
+        logger.LogError(context.Exception, "Server couldn't process the request.");
+        
         var result = new Result
         (
             Message: "Server couldn't process the request.",

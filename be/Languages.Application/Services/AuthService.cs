@@ -24,12 +24,12 @@ public sealed class AuthService(
 
         var username = input.Username.Trim();
         if (await dbContext.Users.AnyAsync(u => u.Username == username, cancellationToken))
-            return Result.Failure<RegisterOutput>("Username is already taken.", ResultErrorKind.ConflictOccured);
+            return Result.Failure<RegisterOutput>("Username is already in use.", ResultErrorKind.ConflictOccured);
 
         var user = new User
         {
             Username = username,
-            PasswordHash = passwordHashingService.HashPassword(input.Password),
+            PasswordHash = passwordHashingService.HashPassword(input.Password.Trim()),
             Role = input.Role
         };
 
@@ -53,10 +53,11 @@ public sealed class AuthService(
         var username = input.Username.Trim();
         var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Username == username, cancellationToken);
         
-        if (user == null || !passwordHashingService.VerifyPasswordHash(user.PasswordHash, input.Password))
+        if (user == null || !passwordHashingService.VerifyPasswordHash(user.PasswordHash, input.Password.Trim()))
             return Result.Failure<AuthTokensOutput>("Username or password is incorrect.", ResultErrorKind.AuthenticationFailed);
 
         var refreshToken = tokenService.CreateRefreshToken();
+        
         var session = new UserSession
         {
             UserId = user.Id,
@@ -64,6 +65,7 @@ public sealed class AuthService(
             RefreshTokenHash = refreshToken.Hash,
             ExpiresAtUTC = refreshToken.ExpiresAtUTC
         };
+        
         dbContext.UserSessions.Add(session);
         await dbContext.SaveChangesAsync(cancellationToken);
 
@@ -92,14 +94,13 @@ public sealed class AuthService(
         }
         catch (FormatException)
         {
-            return Result.Failure<AuthTokensOutput>("Refresh token is invalid", ResultErrorKind.AuthenticationFailed);
+            return Result.Failure<AuthTokensOutput>("Refresh token is invalid.", ResultErrorKind.AuthenticationFailed);
         }
         
         var session = await dbContext.UserSessions
-            .AsNoTracking()
             .Include(s => s.User)
-            .FirstOrDefaultAsync(s => s.RefreshTokenHash == refreshTokenHash && 
-                                      s.RevokedAtUTC == null && s.ExpiresAtUTC > now, 
+            .FirstOrDefaultAsync(s => 
+                    s.RefreshTokenHash == refreshTokenHash && s.RevokedAtUTC == null && s.ExpiresAtUTC > now, 
                 cancellationToken);
 
         if (session == null)
@@ -108,7 +109,7 @@ public sealed class AuthService(
         var refreshToken = tokenService.CreateRefreshToken(session.ExpiresAtUTC);
         var accessToken = tokenService.CreateAccessToken(session.User);
         
-        session.RefreshTokenHash = refreshTokenHash;
+        session.RefreshTokenHash = refreshToken.Hash;
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
@@ -125,8 +126,6 @@ public sealed class AuthService(
         var inputValidation = await validation.ValidateAsync(input, cancellationToken);
         if (!inputValidation.IsValid)
             return inputValidation.ToFailureResult();
-
-        var now = DateTime.UtcNow;
         
         string refreshTokenHash;
         try

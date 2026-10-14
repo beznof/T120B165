@@ -11,7 +11,7 @@ public class CreateLanguageInputValidator : AbstractValidator<CreateLanguageInpu
 {
     public CreateLanguageInputValidator()
     {
-        RuleFor(l => l.Name)
+        RuleFor(l => l.Name.Trim())
             .Cascade(CascadeMode.Stop)
             .NotEmpty()
             .WithMessage("Name is required.")

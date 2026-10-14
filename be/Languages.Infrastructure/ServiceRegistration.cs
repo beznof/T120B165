@@ -1,9 +1,7 @@
-﻿using Azure.Identity;
-using Azure.Storage.Blobs;
+﻿using Azure.Storage.Blobs;
 using FluentValidation;
 using Languages.Application.Interfaces;
 using Languages.Infrastructure.Authentication;
-using Languages.Infrastructure.ImageStorage;
 using Languages.Infrastructure.Options;
 using Languages.Infrastructure.Persistence;
 using Languages.Infrastructure.Persistence.Interceptors;
@@ -12,7 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
 namespace Languages.Infrastructure;
@@ -24,7 +21,6 @@ public static class ServiceRegistration
         // Configuration
         services.AddOptions<AzureBlobStorageOptions>()
             .Bind(configuration.GetSection(AzureBlobStorageOptions.AppSettingsSectionName))
-                .Validate(o => !string.IsNullOrWhiteSpace(o.ServiceUri), "ServiceUri must be a non-empty string.")
                 .Validate(o => !string.IsNullOrWhiteSpace(o.ContainerName), "ContainerName must be a non-empty string.")
             .ValidateOnStart();
         
@@ -52,8 +48,12 @@ public static class ServiceRegistration
         // DbContext
         services.AddDbContext<LanguagesDbContext>((serviceProvider, options) =>
         {
-            var connectionString = configuration.GetConnectionString("LanguagesDatabase") ?? throw new InvalidOperationException("LanguagesDatabase connection string not set.");
-            options.UseSqlServer(connectionString);
+            var connectionString = configuration.GetConnectionString("LanguagesDatabase") 
+                                   ?? throw new InvalidOperationException("LanguagesDatabase connection string not set.");
+            options.UseSqlServer(connectionString, (builder) =>
+            {
+                builder.EnableRetryOnFailure();
+            });
             options.AddInterceptors(serviceProvider.GetRequiredService<EntityAuditInterceptor>());
         });
 
@@ -65,10 +65,8 @@ public static class ServiceRegistration
         {
             var azureBlobStorageOptions = serviceProvider.GetRequiredService<IOptions<AzureBlobStorageOptions>>().Value;
             
-            var azureBlobServiceClient = new BlobServiceClient(
-                new Uri(azureBlobStorageOptions.ServiceUri),
-                new DefaultAzureCredential()
-            );
+            var azureBlobServiceClient = new BlobServiceClient(configuration.GetConnectionString("LanguagesBlobStorage")) 
+                                         ?? throw new InvalidOperationException("LanguagesDatabase connection string not set.");
             
             return azureBlobServiceClient.GetBlobContainerClient(azureBlobStorageOptions.ContainerName);
         });

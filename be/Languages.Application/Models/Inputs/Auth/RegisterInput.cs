@@ -14,16 +14,19 @@ public sealed class RegisterInputValidator : AbstractValidator<RegisterInput>
 {
     public RegisterInputValidator()
     {
-        RuleFor(i => i.Username)
+        RuleFor(i => i.Username.Trim())
             .Cascade(CascadeMode.Stop)
             .NotEmpty()
                 .WithMessage("Username is required.")
+            .MinimumLength(5)
+                .WithMessage("Username must contain at least 5 characters.")
             .Must(username => username.Trim().Length <= 50)
                 .WithMessage("Username cannot exceed 50 characters.");
 
-        RuleFor(i => i.Password)
+        RuleFor(i => i.Password.Trim())
             .Cascade(CascadeMode.Stop)
-            .NotEmpty().WithMessage("Password is required.")
+            .NotEmpty()
+                .WithMessage("Password is required.")
             .MinimumLength(8)
                 .WithMessage("Password must contain at least 8 characters.")
             .MaximumLength(64)

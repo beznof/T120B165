@@ -76,7 +76,7 @@ public class LanguageService(
 
         var newLanguage = new Language
         {
-            Name = input.Name
+            Name = input.Name.Trim()
         };
         
         dbContext.Languages.Add(newLanguage);

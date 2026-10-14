@@ -12,6 +12,7 @@ public sealed class RefreshInputValidator : AbstractValidator<RefreshInput>
     public RefreshInputValidator()
     {
         RuleFor(i => i.RefreshToken)
-            .NotEmpty().WithMessage("Refresh token is required.");
+            .NotEmpty()
+                .WithMessage("Refresh token is required.");
     }
 }

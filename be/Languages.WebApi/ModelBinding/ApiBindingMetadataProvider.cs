@@ -21,11 +21,11 @@ internal sealed class ApiBindingMetadataProvider : IBindingMetadataProvider
         );
 
         bindingMessageProvider.SetUnknownValueIsInvalidAccessor(
-            _ => invalidValueMessage
+            (_) => invalidValueMessage
         );
 
         bindingMessageProvider.SetNonPropertyAttemptedValueIsInvalidAccessor(
-            _ => invalidValueMessage
+            (_) => invalidValueMessage
         );
 
         bindingMessageProvider.SetNonPropertyUnknownValueIsInvalidAccessor(
@@ -33,11 +33,11 @@ internal sealed class ApiBindingMetadataProvider : IBindingMetadataProvider
         );
 
         bindingMessageProvider.SetValueIsInvalidAccessor(
-            _ => invalidValueMessage
+            (_) => invalidValueMessage
         );
 
         bindingMessageProvider.SetValueMustNotBeNullAccessor(
-            _ => requiredValueMessage
+            (_) => requiredValueMessage
         );
 
         bindingMessageProvider.SetMissingRequestBodyRequiredValueAccessor(

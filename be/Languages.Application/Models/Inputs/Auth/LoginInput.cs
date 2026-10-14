@@ -15,15 +15,11 @@ public sealed class LoginInputValidator : AbstractValidator<LoginInput>
         RuleFor(i => i.Username)
             .Cascade(CascadeMode.Stop)
             .NotEmpty()
-                .WithMessage("Username is required.")
-            .Must(username => username.Trim().Length <= 50)
-                .WithMessage("Username cannot exceed 50 characters.");
+                .WithMessage("Username is required.");
 
         RuleFor(i => i.Password)
             .Cascade(CascadeMode.Stop)
             .NotEmpty()
-                .WithMessage("Password is required.")
-            .MaximumLength(64)
-                .WithMessage("Password cannot exceed 64 characters.");
+                .WithMessage("Password is required.");
     }
 }

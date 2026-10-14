@@ -1,8 +1,10 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 using Languages.Application.Interfaces;
 using Languages.Application.Models.Common;
 using Languages.Application.Persistence;
 using Languages.Application.Services;
+using Languages.Domain.Enums;
 using Languages.Infrastructure.ImageStorage;
 using Languages.Infrastructure.Options;
 using Languages.Infrastructure.Persistence;
@@ -72,6 +74,8 @@ internal static class ServiceRegistration
             options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             options.JsonSerializerOptions.AllowDuplicateProperties = false;
             options.JsonSerializerOptions.Converters.Add(new PatchFieldJsonConverterFactory());
+            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter<UserRole>());
+            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter<DictionaryEntryType>());
             options.AllowInputFormatterExceptionMessages = false;
         });
 
