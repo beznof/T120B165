@@ -20,7 +20,7 @@ public class UpdateEntryInputValidator : AbstractValidator<UpdateEntryInput>
 
         When(e => e.Text.IsProvided, () =>
         {
-            RuleFor(e => e.Text.Value)
+            RuleFor(e => e.Text.Value == null ? null : e.Text.Value.Trim())
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty()
                 .WithMessage("Text cannot be null or empty.")
@@ -30,7 +30,7 @@ public class UpdateEntryInputValidator : AbstractValidator<UpdateEntryInput>
 
         When(e => e.Translation.IsProvided, () =>
         {
-            RuleFor(e => e.Translation.Value)
+            RuleFor(e => e.Translation.Value == null ? null : e.Translation.Value.Trim())
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty()
                 .WithMessage("Translation cannot be null or empty.")
@@ -50,7 +50,7 @@ public class UpdateEntryInputValidator : AbstractValidator<UpdateEntryInput>
 
         When(e => e.PhoneticTranscription.IsProvided, () =>
         {
-            RuleFor(e => e.PhoneticTranscription.Value)
+            RuleFor(e => e.PhoneticTranscription.Value == null ? null : e.PhoneticTranscription.Value.Trim())
                 .MaximumLength(500)
                 .WithMessage("Phonetic transcription cannot exceed 500 characters.");
         });

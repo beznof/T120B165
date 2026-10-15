@@ -12,12 +12,12 @@ public sealed class LoginInputValidator : AbstractValidator<LoginInput>
 {
     public LoginInputValidator()
     {
-        RuleFor(i => i.Username)
+        RuleFor(i => i.Username.Trim())
             .Cascade(CascadeMode.Stop)
             .NotEmpty()
                 .WithMessage("Username is required.");
 
-        RuleFor(i => i.Password)
+        RuleFor(i => i.Password.Trim())
             .Cascade(CascadeMode.Stop)
             .NotEmpty()
                 .WithMessage("Password is required.");

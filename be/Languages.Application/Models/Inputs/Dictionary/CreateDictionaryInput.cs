@@ -13,7 +13,7 @@ public class CreateDictionaryInputValidator : AbstractValidator<CreateDictionary
     {
         Include(new BaseDictionaryInputValidator());
 
-        RuleFor(d => d.Name)
+        RuleFor(d => d.Name.Trim())
             .Cascade(CascadeMode.Stop)
             .NotEmpty()
             .WithMessage("Name is required.")

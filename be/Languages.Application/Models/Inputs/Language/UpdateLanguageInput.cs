@@ -16,7 +16,7 @@ public class UpdateLanguageInputValidator : AbstractValidator<UpdateLanguageInpu
 
         When(l => l.Name.IsProvided, () =>
         {
-            RuleFor(l => l.Name.Value)
+            RuleFor(l => l.Name.Value == null ? null : l.Name.Value.Trim())
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty()
                 .WithMessage("Name cannot be null or empty.")

@@ -17,14 +17,14 @@ public class CreateEntryInputValidator : AbstractValidator<CreateEntryInput>
     {
         Include(new BaseEntryInputValidator());
 
-        RuleFor(e => e.Text)
+        RuleFor(e => e.Text.Trim())
             .Cascade(CascadeMode.Stop)
             .NotEmpty()
             .WithMessage("Text is required.")
             .MaximumLength(500)
             .WithMessage("Text cannot exceed 500 characters.");
 
-        RuleFor(e => e.Translation)
+        RuleFor(e => e.Translation.Trim())
             .Cascade(CascadeMode.Stop)
             .NotEmpty()
             .WithMessage("Translation is required.")
@@ -40,7 +40,7 @@ public class CreateEntryInputValidator : AbstractValidator<CreateEntryInput>
 
         When(e => e.PhoneticTranscription != null, () =>
         {
-            RuleFor(e => e.PhoneticTranscription)
+            RuleFor(e => e.PhoneticTranscription == null ? null : e.PhoneticTranscription.Trim())
                 .MaximumLength(500)
                 .WithMessage("Phonetic transcription cannot exceed 500 characters.");
         });

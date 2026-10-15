@@ -16,7 +16,7 @@ public class UpdateDictionaryInputValidator : AbstractValidator<UpdateDictionary
 
         When(d => d.Name.IsProvided, () =>
         {
-            RuleFor(d => d.Name.Value)
+            RuleFor(d => d.Name.Value == null ? null : d.Name.Value.Trim())
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty()
                 .WithMessage("Name cannot be null or empty.")

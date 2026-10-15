@@ -106,10 +106,10 @@ public class EntryService(
 
         var newEntry = new Entry
         {
-            Text = input.Text,
-            Translation = input.Translation,
+            Text = input.Text.Trim(),
+            Translation = input.Translation.Trim(),
             Type = input.Type,
-            PhoneticTranscription = input.PhoneticTranscription,
+            PhoneticTranscription = input.PhoneticTranscription?.Trim(),
             DictionaryId = dictionary.Id,
         };
         
@@ -149,12 +149,12 @@ public class EntryService(
 
         if (input.Text.IsProvided)
         {
-            entry.Text = input.Text.Value ?? throw new InvalidDataException("Entry text was null.");
+            entry.Text = input.Text.Value?.Trim() ?? throw new InvalidDataException("Entry text was null.");
         }
         
         if (input.Translation.IsProvided)
         {
-            entry.Translation = input.Translation.Value ?? throw new InvalidDataException("Entry translation was null.");
+            entry.Translation = input.Translation.Value?.Trim() ?? throw new InvalidDataException("Entry translation was null.");
         }
         
         if (input.Type.IsProvided)
@@ -164,7 +164,7 @@ public class EntryService(
         
         if (input.PhoneticTranscription.IsProvided)
         {
-            entry.PhoneticTranscription = input.PhoneticTranscription.Value;
+            entry.PhoneticTranscription = input.PhoneticTranscription.Value?.Trim();
         }
         
         await dbContext.SaveChangesAsync(cancellationToken);

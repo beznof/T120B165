@@ -28,7 +28,7 @@ public sealed class AuthService(
 
         var user = new User
         {
-            Username = username,
+            Username = username.Trim(),
             PasswordHash = passwordHashingService.HashPassword(input.Password.Trim()),
             Role = input.Role
         };

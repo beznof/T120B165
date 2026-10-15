@@ -110,7 +110,7 @@ public class LanguageService(
 
         if (input.Name.IsProvided)
         {
-            language.Name = input.Name.Value ?? throw new InvalidDataException("Language name was null.");
+            language.Name = input.Name.Value?.Trim() ?? throw new InvalidDataException("Language name was null.");
         }
         
         await dbContext.SaveChangesAsync(cancellationToken);

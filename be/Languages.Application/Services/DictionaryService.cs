@@ -111,7 +111,7 @@ public class DictionaryService(
 
         var newDictionary = new Dictionary
         {
-            Name = input.Name,
+            Name = input.Name.Trim(),
             LanguageId = language.Id,
             OwnerId = authorInput.AuthorId
         };
@@ -163,7 +163,7 @@ public class DictionaryService(
 
         if (input.Name.IsProvided)
         {
-            dictionary.Name = input.Name.Value ?? throw new InvalidDataException("Dictionary name was null.");
+            dictionary.Name = input.Name.Value?.Trim() ?? throw new InvalidDataException("Dictionary name was null.");
         }
         
         await dbContext.SaveChangesAsync(cancellationToken);
