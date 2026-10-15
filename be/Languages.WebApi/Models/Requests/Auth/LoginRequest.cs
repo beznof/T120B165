@@ -1,4 +1,6 @@
-﻿namespace Languages.WebApi.Models.Requests.Auth;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Languages.WebApi.Models.Requests.Auth;
 
 public sealed class LoginRequest
 {
@@ -7,12 +9,14 @@ public sealed class LoginRequest
     /// Required.
     /// </summary>
     /// <example>CT-5555</example>
-    public required string Username { get; set; }
+    [Required(ErrorMessage = "Username is required.")]
+    public string Username { get; set; } = null!;
 
     /// <summary>
     /// The password of the user.
     /// Required.
     /// </summary>
     /// <example>Coruscant123</example>
-    public required string Password { get; set; }
+    [Required(ErrorMessage = "Password is required.")]
+    public string Password { get; set; } = null!;
 }

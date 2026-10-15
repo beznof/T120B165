@@ -31,19 +31,23 @@ public sealed partial class LanguagesController(ILanguageService languageService
     [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<ApiResponse<GetManyLanguagesOutput>>> GetMany([FromQuery] GetManyLanguagesRequest request, CancellationToken cancellationToken)
     {
+        var pageSize = request.PageSize!.Value;
+        var page = request.Page!.Value;
+        var search = request.Search;
+        
         var result = await languageService.GetMany(new GetManyLanguagesInput
         {
             Pagination = new GetManyInput
             {
-                PageSize = request.PageSize,
-                Page = request.Page,
-                Search = request.Search,
+                PageSize = pageSize,
+                Page = page,
+                Search = search,
             }
         }, cancellationToken);
 
         var links = new Dictionary<string, string>();
         if (result.IsSuccessful && result.Data != null)
-            AddPaginationLinks(links, result.Data.TotalCount, result.Data.Page, result.Data.PageSize, request.Search);
+            AddPaginationLinks(links, result.Data.TotalCount, result.Data.Page, result.Data.PageSize, search);
 
         return result.ToActionResult(links: links);
     }
@@ -61,9 +65,11 @@ public sealed partial class LanguagesController(ILanguageService languageService
     [ProducesResponseType<ApiResponse>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ApiResponse<GetOneLanguageOutput>>> GetOne([FromRoute] LanguageRequest languageRequest, CancellationToken cancellationToken)
     {
+        var languageId = languageRequest.LanguageId!.Value;
+
         var result = await languageService.GetOne(new GetOneLanguageInput
         {
-            LanguageId = languageRequest.LanguageId
+            LanguageId = languageId
         }, cancellationToken);
 
         var links = new Dictionary<string, string>();
@@ -90,9 +96,11 @@ public sealed partial class LanguagesController(ILanguageService languageService
     [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<ApiResponse<CreateLanguageOutput>>> Create([FromBody] CreateLanguageRequest request, CancellationToken cancellationToken)
     {
+        var name = request.Name;
+
         var result = await languageService.Create(new CreateLanguageInput
         {
-            Name = request.Name,
+            Name = name,
         }, cancellationToken);
 
         var links = new Dictionary<string, string>();
@@ -119,19 +127,22 @@ public sealed partial class LanguagesController(ILanguageService languageService
     [ProducesResponseType<ApiResponse>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ApiResponse<UpdateLanguageOutput>>> Update([FromRoute] LanguageRequest languageRequest, [FromBody] UpdateLanguageRequest request, CancellationToken cancellationToken)
     {
+        var languageId = languageRequest.LanguageId!.Value;
+        var name = request.Name;
+
         var result = await languageService.Update(new UpdateLanguageInput
         {
-            LanguageId = languageRequest.LanguageId,
-            Name = request.Name,
+            LanguageId = languageId,
+            Name = name,
         }, cancellationToken);
 
         var links = new Dictionary<string, string>();
         if (result.IsSuccessful && result.Data != null)
         {
-            AddSelfResourceLinks(links, languageRequest.LanguageId);
-            AddSetBackgroundImageLink(links, languageRequest.LanguageId);
+            AddSelfResourceLinks(links, languageId);
+            AddSetBackgroundImageLink(links, languageId);
             if (!string.IsNullOrWhiteSpace(result.Data.BackgroundImageUrl))
-                AddDeleteBackgroundImageLink(links, languageRequest.LanguageId);
+                AddDeleteBackgroundImageLink(links, languageId);
         }
 
         return result.ToActionResult(links: links);
@@ -152,23 +163,26 @@ public sealed partial class LanguagesController(ILanguageService languageService
     [ProducesResponseType<ApiResponse>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ApiResponse<SetLanguageBackgroundImageOutput>>> SetBackgroundImage([FromRoute] LanguageRequest languageRequest, [FromForm] SetLanguageBackgroundImageRequest request, CancellationToken cancellationToken)
     {
+        var languageId = languageRequest.LanguageId!.Value;
+        var backgroundImage = request.BackgroundImage!;
+
         var result = await languageService.SetBackgroundImage(new SetLanguageBackgroundImageInput
         {
-            LanguageId = languageRequest.LanguageId,
+            LanguageId = languageId,
             Image = new SetImageInput
             {
-                ContentType = request.BackgroundImage.ContentType,
-                ImageStream = request.BackgroundImage.OpenReadStream(),
-                Length = request.BackgroundImage.Length,
+                ContentType = backgroundImage.ContentType,
+                ImageStream = backgroundImage.OpenReadStream(),
+                Length = backgroundImage.Length,
             }
         }, cancellationToken);
 
         var links = new Dictionary<string, string>();
         if (result.IsSuccessful && result.Data != null)
         {
-            AddImageParentLink(links, languageRequest.LanguageId);
-            AddDeleteBackgroundImageLink(links, languageRequest.LanguageId);
-            AddSetBackgroundImageLink(links, languageRequest.LanguageId);
+            AddImageParentLink(links, languageId);
+            AddDeleteBackgroundImageLink(links, languageId);
+            AddSetBackgroundImageLink(links, languageId);
         }
 
         return result.ToActionResult(links: links);
@@ -188,16 +202,18 @@ public sealed partial class LanguagesController(ILanguageService languageService
     [ProducesResponseType<ApiResponse>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ApiResponse>> DeleteBackgroundImage([FromRoute] LanguageRequest languageRequest, CancellationToken cancellationToken)
     {
+        var languageId = languageRequest.LanguageId!.Value;
+
         var result = await languageService.DeleteBackgroundImage(new DeleteLanguageBackgroundImageInput
         {
-            LanguageId = languageRequest.LanguageId
+            LanguageId = languageId
         }, cancellationToken);
 
         var links = new Dictionary<string, string>();
         if (result.IsSuccessful)
         {
-            AddImageParentLink(links, languageRequest.LanguageId);
-            AddSetBackgroundImageLink(links, languageRequest.LanguageId);
+            AddImageParentLink(links, languageId);
+            AddSetBackgroundImageLink(links, languageId);
         }
 
         return result.ToActionResult(links: links);
@@ -217,9 +233,11 @@ public sealed partial class LanguagesController(ILanguageService languageService
     [ProducesResponseType<ApiResponse>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ApiResponse>> Delete([FromRoute] LanguageRequest languageRequest, CancellationToken cancellationToken)
     {
+        var languageId = languageRequest.LanguageId!.Value;
+
         var result = await languageService.Delete(new DeleteLanguageInput
         {
-            LanguageId = languageRequest.LanguageId
+            LanguageId = languageId
         }, cancellationToken);
 
         var links = new Dictionary<string, string>();

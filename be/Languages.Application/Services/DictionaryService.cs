@@ -26,8 +26,6 @@ public class DictionaryService(
 
         var query = dbContext.Dictionaries
             .AsNoTracking()
-            .Include(d => d.Language)
-            .Include(d => d.Owner)
             .Where(d => d.LanguageId == input.LanguageId && 
                         (input.Pagination.Search == null || d.Name.Contains(input.Pagination.Search)))
             .OrderBy(d => d.Id);
@@ -37,13 +35,11 @@ public class DictionaryService(
         var result = await query
             .Skip((input.Pagination.Page - 1) * input.Pagination.PageSize)
             .Take(input.Pagination.PageSize)
-            .ToListAsync(cancellationToken);
-
-        return Result.Success<GetManyDictionariesOutput>("Dictionaries were retrieved successfully.", new GetManyDictionariesOutput(
-            Items: result.Select(d => new GetOneDictionaryOutput(
+            .Select(d => new GetOneDictionaryOutput(
                 Id: d.Id,
                 Name: d.Name,
                 BackgroundImageUrl: d.BackgroundImageUrl,
+                EntriesCount: d.Entries.Count,
                 Language: new LanguageSummaryOutput(
                     Id: d.LanguageId,
                     Name: d.Language.Name    
@@ -54,7 +50,11 @@ public class DictionaryService(
                 ),
                 CreatedAtUTC: d.CreatedAtUTC,
                 LastUpdatedAtUTC: d.ModifiedAtUTC
-            )).ToList(),
+            ))
+            .ToListAsync(cancellationToken);
+
+        return Result.Success<GetManyDictionariesOutput>("Dictionaries were retrieved successfully.", new GetManyDictionariesOutput(
+            Items: result,
             Page: input.Pagination.Page,
             PageSize: input.Pagination.PageSize,
             TotalCount: totalCount
@@ -69,29 +69,29 @@ public class DictionaryService(
 
         var dictionary = await dbContext.Dictionaries
             .AsNoTracking()
-            .Include(d => d.Language)
-            .Include(d => d.Owner)
             .Where(d => d.LanguageId == input.LanguageId && d.Id == input.DictionaryId)
+            .Select(d => new GetOneDictionaryOutput(
+                Id: d.Id,
+                Name: d.Name,
+                BackgroundImageUrl: d.BackgroundImageUrl,
+                EntriesCount: d.Entries.Count,
+                Language: new LanguageSummaryOutput(
+                    Id: d.LanguageId,
+                    Name: d.Language.Name 
+                ),
+                Owner: new OwnerSummaryOutput(
+                    Id: d.Owner.Id,
+                    Username: d.Owner.Username
+                ),
+                CreatedAtUTC: d.CreatedAtUTC,
+                LastUpdatedAtUTC: d.ModifiedAtUTC
+            ))
             .FirstOrDefaultAsync(cancellationToken);
         
         if (dictionary == null)
             return Result.Failure<GetOneDictionaryOutput>("Dictionary not found.", ResultErrorKind.ResourceNotFound);
 
-        return Result.Success<GetOneDictionaryOutput>("Dictionary was retrieved successfully.", new GetOneDictionaryOutput(
-            Id: dictionary.Id,
-            Name: dictionary.Name,
-            BackgroundImageUrl: dictionary.BackgroundImageUrl,
-            Language: new LanguageSummaryOutput(
-                Id: dictionary.LanguageId,
-                Name: dictionary.Language.Name 
-            ),
-            Owner: new OwnerSummaryOutput(
-                Id: dictionary.Owner.Id,
-                Username: dictionary.Owner.Username
-            ),
-            CreatedAtUTC: dictionary.CreatedAtUTC,
-            LastUpdatedAtUTC: dictionary.ModifiedAtUTC
-        ));
+        return Result.Success<GetOneDictionaryOutput>("Dictionary was retrieved successfully.", dictionary);
     }
 
     public async Task<Result<CreateDictionaryOutput>> Create(CreateDictionaryInput input, AuthorInput authorInput, CancellationToken cancellationToken)

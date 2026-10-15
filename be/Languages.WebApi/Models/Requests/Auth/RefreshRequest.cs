@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Languages.WebApi.Models.Requests.Auth;
 
 public sealed class RefreshRequest
@@ -7,5 +9,6 @@ public sealed class RefreshRequest
     /// Required.
     /// </summary>
     /// <example>refresh token</example>
-    public required string RefreshToken { get; set; }
+    [Required(ErrorMessage = "Refresh token is required.")]
+    public string RefreshToken { get; set; } = null!;
 }

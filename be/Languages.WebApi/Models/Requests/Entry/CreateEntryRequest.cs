@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Languages.Domain.Enums;
 
 namespace Languages.WebApi.Models.Requests.Entry;
@@ -10,7 +11,8 @@ public sealed class CreateEntryRequest
     /// Cannot exceed 500 characters.
     /// </summary>
     /// <example>Clanker</example>
-    public required string Text { get; set; }
+    [Required(ErrorMessage = "Text is required.")]
+    public string Text { get; set; } = null!;
 
     /// <summary>
     /// The translation of the word or phrase.
@@ -18,7 +20,8 @@ public sealed class CreateEntryRequest
     /// Cannot exceed 500 characters.
     /// </summary>
     /// <example>Battle droid</example>
-    public required string Translation { get; set; }
+    [Required(ErrorMessage = "Translation is required.")]
+    public string Translation { get; set; } = null!;
 
     /// <summary>
     /// The type of entry.
@@ -26,7 +29,8 @@ public sealed class CreateEntryRequest
     /// Must use 0 for Word type and 1 for Phrase type.
     /// </summary>
     /// <example>0</example>
-    public required DictionaryEntryType Type { get; set; }
+    [Required(ErrorMessage = "Type is required.")]
+    public DictionaryEntryType? Type { get; set; }
 
     /// <summary>
     /// The phonetic transcription.

@@ -40,6 +40,7 @@ public sealed record CreateDictionaryOutput(
 /// <param name="BackgroundImageUrl">
 /// The URL of the dictionary's background image.
 /// </param>
+/// <param name="EntriesCount">The number of entries that belong to the given dictionary</param>
 /// <param name="Language">The identifier and name of the language the dictionary belongs to.</param>
 /// <param name="Owner">The identifier and username of the user who owns the dictionary.</param>
 /// <param name="CreatedAtUTC">The date and time when the dictionary was created, in UTC.</param>
@@ -49,6 +50,7 @@ public sealed record CreateDictionaryOutput(
 ///   "id": 1,
 ///   "name": "Common words",
 ///   "backgroundImageUrl": null,
+///   "entriesCount": 0,
 ///   "language": {
 ///     "id": 1,
 ///     "name": "Ewokese"
@@ -65,6 +67,7 @@ public sealed record GetOneDictionaryOutput(
     int Id,
     string Name,
     string? BackgroundImageUrl,
+    int EntriesCount,
     LanguageSummaryOutput Language,
     OwnerSummaryOutput Owner,
     DateTime CreatedAtUTC,

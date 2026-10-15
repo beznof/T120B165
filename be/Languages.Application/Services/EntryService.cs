@@ -25,7 +25,6 @@ public class EntryService(
 
         var query = dbContext.Entries
             .AsNoTracking()
-            .Include(e => e.Dictionary)
             .Where(e => e.DictionaryId == input.DictionaryId && e.Dictionary.LanguageId == input.LanguageId &&
                         (input.Type == null || input.Type == e.Type) && 
                         (input.Pagination.Search == null || e.Text.Contains(input.Pagination.Search)))
@@ -36,10 +35,7 @@ public class EntryService(
         var result = await query
             .Skip((input.Pagination.Page - 1) * input.Pagination.PageSize)
             .Take(input.Pagination.PageSize)
-            .ToListAsync(cancellationToken);
-
-        return Result.Success<GetManyEntriesOutput>("Entries were retrieved successfully.", new GetManyEntriesOutput(
-            Items: result.Select(e => new GetOneEntryOutput(
+            .Select(e => new GetOneEntryOutput(
                 Id: e.Id,
                 Text: e.Text,
                 Translation: e.Translation,
@@ -51,7 +47,11 @@ public class EntryService(
                 ),
                 CreatedAtUTC: e.CreatedAtUTC,
                 LastUpdatedAtUTC: e.ModifiedAtUTC
-            )).ToList(),
+            ))
+            .ToListAsync(cancellationToken);
+
+        return Result.Success<GetManyEntriesOutput>("Entries were retrieved successfully.", new GetManyEntriesOutput(
+            Items: result,
             Page: input.Pagination.Page,
             PageSize: input.Pagination.PageSize,
             TotalCount: totalCount
@@ -66,25 +66,26 @@ public class EntryService(
 
         var entry = await dbContext.Entries
             .AsNoTracking()
-            .Include(e => e.Dictionary)
-            .FirstOrDefaultAsync(e => e.DictionaryId == input.DictionaryId && e.Dictionary.LanguageId == input.LanguageId && e.Id == input.EntryId, cancellationToken);
+            .Where(e => e.DictionaryId == input.DictionaryId && e.Dictionary.LanguageId == input.LanguageId && e.Id == input.EntryId)
+            .Select(e => new GetOneEntryOutput(
+                Id: e.Id,
+                Text: e.Text,
+                Translation: e.Translation,
+                Type: e.Type,
+                PhoneticTranscription: e.PhoneticTranscription,
+                Dictionary: new DictionarySummaryOutput(
+                    Id: e.DictionaryId,
+                    Name: e.Dictionary.Name    
+                ),
+                CreatedAtUTC: e.CreatedAtUTC,
+                LastUpdatedAtUTC: e.ModifiedAtUTC
+            ))
+            .FirstOrDefaultAsync(cancellationToken);
         
         if (entry == null)
             return Result.Failure<GetOneEntryOutput>("Entry not found.", ResultErrorKind.ResourceNotFound);
 
-        return Result.Success<GetOneEntryOutput>("Entry was retrieved successfully.", new GetOneEntryOutput(
-            Id: entry.Id,
-            Text: entry.Text,
-            Translation: entry.Translation,
-            Type: entry.Type,
-            PhoneticTranscription: entry.PhoneticTranscription,
-            Dictionary: new DictionarySummaryOutput(
-                Id: entry.DictionaryId,
-                Name: entry.Dictionary.Name    
-            ),
-            CreatedAtUTC: entry.CreatedAtUTC,
-            LastUpdatedAtUTC: entry.ModifiedAtUTC
-        ));
+        return Result.Success<GetOneEntryOutput>("Entry was retrieved successfully.", entry);
     }
 
     public async Task<Result<CreateEntryOutput>> Create(CreateEntryInput input, AuthorInput authorInput, CancellationToken cancellationToken)

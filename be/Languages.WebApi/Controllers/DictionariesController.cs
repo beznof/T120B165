@@ -39,22 +39,27 @@ public sealed partial class DictionariesController(IDictionaryService dictionary
     [ProducesResponseType<ApiResponse>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ApiResponse<GetManyDictionariesOutput>>> GetMany([FromRoute] BaseDictionaryRequest dictionaryRequest, [FromQuery] GetManyDictionariesRequest request, CancellationToken cancellationToken)
     {
+        var languageId = dictionaryRequest.LanguageId!.Value;
+        var pageSize = request.PageSize!.Value;
+        var page = request.Page!.Value;
+        var search = request.Search;
+
         var result = await dictionaryService.GetMany(new GetManyDictionariesInput
         {
-            LanguageId = dictionaryRequest.LanguageId,
+            LanguageId = languageId,
             Pagination = new GetManyInput
             {
-                PageSize = request.PageSize,
-                Page = request.Page,
-                Search = request.Search,
+                PageSize = pageSize,
+                Page = page,
+                Search = search,
             }
         }, cancellationToken);
 
         var links = new Dictionary<string, string>();
         if (result.IsSuccessful && result.Data != null)
         {
-            AddParentLanguageLink(links, dictionaryRequest.LanguageId);
-            AddPaginationLinks(links, dictionaryRequest.LanguageId, result.Data.TotalCount, request.Page, request.PageSize, request.Search);
+            AddParentLanguageLink(links, languageId);
+            AddPaginationLinks(links, languageId, result.Data.TotalCount, page, pageSize, search);
         }
 
         return result.ToActionResult(links: links);
@@ -73,20 +78,23 @@ public sealed partial class DictionariesController(IDictionaryService dictionary
     [ProducesResponseType<ApiResponse>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ApiResponse<GetOneDictionaryOutput>>> GetOne([FromRoute] DictionaryRequest dictionaryRequest, CancellationToken cancellationToken)
     {
+        var languageId = dictionaryRequest.LanguageId!.Value;
+        var dictionaryId = dictionaryRequest.DictionaryId!.Value;
+
         var result = await dictionaryService.GetOne(new GetOneDictionaryInput
         {
-            LanguageId = dictionaryRequest.LanguageId,
-            DictionaryId = dictionaryRequest.DictionaryId
+            LanguageId = languageId,
+            DictionaryId = dictionaryId
         }, cancellationToken);
         
         var links = new Dictionary<string, string>();
         if (result.IsSuccessful && result.Data != null)
         {
-            AddParentLanguageLink(links, dictionaryRequest.LanguageId);
-            AddSelfResourceLinks(links, dictionaryRequest.LanguageId, dictionaryRequest.DictionaryId);
-            AddSetBackgroundImageLink(links, dictionaryRequest.LanguageId, dictionaryRequest.DictionaryId);
+            AddParentLanguageLink(links, languageId);
+            AddSelfResourceLinks(links, languageId, dictionaryId);
+            AddSetBackgroundImageLink(links, languageId, dictionaryId);
             if (!string.IsNullOrWhiteSpace(result.Data.BackgroundImageUrl))
-                AddDeleteBackgroundImageLink(links, dictionaryRequest.LanguageId, dictionaryRequest.DictionaryId);
+                AddDeleteBackgroundImageLink(links, languageId, dictionaryId);
         }
 
         return result.ToActionResult(links: links);
@@ -106,10 +114,13 @@ public sealed partial class DictionariesController(IDictionaryService dictionary
     [ProducesResponseType<ApiResponse>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ApiResponse<CreateDictionaryOutput>>> Create([FromRoute] BaseDictionaryRequest dictionaryRequest, [FromBody] CreateDictionaryRequest request, CancellationToken cancellationToken)
     {
+        var languageId = dictionaryRequest.LanguageId!.Value;
+        var name = request.Name;
+
         var result = await dictionaryService.Create(new CreateDictionaryInput
             {
-                LanguageId = dictionaryRequest.LanguageId,
-                Name = request.Name,
+                LanguageId = languageId,
+                Name = name,
             }, 
             new AuthorInput
             {
@@ -121,9 +132,9 @@ public sealed partial class DictionariesController(IDictionaryService dictionary
         var links = new Dictionary<string, string>();
         if (result.IsSuccessful && result.Data != null)
         {
-            AddParentLanguageLink(links, dictionaryRequest.LanguageId);
-            AddSelfResourceLinks(links, dictionaryRequest.LanguageId, result.Data.Id);
-            AddSetBackgroundImageLink(links, dictionaryRequest.LanguageId, result.Data.Id);
+            AddParentLanguageLink(links, languageId);
+            AddSelfResourceLinks(links, languageId, result.Data.Id);
+            AddSetBackgroundImageLink(links, languageId, result.Data.Id);
         }
 
         return result.ToActionResult(statusCode: result.IsSuccessful ? HttpStatusCode.Created : null, links: links);
@@ -143,11 +154,15 @@ public sealed partial class DictionariesController(IDictionaryService dictionary
     [ProducesResponseType<ApiResponse>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ApiResponse<UpdateDictionaryOutput>>> Update([FromRoute] DictionaryRequest dictionaryRequest, [FromBody] UpdateDictionaryRequest request, CancellationToken cancellationToken)
     {
+        var languageId = dictionaryRequest.LanguageId!.Value;
+        var dictionaryId = dictionaryRequest.DictionaryId!.Value;
+        var name = request.Name;
+
         var result = await dictionaryService.Update(new UpdateDictionaryInput
             {
-                LanguageId = dictionaryRequest.LanguageId,
-                DictionaryId = dictionaryRequest.DictionaryId,
-                Name = request.Name,
+                LanguageId = languageId,
+                DictionaryId = dictionaryId,
+                Name = name,
             }, 
             new AuthorInput
             {
@@ -159,11 +174,11 @@ public sealed partial class DictionariesController(IDictionaryService dictionary
         var links = new Dictionary<string, string>();
         if (result.IsSuccessful && result.Data != null)
         {
-            AddParentLanguageLink(links, dictionaryRequest.LanguageId);
-            AddSelfResourceLinks(links, dictionaryRequest.LanguageId, dictionaryRequest.DictionaryId);
-            AddSetBackgroundImageLink(links, dictionaryRequest.LanguageId, dictionaryRequest.DictionaryId);
+            AddParentLanguageLink(links, languageId);
+            AddSelfResourceLinks(links, languageId, dictionaryId);
+            AddSetBackgroundImageLink(links, languageId, dictionaryId);
             if (!string.IsNullOrWhiteSpace(result.Data.BackgroundImageUrl))
-                AddDeleteBackgroundImageLink(links, dictionaryRequest.LanguageId, dictionaryRequest.DictionaryId);
+                AddDeleteBackgroundImageLink(links, languageId, dictionaryId);
         }
 
         return result.ToActionResult(links: links);
@@ -184,15 +199,19 @@ public sealed partial class DictionariesController(IDictionaryService dictionary
     [ProducesResponseType<ApiResponse>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ApiResponse<SetDictionaryBackgroundImageOutput>>> SetBackgroundImage([FromRoute] DictionaryRequest dictionaryRequest, [FromForm] SetDictionaryBackgroundImageRequest request, CancellationToken cancellationToken)
     {
+        var languageId = dictionaryRequest.LanguageId!.Value;
+        var dictionaryId = dictionaryRequest.DictionaryId!.Value;
+        var backgroundImage = request.BackgroundImage!;
+
         var result = await dictionaryService.SetBackgroundImage(new SetDictionaryBackgroundImageInput
             {
-                LanguageId = dictionaryRequest.LanguageId,
-                DictionaryId = dictionaryRequest.DictionaryId,
+                LanguageId = languageId,
+                DictionaryId = dictionaryId,
                 Image = new SetImageInput
                 {
-                    ContentType = request.BackgroundImage.ContentType,
-                    ImageStream = request.BackgroundImage.OpenReadStream(),
-                    Length = request.BackgroundImage.Length,
+                    ContentType = backgroundImage.ContentType,
+                    ImageStream = backgroundImage.OpenReadStream(),
+                    Length = backgroundImage.Length,
                 }
             }, 
             new AuthorInput
@@ -205,9 +224,9 @@ public sealed partial class DictionariesController(IDictionaryService dictionary
         var links = new Dictionary<string, string>();
         if (result.IsSuccessful && result.Data != null)
         {
-            AddImageParentLink(links, dictionaryRequest.LanguageId, dictionaryRequest.DictionaryId);
-            AddDeleteBackgroundImageLink(links, dictionaryRequest.LanguageId, dictionaryRequest.DictionaryId);
-            AddSetBackgroundImageLink(links, dictionaryRequest.LanguageId, dictionaryRequest.DictionaryId);
+            AddImageParentLink(links, languageId, dictionaryId);
+            AddDeleteBackgroundImageLink(links, languageId, dictionaryId);
+            AddSetBackgroundImageLink(links, languageId, dictionaryId);
         }
 
         return result.ToActionResult(links: links);
@@ -227,10 +246,13 @@ public sealed partial class DictionariesController(IDictionaryService dictionary
     [ProducesResponseType<ApiResponse>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ApiResponse>> DeleteBackgroundImage([FromRoute] DictionaryRequest dictionaryRequest, CancellationToken cancellationToken)
     {
+        var languageId = dictionaryRequest.LanguageId!.Value;
+        var dictionaryId = dictionaryRequest.DictionaryId!.Value;
+
         var result = await dictionaryService.DeleteBackgroundImage(new DeleteDictionaryBackgroundImageInput
             {
-                LanguageId = dictionaryRequest.LanguageId,
-                DictionaryId = dictionaryRequest.DictionaryId
+                LanguageId = languageId,
+                DictionaryId = dictionaryId
             }, 
             new AuthorInput
             {
@@ -242,8 +264,8 @@ public sealed partial class DictionariesController(IDictionaryService dictionary
         var links = new Dictionary<string, string>();
         if (result.IsSuccessful)
         {
-            AddImageParentLink(links, dictionaryRequest.LanguageId, dictionaryRequest.DictionaryId);
-            AddSetBackgroundImageLink(links, dictionaryRequest.LanguageId, dictionaryRequest.DictionaryId);
+            AddImageParentLink(links, languageId, dictionaryId);
+            AddSetBackgroundImageLink(links, languageId, dictionaryId);
         }
 
         return result.ToActionResult(links: links);
@@ -263,10 +285,13 @@ public sealed partial class DictionariesController(IDictionaryService dictionary
     [ProducesResponseType<ApiResponse>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ApiResponse>> Delete([FromRoute] DictionaryRequest dictionaryRequest, CancellationToken cancellationToken)
     {
+        var languageId = dictionaryRequest.LanguageId!.Value;
+        var dictionaryId = dictionaryRequest.DictionaryId!.Value;
+
         var result = await dictionaryService.Delete(new DeleteDictionaryInput
             {
-                LanguageId = dictionaryRequest.LanguageId,
-                DictionaryId = dictionaryRequest.DictionaryId
+                LanguageId = languageId,
+                DictionaryId = dictionaryId
             }, 
             new AuthorInput
             {
@@ -278,9 +303,9 @@ public sealed partial class DictionariesController(IDictionaryService dictionary
         var links = new Dictionary<string, string>();
         if (result.IsSuccessful)
         {
-            AddParentLanguageLink(links, dictionaryRequest.LanguageId);
-            AddParentLanguageCollectionLink(links, dictionaryRequest.LanguageId);
-            AddCreateLink(links, dictionaryRequest.LanguageId);
+            AddParentLanguageLink(links, languageId);
+            AddParentLanguageCollectionLink(links, languageId);
+            AddCreateLink(links, languageId);
         }
 
         return result.ToActionResult(links: links);

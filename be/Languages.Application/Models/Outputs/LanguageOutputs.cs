@@ -28,6 +28,7 @@ public sealed record CreateLanguageOutput(
 /// <param name="BackgroundImageUrl">
 /// The URL of the language's background image.
 /// </param>
+/// <param name="DictionariesCount">The number of dictionaries that belong to the given language</param>
 /// <param name="CreatedAtUTC">The date and time when the language was created, in UTC.</param>
 /// <param name="LastUpdatedAtUTC">The date and time when the language was last updated, in UTC.</param>
 /// <example>
@@ -43,6 +44,7 @@ public sealed record GetOneLanguageOutput(
     int Id,
     string Name,
     string? BackgroundImageUrl,
+    int DictionariesCount,
     DateTime CreatedAtUTC,
     DateTime LastUpdatedAtUTC
 );

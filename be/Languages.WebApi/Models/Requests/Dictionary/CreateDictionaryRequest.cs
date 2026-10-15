@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Languages.WebApi.Models.Requests.Dictionary;
 
 public sealed class CreateDictionaryRequest
@@ -8,5 +10,6 @@ public sealed class CreateDictionaryRequest
     /// Must be between 5 and 20 characters long.
     /// </summary>
     /// <example>Common words</example>
-    public required string Name { get; set; }
+    [Required(ErrorMessage = "Name is required.")]
+    public string Name { get; set; } = null!;
 }

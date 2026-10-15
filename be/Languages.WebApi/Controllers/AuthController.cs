@@ -30,11 +30,15 @@ public sealed class AuthController(IAuthService authService) : ControllerBase
     [ProducesResponseType<ApiResponse>(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<ApiResponse<RegisterOutput>>> Register([FromBody] RegisterRequest request, CancellationToken cancellationToken)
     {
+        var username = request.Username;
+        var password = request.Password;
+        var role = request.Role!.Value;
+
         var result = await authService.Register(new RegisterInput
         {
-            Username = request.Username,
-            Password = request.Password,
-            Role = request.Role
+            Username = username,
+            Password = password,
+            Role = role
         }, cancellationToken);
 
         return result.ToActionResult(statusCode: result.IsSuccessful ? HttpStatusCode.Created : null);
@@ -51,10 +55,13 @@ public sealed class AuthController(IAuthService authService) : ControllerBase
     [ProducesResponseType<ApiResponse>(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<ApiResponse<AuthTokensOutput>>> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
     {
+        var username = request.Username;
+        var password = request.Password;
+
         var result = await authService.Login(new LoginInput
         {
-            Username = request.Username,
-            Password = request.Password
+            Username = username,
+            Password = password
         }, cancellationToken);
 
         return result.ToActionResult();
@@ -71,9 +78,11 @@ public sealed class AuthController(IAuthService authService) : ControllerBase
     [ProducesResponseType<ApiResponse>(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<ApiResponse<AuthTokensOutput>>> Refresh([FromBody] RefreshRequest request, CancellationToken cancellationToken)
     {
+        var refreshToken = request.RefreshToken;
+
         var result = await authService.RefreshAccessToken(new RefreshInput
         {
-            RefreshToken = request.RefreshToken
+            RefreshToken = refreshToken
         }, cancellationToken);
 
         return result.ToActionResult();
@@ -90,9 +99,11 @@ public sealed class AuthController(IAuthService authService) : ControllerBase
     [ProducesResponseType<ApiResponse>(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<ApiResponse>> Logout([FromBody] LogoutRequest request, CancellationToken cancellationToken)
     {
+        var refreshToken = request.RefreshToken;
+
         var result = await authService.Logout(new LogoutInput
         {
-            RefreshToken = request.RefreshToken
+            RefreshToken = refreshToken
         }, cancellationToken);
 
         return result.ToActionResult();

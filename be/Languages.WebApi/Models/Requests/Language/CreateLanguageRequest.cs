@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Languages.WebApi.Models.Requests.Language;
 
 public sealed class CreateLanguageRequest
@@ -8,5 +10,6 @@ public sealed class CreateLanguageRequest
     /// Cannot exceed 100 characters.
     /// </summary>
     /// <example>Ewokese</example>
-    public required string Name { get; set; }
+    [Required(ErrorMessage = "Name is required.")]
+    public string Name { get; set; } = null!;
 }

@@ -30,16 +30,18 @@ public class LanguageService(
         var result = await query
             .Skip((input.Pagination.Page - 1) * input.Pagination.PageSize)
             .Take(input.Pagination.PageSize)
-            .ToListAsync(cancellationToken);
-
-        return Result.Success<GetManyLanguagesOutput>("Languages were retrieved successfully.", new GetManyLanguagesOutput(
-            Items: result.Select(l => new GetOneLanguageOutput(
+            .Select(l => new GetOneLanguageOutput(
                 Id: l.Id,
                 Name: l.Name,
                 BackgroundImageUrl: l.BackgroundImageUrl,
+                DictionariesCount: l.Dictionaries.Count,
                 CreatedAtUTC: l.CreatedAtUTC,
                 LastUpdatedAtUTC: l.ModifiedAtUTC
-            )).ToList(),
+            ))
+            .ToListAsync(cancellationToken);
+
+        return Result.Success<GetManyLanguagesOutput>("Languages were retrieved successfully.", new GetManyLanguagesOutput(
+            Items: result,
             Page: input.Pagination.Page,
             PageSize: input.Pagination.PageSize,
             TotalCount: totalCount
@@ -54,18 +56,21 @@ public class LanguageService(
 
         var language = await dbContext.Languages
             .AsNoTracking()
-            .FirstOrDefaultAsync(l => l.Id == input.LanguageId, cancellationToken);
+            .Where(l => l.Id == input.LanguageId)
+            .Select(l => new GetOneLanguageOutput(
+                Id: l.Id,
+                Name: l.Name,
+                BackgroundImageUrl: l.BackgroundImageUrl,
+                DictionariesCount: l.Dictionaries.Count,
+                CreatedAtUTC: l.CreatedAtUTC,
+                LastUpdatedAtUTC: l.ModifiedAtUTC
+            ))
+            .FirstOrDefaultAsync(cancellationToken);
 
         if (language == null)
             return Result.Failure<GetOneLanguageOutput>("Language not found.", ResultErrorKind.ResourceNotFound);
 
-        return Result.Success<GetOneLanguageOutput>("Language was retrieved successfully.", new GetOneLanguageOutput(
-            Id: language.Id,
-            Name: language.Name,
-            BackgroundImageUrl: language.BackgroundImageUrl,
-            CreatedAtUTC: language.CreatedAtUTC,
-            LastUpdatedAtUTC: language.ModifiedAtUTC
-        ));
+        return Result.Success<GetOneLanguageOutput>("Language was retrieved successfully.", language);
     }
 
     public async Task<Result<CreateLanguageOutput>> Create(CreateLanguageInput input, CancellationToken cancellationToken)

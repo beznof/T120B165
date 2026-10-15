@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using FluentValidation;
 
 namespace Languages.WebApi.Models.Requests.Dictionary;
@@ -12,7 +13,8 @@ public sealed class SetDictionaryBackgroundImageRequest
     /// Must be at least 500px wide and 500px tall.
     /// Must be in JPEG or PNG format.
     /// </summary>
-    public IFormFile BackgroundImage { get; set; }
+    [Required(ErrorMessage = "Background image is required.")]
+    public IFormFile? BackgroundImage { get; set; }
 }
 
 public class SetDictionaryBackgroundImageRequestValidator : AbstractValidator<SetDictionaryBackgroundImageRequest>

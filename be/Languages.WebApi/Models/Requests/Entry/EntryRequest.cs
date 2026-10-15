@@ -1,4 +1,6 @@
-﻿namespace Languages.WebApi.Models.Requests.Entry;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Languages.WebApi.Models.Requests.Entry;
 
 public sealed class EntryRequest : BaseEntryRequest
 {
@@ -7,5 +9,6 @@ public sealed class EntryRequest : BaseEntryRequest
     /// Must be a positive integer.
     /// </summary>
     /// <example>1</example>
-    public required int EntryId { get; set; }
+    [Required(ErrorMessage = "Entry ID is required.")]
+    public int? EntryId { get; set; }
 }

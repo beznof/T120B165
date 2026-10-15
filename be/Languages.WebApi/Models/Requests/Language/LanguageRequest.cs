@@ -1,4 +1,6 @@
-﻿namespace Languages.WebApi.Models.Requests.Language;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Languages.WebApi.Models.Requests.Language;
 
 public class LanguageRequest
 {
@@ -7,5 +9,6 @@ public class LanguageRequest
     /// Must be a positive integer.
     /// </summary>
     /// <example>1</example>
-    public required int LanguageId { get; set; }
+    [Required(ErrorMessage = "Language ID is required.")]
+    public int? LanguageId { get; set; }
 }

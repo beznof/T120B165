@@ -1,4 +1,5 @@
-﻿using Languages.Domain.Enums;
+﻿using System.ComponentModel.DataAnnotations;
+using Languages.Domain.Enums;
 
 namespace Languages.WebApi.Models.Requests.Auth;
 
@@ -11,7 +12,8 @@ public sealed class RegisterRequest
     /// Must contain between 8 and 64 characters.
     /// </summary>
     /// <example>CT-5555</example>
-    public required string Username { get; set; }
+    [Required(ErrorMessage = "Username is required.")]
+    public string Username { get; set; } = null!;
 
     /// <summary>
     /// The password of the user.
@@ -20,7 +22,8 @@ public sealed class RegisterRequest
     /// Must contain between 8 and 64 characters.
     /// </summary>
     /// <example>Coruscant123</example>
-    public required string Password { get; set; }
+    [Required(ErrorMessage = "Password is required.")]
+    public string Password { get; set; } = null!;
 
     /// <summary>
     /// The role of the user.
@@ -28,5 +31,6 @@ public sealed class RegisterRequest
     /// Required.
     /// </summary>
     /// <example>Learner</example>
-    public required UserRole Role { get; set; }
+    [Required(ErrorMessage = "Role is required.")]
+    public UserRole? Role { get; set; }
 }

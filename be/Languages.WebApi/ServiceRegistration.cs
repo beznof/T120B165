@@ -11,6 +11,7 @@ using Languages.Infrastructure.Persistence;
 using Languages.WebApi.Extensions;
 using Languages.WebApi.Filters;
 using Languages.WebApi.ModelBinding;
+using Languages.WebApi.Models.Common;
 using Languages.WebApi.OpenApi;
 using Languages.WebApi.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -119,6 +120,25 @@ internal static class ServiceRegistration
                     // Claim mapping
                     NameClaimType = "name",
                     RoleClaimType = "role"
+                };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnChallenge = (context) =>
+                    {
+                        context.HandleResponse();
+
+                        context.Response.Headers.WWWAuthenticate = context.Options.Challenge;
+                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+
+                        return context.Response.WriteAsJsonAsync(new ApiResponse("User is unauthenticated."));
+                    },
+                    OnForbidden = (context) =>
+                    {
+                        context.Response.StatusCode = StatusCodes.Status403Forbidden;
+
+                        return context.Response.WriteAsJsonAsync(new ApiResponse("Action not allowed for this user."));
+                    }
                 };
             });
         

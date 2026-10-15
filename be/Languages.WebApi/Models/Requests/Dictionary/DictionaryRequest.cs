@@ -1,4 +1,6 @@
-﻿namespace Languages.WebApi.Models.Requests.Dictionary;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Languages.WebApi.Models.Requests.Dictionary;
 
 public class DictionaryRequest : BaseDictionaryRequest
 {
@@ -7,5 +9,6 @@ public class DictionaryRequest : BaseDictionaryRequest
     /// Must be a positive integer.
     /// </summary>
     /// <example>1</example>
-    public required int DictionaryId { get; set; }
+    [Required(ErrorMessage = "Dictionary ID is required.")]
+    public int? DictionaryId { get; set; }
 }
