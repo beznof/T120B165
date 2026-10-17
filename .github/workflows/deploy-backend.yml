@@ -1,0 +1,64 @@
+name: Deploy backend
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'be/**'
+      - '.github/workflows/deploy-backend.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: deploy-backend
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      ACR_NAME: ${{ secrets.ACR_NAME }}
+      CONTAINER_APP_NAME: ${{ secrets.CONTAINER_APP_NAME }}
+      AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Sign in to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Build and push image
+        shell: bash
+        run: |
+          set -euo pipefail
+          : "${ACR_NAME:?ACR_NAME must be set.}"
+          : "${CONTAINER_APP_NAME:?CONTAINER_APP_NAME must be set.}"
+          : "${AZURE_RESOURCE_GROUP:?AZURE_RESOURCE_GROUP must be set.}"
+          az acr login --name "$ACR_NAME" --output none
+          registry=$(az acr show --name "$ACR_NAME" --query loginServer --output tsv)
+          image="$registry/languages-api:$GITHUB_SHA"
+          docker build --file be/Languages.WebApi/Dockerfile --tag "$image" be
+          docker push "$image"
+          echo "BACKEND_IMAGE=$image" >> "$GITHUB_ENV"
+
+      - name: Deploy image to Azure Container Apps
+        shell: bash
+        run: |
+          set -euo pipefail
+          : "${ACR_NAME:?ACR_NAME must be set.}"
+          : "${CONTAINER_APP_NAME:?CONTAINER_APP_NAME must be set.}"
+          : "${AZURE_RESOURCE_GROUP:?AZURE_RESOURCE_GROUP must be set.}"
+          az containerapp update \
+            --name "$CONTAINER_APP_NAME" \
+            --resource-group "$AZURE_RESOURCE_GROUP" \
+            --image "$BACKEND_IMAGE" \
+            --output none

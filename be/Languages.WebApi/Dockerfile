@@ -1,23 +1,38 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
-USER $APP_UID
-WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
+ARG APP_DIR="/app"
 
+
+# Build
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
-ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
-COPY ["Backend/Backend.csproj", "Backend/"]
-RUN dotnet restore "Backend/Backend.csproj"
+
+ARG APP_DIR
+ARG BUILD_CONFIGURATION="Release"
+
+WORKDIR "${APP_DIR}"
+
+COPY ["Languages.Domain/Languages.Domain.csproj", "Languages.Domain/"]
+COPY ["Languages.Application/Languages.Application.csproj", "Languages.Application/"]
+COPY ["Languages.Infrastructure/Languages.Infrastructure.csproj", "Languages.Infrastructure/"]
+COPY ["Languages.WebApi/Languages.WebApi.csproj", "Languages.WebApi/"]
+RUN dotnet restore "Languages.WebApi/Languages.WebApi.csproj"
+
 COPY . .
-WORKDIR "/src/Backend"
-RUN dotnet build "./Backend.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet publish "Languages.WebApi/Languages.WebApi.csproj" -c "${BUILD_CONFIGURATION}" -o "${APP_DIR}/publish" --no-restore /p:UseAppHost=false
 
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Backend.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Backend.dll"]
+# Run
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS run
+
+ARG APP_DIR
+ARG PORT="8080"
+
+WORKDIR "${APP_DIR}"
+
+ENV ASPNETCORE_HTTP_PORTS="${PORT}"
+
+EXPOSE ${PORT}
+
+USER "${APP_UID}"
+
+COPY --from=build "${APP_DIR}/publish" .
+
+ENTRYPOINT ["dotnet", "Languages.WebApi.dll"]
