@@ -1,5 +1,5 @@
 using FluentValidation;
-using SixLabors.ImageSharp;
+using SkiaSharp;
 
 namespace Languages.Application.Models.Inputs.Common;
 
@@ -27,8 +27,7 @@ public class SetImageInputValidator : AbstractValidator<SetImageInput>
                 .WithMessage("Background image could not be read.")
             .Must(stream => stream.CanSeek)
                 .WithMessage("Background image could not be read.")
-            .MustAsync(async (stream, cancellationToken) => 
-                await ValidateDimensions(stream, cancellationToken))
+            .Must(ValidateDimensions)
             .WithMessage("Background image must be at least 500px in width and 500px in height.");
 
         RuleFor(i => i.Length)
@@ -43,7 +42,7 @@ public class SetImageInputValidator : AbstractValidator<SetImageInput>
                 .WithMessage("Only JPEG and PNG images are supported.");
     }
 
-    private static async Task<bool> ValidateDimensions(Stream stream, CancellationToken cancellationToken)
+    private static bool ValidateDimensions(Stream stream)
     {
         var startingPosition = stream.Position;
 
@@ -51,13 +50,10 @@ public class SetImageInputValidator : AbstractValidator<SetImageInput>
         {
             stream.Position = 0;
 
-            var imageInfo = await Image.IdentifyAsync(stream, cancellationToken);
+            using var managedStream = new SKManagedStream(stream, disposeManagedStream: false);
+            using var codec = SKCodec.Create(managedStream);
 
-            return imageInfo.Width >= MinWidth && imageInfo.Height >= MinHeight;
-        }
-        catch (Exception exception) when (exception is UnknownImageFormatException or InvalidImageContentException)
-        {
-            return false;
+            return codec != null && codec.Info.Width >= MinWidth && codec.Info.Height >= MinHeight;
         }
         finally
         {
