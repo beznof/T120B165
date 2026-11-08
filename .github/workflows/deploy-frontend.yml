@@ -44,6 +44,16 @@ jobs:
           : "${CONTAINER_APP_NAME:?FRONTEND_CONTAINER_APP_NAME secret must be set.}"
           : "${AZURE_RESOURCE_GROUP:?AZURE_RESOURCE_GROUP must be set.}"
 
+          api_upstream=$(az containerapp show \
+            --name "$CONTAINER_APP_NAME" \
+            --resource-group "$AZURE_RESOURCE_GROUP" \
+            --query "properties.template.containers[0].env[?name=='API_UPSTREAM'].value | [0]" \
+            --output tsv)
+          if [[ ! "$api_upstream" =~ ^https?://[[:alnum:].-]+(:[0-9]+)?$ ]]; then
+            echo "::error::Set API_UPSTREAM on the frontend Container App to an HTTP(S) origin."
+            exit 1
+          fi
+
           registry=$(az acr show --name "$ACR_NAME" --query loginServer --output tsv)
           pull_identity=$(az containerapp registry list \
             --name "$CONTAINER_APP_NAME" \
@@ -56,7 +66,7 @@ jobs:
 
           image="$registry/languages-frontend:$GITHUB_SHA"
           docker build --file fe/Dockerfile --tag "$image" fe
-          docker run --rm "$image" nginx -t
+          docker run --rm --env "API_UPSTREAM=$api_upstream" "$image" nginx -t
           az acr login --name "$ACR_NAME" --output none
           docker push "$image"
           echo "FRONTEND_IMAGE=$image" >> "$GITHUB_ENV"

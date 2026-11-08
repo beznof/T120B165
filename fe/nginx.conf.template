@@ -1,0 +1,23 @@
+server {
+    listen 80;
+    server_name _;
+    root /usr/share/nginx/html;
+    absolute_redirect off;
+
+    location ~ ^/api(?:/|$) {
+        # Allow multipart overhead for 5 MiB cover uploads.
+        client_max_body_size 6m;
+        proxy_pass "${API_UPSTREAM}";
+        proxy_ssl_server_name on;
+        proxy_ssl_verify on;
+        proxy_ssl_trusted_certificate /etc/ssl/certs/ca-certificates.crt;
+    }
+
+    location /assets/ {
+        try_files $uri =404;
+    }
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}

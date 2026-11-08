@@ -19,7 +19,9 @@ FROM nginx:stable-alpine
 
 ARG APP_DIR
 
-COPY "nginx.conf" "/etc/nginx/conf.d/default.conf"
+ENV NGINX_ENVSUBST_FILTER="^API_UPSTREAM$"
+
+COPY "nginx.conf.template" "/etc/nginx/templates/default.conf.template"
 COPY --from=build "${APP_DIR}/dist/" "/usr/share/nginx/html/"
 
 EXPOSE 80

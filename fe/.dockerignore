@@ -3,7 +3,6 @@
 .tanstack
 **/.env
 **/.env.*
-!.env
 dist
 node_modules
 *.log

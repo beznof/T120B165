@@ -33,12 +33,7 @@ export async function request<T>(
 		headers.set('Authorization', `Bearer ${options.token}`)
 	}
 
-	const base = import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, '')
-	if (!base) {
-		throw new Error('Set VITE_API_BASE_URL in .env.')
-	}
-
-	const response = await fetch(base + path, {
+	const response = await fetch(`/api${path}`, {
 		method: options.method ?? (options.body === undefined ? 'GET' : 'POST'),
 		headers,
 		body: multipart ? (options.body as FormData) : JSON.stringify(options.body),
