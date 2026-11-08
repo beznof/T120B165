@@ -11,9 +11,9 @@ The `/` route opens the languages catalog. Use `/register` to create a learner o
 
 Admins can manage languages, dictionaries, and entries. Teachers can create dictionaries and manage their own dictionaries and entries. The API enforces these permissions. The session module stores tokens in memory and clears cached queries when the session changes.
 
-Vite forwards `/api` to `https://api.saitynai.vilvis.lt` by default. To use a local backend, set `API_PROXY_TARGET=http://127.0.0.1:5000` in `fe/.env.local` and start the API from the repository root with `dotnet run --project be/Languages.WebApi --launch-profile http`.
+The browser calls `VITE_API_BASE_URL` from `.env` directly. To use a local backend, set `VITE_API_BASE_URL=http://localhost:5000/api` in `fe/.env.local` and start the API from the repository root with `dotnet run --project be/Languages.WebApi --launch-profile http`.
 
-In production, forward `/api` to the backend or set `VITE_API_BASE_URL` to its API base (including `/api`) at build time and allow the frontend origin on the API. Configure the static host to serve index.html for frontend routes.
+The Docker build uses the same `.env`. Azure API ingress allows `https://saitynai.vilvis.lt` and Vite's default local origins `http://localhost:5173` (dev) and `http://localhost:4173` (preview). The local API allows those two local origins in Development. Nginx serves `index.html` for frontend routes.
 
 After backend contract changes, run `npm run api:types` against the local development API and commit the generated types.
 

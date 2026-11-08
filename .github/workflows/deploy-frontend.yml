@@ -1,0 +1,84 @@
+name: Deploy frontend
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'fe/**'
+      - '.github/workflows/deploy-frontend.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: deploy-frontend
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      ACR_NAME: ${{ secrets.ACR_NAME }}
+      CONTAINER_APP_NAME: ${{ secrets.FRONTEND_CONTAINER_APP_NAME }}
+      AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Sign in to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Build and push frontend image
+        shell: bash
+        run: |
+          set -euo pipefail
+          : "${ACR_NAME:?ACR_NAME must be set.}"
+          : "${CONTAINER_APP_NAME:?FRONTEND_CONTAINER_APP_NAME secret must be set.}"
+          : "${AZURE_RESOURCE_GROUP:?AZURE_RESOURCE_GROUP must be set.}"
+
+          registry=$(az acr show --name "$ACR_NAME" --query loginServer --output tsv)
+          pull_identity=$(az containerapp registry list \
+            --name "$CONTAINER_APP_NAME" \
+            --resource-group "$AZURE_RESOURCE_GROUP" \
+            --query "[?server=='$registry'].identity | [0]" --output tsv)
+          if [[ -z "$pull_identity" ]]; then
+            echo "::error::Configure a managed identity with AcrPull for $CONTAINER_APP_NAME on $registry."
+            exit 1
+          fi
+
+          image="$registry/languages-frontend:$GITHUB_SHA"
+          docker build --file fe/Dockerfile --tag "$image" fe
+          docker run --rm "$image" nginx -t
+          az acr login --name "$ACR_NAME" --output none
+          docker push "$image"
+          echo "FRONTEND_IMAGE=$image" >> "$GITHUB_ENV"
+
+      - name: Deploy frontend to Azure Container Apps
+        shell: bash
+        run: |
+          set -euo pipefail
+          az containerapp update \
+            --name "$CONTAINER_APP_NAME" \
+            --resource-group "$AZURE_RESOURCE_GROUP" \
+            --image "$FRONTEND_IMAGE" \
+            --output none
+
+          hostname=$(az containerapp show \
+            --name "$CONTAINER_APP_NAME" \
+            --resource-group "$AZURE_RESOURCE_GROUP" \
+            --query properties.configuration.ingress.fqdn --output tsv)
+          if [[ -z "$hostname" ]]; then
+            az containerapp ingress enable \
+              --name "$CONTAINER_APP_NAME" \
+              --resource-group "$AZURE_RESOURCE_GROUP" \
+              --type external --transport auto --target-port 80 \
+              --output none
+          fi

@@ -23,7 +23,7 @@ jobs:
     timeout-minutes: 30
     env:
       ACR_NAME: ${{ secrets.ACR_NAME }}
-      CONTAINER_APP_NAME: ${{ secrets.CONTAINER_APP_NAME }}
+      CONTAINER_APP_NAME: ${{ secrets.API_CONTAINER_APP_NAME }}
       AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
     steps:
       - name: Check out repository

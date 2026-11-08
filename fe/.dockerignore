@@ -1,8 +1,9 @@
 .git
 .idea
 .tanstack
-.env
-.env.*
+**/.env
+**/.env.*
+!.env
 dist
 node_modules
 *.log

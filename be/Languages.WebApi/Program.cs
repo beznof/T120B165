@@ -9,10 +9,17 @@ builder.Services
     .AddInfrastructure(configuration)
     .AddWebApi(configuration);
 
+builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy
+    .WithOrigins("http://localhost:5173", "http://localhost:4173")
+    .WithMethods("GET", "POST", "PATCH", "PUT", "DELETE")
+    .WithHeaders("Authorization", "Content-Type")));
+
 var app = builder.Build();
+app.UseHttpsRedirection();
 
 if (app.Environment.IsDevelopment())
 {
+    app.UseCors();
     app.MapOpenApi();
     app.MapScalarApiReference("api/docs", (options) =>
     {
@@ -30,7 +37,6 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
