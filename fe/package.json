@@ -1,42 +1,43 @@
 {
-  "name": "t120b165-frontend",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "engines": {
-    "node": "^22.12.0 || >=24.0.0"
-  },
-  "scripts": {
-    "api:types": "openapi-typescript http://127.0.0.1:5000/openapi/v1.json -o src/api/schema.gen.ts",
-    "test": "vitest run",
-    "dev": "vite",
-    "build": "vite build && npm run typecheck",
-    "preview": "vite preview",
-    "typecheck": "tsc --noEmit",
-    "lint": "biome lint .",
-    "format": "biome format --write .",
-    "check": "biome check . && npm run typecheck"
-  },
-  "dependencies": {
-    "@heroui/react": "^3",
-    "@heroui/styles": "^3",
-    "@tanstack/react-query": "^5",
-    "@tanstack/react-router": "^1",
-    "react": "^19",
-    "react-dom": "^19"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^2",
-    "@tailwindcss/vite": "^4",
-    "@tanstack/router-plugin": "^1",
-    "@types/node": "^22",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "@vitejs/plugin-react": "^6",
-    "openapi-typescript": "^7.13.0",
-    "tailwindcss": "^4",
-    "typescript": "~5.9.3",
-    "vite": "^8",
-    "vitest": "^5.1.0"
-  }
+	"name": "t120b165-frontend",
+	"private": true,
+	"version": "0.0.0",
+	"type": "module",
+	"engines": {
+		"node": "^22.12.0 || >=24.0.0"
+	},
+	"scripts": {
+		"api:types": "openapi-typescript http://127.0.0.1:5000/openapi/v1.json -o src/api/schema.gen.ts",
+		"dev": "vite",
+		"build": "vite build && npm run typecheck",
+		"preview": "vite preview",
+		"typecheck": "tsc --noEmit",
+		"lint": "biome lint .",
+		"format": "biome format --write .",
+		"check": "biome check . && npm run typecheck"
+	},
+	"dependencies": {
+		"@fontsource-variable/atkinson-hyperlegible-next": "^5.3.0",
+		"@fontsource-variable/literata": "^5.3.0",
+		"@heroui/react": "^3",
+		"@heroui/styles": "^3",
+		"@tanstack/react-query": "^5",
+		"@tanstack/react-router": "^1",
+		"lucide-react": "^1.70.0",
+		"react": "^19",
+		"react-dom": "^19"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2",
+		"@tailwindcss/vite": "^4",
+		"@tanstack/router-plugin": "^1",
+		"@types/node": "^22",
+		"@types/react": "^19",
+		"@types/react-dom": "^19",
+		"@vitejs/plugin-react": "^6",
+		"openapi-typescript": "^7.13.0",
+		"tailwindcss": "^4",
+		"typescript": "~5.9.3",
+		"vite": "^8"
+	}
 }

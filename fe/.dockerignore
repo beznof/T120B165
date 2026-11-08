@@ -1,0 +1,8 @@
+.git
+.idea
+.tanstack
+.env
+.env.*
+dist
+node_modules
+*.log

@@ -1,0 +1,35 @@
+.bloom-theme {
+	--primary: #6836e8;
+	--secondary: #c7f34f;
+	--highlight: #bca7ff;
+	--bloom-page: #fff;
+	--bloom-surface: #fff;
+	--bloom-text: #202020;
+	--bloom-muted: #5c5569;
+	--bloom-accent-text: var(--primary);
+	--bloom-danger-text: #9a2345;
+	--bloom-rule: color-mix(in srgb, var(--highlight) 44%, var(--bloom-surface));
+	--bloom-wash: color-mix(in srgb, var(--highlight) 15%, var(--bloom-surface));
+	--bloom-selection: color-mix(in srgb, var(--highlight) 34%, var(--bloom-surface));
+	--bloom-field-border: color-mix(in srgb, var(--bloom-muted) 65%, var(--bloom-rule));
+	--bloom-board: color-mix(in srgb, var(--primary) 85%, #321672);
+	--bloom-board-text: #faf8ff;
+	--bloom-board-muted: #ede5ff;
+	--bloom-lime-text: #222b10;
+	--bloom-button-height: 44px;
+	--bloom-field-radius: 10px;
+	--bloom-card-radius: 16px;
+	--bloom-ui-font: "Atkinson Hyperlegible Next Variable", sans-serif;
+	--bloom-reading-font: "Literata Variable", Georgia, serif;
+}
+
+.bloom-theme[data-mode="dark"] {
+	--bloom-page: #111112;
+	--bloom-surface: #1b1b1d;
+	--bloom-text: #f1f1ef;
+	--bloom-muted: #c0b9cb;
+	--bloom-accent-text: color-mix(in srgb, var(--highlight) 70%, #fff);
+	--bloom-danger-text: #ffacc1;
+	--bloom-rule: color-mix(in srgb, var(--highlight) 25%, var(--bloom-surface));
+	--bloom-board: color-mix(in srgb, var(--primary) 52%, #25163d);
+}

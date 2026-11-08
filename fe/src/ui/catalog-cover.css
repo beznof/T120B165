@@ -1,0 +1,43 @@
+.catalog-cover {
+	position: relative;
+	display: block;
+	flex: none;
+	inline-size: 100%;
+	aspect-ratio: var(--catalog-cover-ratio, 2.15);
+	overflow: clip;
+	background: color-mix(in srgb, var(--highlight) 24%, var(--surface));
+	color: var(--accent);
+}
+
+.catalog-cover[data-fallback="true"] {
+	display: grid;
+	place-items: center;
+	aspect-ratio: auto;
+	min-block-size: calc(100cqi / var(--catalog-cover-ratio, 2.15));
+	padding: 16px var(--catalog-card-gutter, 18px);
+}
+
+.catalog-cover img {
+	position: absolute;
+	inset: 0;
+	inline-size: 100%;
+	block-size: 100%;
+	max-inline-size: 100%;
+	object-fit: cover;
+}
+
+.catalog-cover-name {
+	min-width: 0;
+	max-inline-size: 100%;
+	font-size: clamp(1.25rem, 10cqi, 2.125rem);
+	font-weight: 750;
+	line-height: 1.15;
+	letter-spacing: -0.035em;
+	text-align: center;
+	text-wrap: balance;
+	overflow-wrap: anywhere;
+}
+
+.catalog-cover-name[data-long="true"] {
+	font-size: clamp(0.75rem, 4.6cqi, 1.25rem);
+}

@@ -1,0 +1,107 @@
+.catalog-navbar {
+	border-block-end: 1px solid var(--border);
+	background: var(--background);
+	color: var(--foreground);
+}
+
+.catalog-navbar-inner {
+	display: grid;
+	grid-template-columns: 1fr auto auto;
+	align-items: center;
+	gap: 16px;
+	padding-block: 8px;
+}
+
+.catalog-navbar-home,
+.catalog-navbar-link,
+.catalog-navbar-join {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	min-height: var(--bloom-button-height);
+	border-radius: var(--bloom-field-radius);
+	font-size: 0.9375rem;
+	font-weight: 650;
+	transition: background-color 160ms ease;
+}
+
+.catalog-navbar-home {
+	justify-self: start;
+	padding-inline: 10px 14px;
+}
+
+.catalog-navbar-home-mark {
+	display: grid;
+	place-items: center;
+	width: 24px;
+	height: 24px;
+	color: var(--bloom-accent-text);
+}
+
+.catalog-navbar-tools,
+.catalog-navbar-account {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.catalog-navbar-account {
+	padding-inline-start: 16px;
+	border-inline-start: 1px solid var(--border);
+}
+
+.catalog-navbar-link,
+.catalog-navbar-join {
+	padding-inline: 14px;
+}
+
+.catalog-navbar-join {
+	background: var(--primary);
+	color: var(--accent-foreground);
+}
+
+.catalog-navbar :is(.catalog-navbar-home, .catalog-navbar-link):hover,
+.catalog-navbar-link[aria-current="page"] {
+	background: var(--bloom-wash);
+}
+
+.catalog-navbar-join:hover {
+	background: color-mix(in srgb, var(--primary) 88%, var(--foreground));
+}
+
+.catalog-navbar .catalog-navbar-toggle {
+	display: none;
+}
+
+@media (max-width: 640px) {
+	.catalog-navbar-inner {
+		grid-template-columns: 1fr auto;
+		gap: 0 8px;
+	}
+
+	.catalog-navbar .catalog-navbar-toggle {
+		display: inline-flex;
+	}
+
+	.catalog-navbar-account {
+		display: none;
+		grid-column: 1 / -1;
+		justify-content: flex-end;
+		flex-wrap: wrap;
+		margin-block-start: 8px;
+		padding: 8px 0 0;
+		border-inline-start: 0;
+		border-block-start: 1px solid var(--border);
+	}
+
+	.catalog-navbar-account[data-expanded="true"] {
+		display: flex;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.catalog-navbar a {
+		transition: none;
+	}
+}

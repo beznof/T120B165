@@ -1,0 +1,137 @@
+.collection-grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 18px;
+}
+
+.collection-card {
+	--collection-caption-height: 84px;
+	position: relative;
+	container-type: inline-size;
+	min-width: 0;
+	height: 100%;
+	gap: 0;
+	padding: 0;
+	overflow: clip;
+	border: 1px solid var(--bloom-rule);
+	border-radius: var(--bloom-card-radius);
+	background: var(--bloom-surface);
+	box-shadow: none;
+}
+
+.collection-card > a {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	min-width: 0;
+	color: var(--bloom-text);
+	text-decoration: none;
+}
+
+.collection-card > a:focus-visible {
+	outline: 2px solid var(--bloom-accent-text);
+	outline-offset: -3px;
+}
+
+.collection-caption {
+	display: flex;
+	flex: 1;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	min-height: var(--collection-caption-height);
+	padding: 10px 16px;
+	transition: background-color 160ms ease;
+}
+
+.collection-caption > svg,
+.collection-card .catalog-cover {
+	color: var(--bloom-accent-text);
+}
+
+.collection-card[data-editable="true"] .collection-caption {
+	padding-inline-end: 60px;
+}
+
+.collection-card > a:hover .collection-caption {
+	background: var(--bloom-wash);
+}
+
+.collection-actions {
+	position: absolute;
+	inset-inline-end: 8px;
+	inset-block-end: calc((var(--collection-caption-height) - var(--bloom-button-height)) / 2);
+}
+
+.collection-caption-text {
+	display: grid;
+	min-width: 0;
+	gap: 1px;
+}
+
+.collection-caption-text strong {
+	overflow-wrap: anywhere;
+	font-size: 1.125rem;
+	font-weight: 680;
+	line-height: 1.2;
+}
+
+.collection-caption-text small {
+	overflow: hidden;
+	color: var(--bloom-muted);
+	font-size: 0.875rem;
+	line-height: 1.3;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.collection-grid[data-display="list"] {
+	grid-template-columns: minmax(0, 1fr);
+	gap: 8px;
+}
+
+.collection-grid[data-display="list"] .collection-card {
+	--collection-caption-height: 76px;
+}
+
+.collection-grid[data-display="list"] .collection-card > a {
+	flex-direction: row;
+}
+
+.collection-grid[data-display="list"] .catalog-cover {
+	inline-size: clamp(72px, 20cqi, 112px);
+	min-block-size: 0;
+	aspect-ratio: auto;
+	padding: 6px;
+}
+
+.collection-grid[data-display="list"] .catalog-cover-name {
+	display: -webkit-box;
+	overflow: hidden;
+	font-size: 0.75rem;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 3;
+}
+
+.collection-grid[data-display="list"] .collection-actions {
+	inset-block: 50% auto;
+	translate: 0 -50%;
+}
+
+@media (max-width: 850px) {
+	.collection-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 560px) {
+	.collection-grid {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.collection-caption {
+		transition: none;
+	}
+}

@@ -7,25 +7,31 @@ import { routeTree } from './routeTree.gen'
 import './styles.css'
 
 const queryClient = new QueryClient()
+
 const router = createRouter({ routeTree, context: { queryClient } })
+
 onSessionChange(() => {
-  queryClient.clear()
-  void router.invalidate()
+	queryClient.clear()
+
+	void router.invalidate()
 })
 
 declare module '@tanstack/react-router' {
-  interface Register {
-    router: typeof router
-  }
+	interface Register {
+		router: typeof router
+	}
 }
 
 const root = document.getElementById('root')
-if (!root) throw new Error('Missing application root')
+
+if (!root) {
+	throw new Error('Missing application root')
+}
 
 createRoot(root).render(
-  <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>
-  </StrictMode>,
+	<StrictMode>
+		<QueryClientProvider client={queryClient}>
+			<RouterProvider router={router} />
+		</QueryClientProvider>
+	</StrictMode>,
 )

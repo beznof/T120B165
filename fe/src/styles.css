@@ -1,2 +1,7 @@
 @import "tailwindcss";
 @import "@heroui/styles";
+@import "./ui/bloom-tokens.css";
+
+.app-icon {
+	flex-shrink: 0;
+}
