@@ -9,7 +9,7 @@ npm run dev
 
 The `/` route opens the list of languages. Use `/register` to create a learner or teacher account and `/login` to sign in. Choose a language from the list and a dictionary from the shelf to open vocabulary review. Select an entry or use Previous and Next to review entries across pages. Search, pagination, and word or phrase filters use the API.
 
-Admins can manage languages, dictionaries, and entries. Teachers can create dictionaries and manage their own dictionaries and entries. The API enforces these permissions. The session module stores tokens in memory and clears cached queries when the session changes.
+Admins can manage languages, dictionaries, and entries. Teachers can create dictionaries and manage their own dictionaries and entries. The API enforces these permissions. The session module uses `sessionStorage` to restore tokens after reloading the same tab and clears cached queries when the session changes.
 
 The browser calls `/api` on the frontend origin. Vite forwards those requests to `https://api.saitynai.vilvis.lt` during development and local preview. To use a local backend, set `API_UPSTREAM=http://localhost:5000` in `fe/.env.local` and start the API from the repository root with `dotnet run --project be/Languages.WebApi --launch-profile http`.
 

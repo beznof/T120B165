@@ -1,6 +1,6 @@
 import { ApiError, request, requireData, type Schema } from '../../api/client'
 
-type Tokens = Schema['AuthTokensOutput']
+type Tokens = Pick<Schema['AuthTokensOutput'], 'accessToken' | 'refreshToken'>
 export type Account = { id: number; username: string; role: 'Learner' | 'Teacher' | 'Admin' }
 type Session = {
 	tokens: Tokens
@@ -8,7 +8,8 @@ type Session = {
 	refreshing?: Promise<Tokens>
 }
 
-let current: Session | undefined
+const sessionKey = 'saitynai-session-v1'
+let current = restoreSession()
 
 const listeners = new Set<() => void>()
 
@@ -37,6 +38,47 @@ function readAccount(token: string, fallbackUsername: string): Account | null {
 	}
 }
 
+function restoreSession(): Session | undefined {
+	try {
+		const saved = sessionStorage.getItem(sessionKey)
+		if (saved === null) {
+			return
+		}
+
+		const { accessToken, refreshToken, username } = JSON.parse(saved)
+		if (
+			typeof accessToken === 'string' &&
+			accessToken &&
+			typeof refreshToken === 'string' &&
+			refreshToken &&
+			typeof username === 'string'
+		) {
+			return {
+				tokens: { accessToken, refreshToken },
+				account: readAccount(accessToken, username),
+			}
+		}
+	} catch {
+		// A saved session may be unreadable or browser storage may be unavailable.
+	}
+
+	persistSession()
+}
+
+function persistSession(session?: Session) {
+	try {
+		// Clear the previous tokens even if saving the new ones fails.
+		sessionStorage.removeItem(sessionKey)
+		if (session) {
+			const { accessToken, refreshToken } = session.tokens
+			const saved = { accessToken, refreshToken, username: session.account?.username ?? '' }
+			sessionStorage.setItem(sessionKey, JSON.stringify(saved))
+		}
+	} catch {
+		// The current page can still use its in-memory session.
+	}
+}
+
 export function onSessionChange(listener: () => void) {
 	listeners.add(listener)
 
@@ -45,6 +87,7 @@ export function onSessionChange(listener: () => void) {
 
 function setSession(value?: Session) {
 	current = value
+	persistSession(value)
 
 	for (const listener of listeners) {
 		listener()
@@ -66,6 +109,9 @@ function refresh(session: Session) {
 		.then(requireData)
 		.then((tokens) => {
 			session.tokens = tokens
+			if (current === session) {
+				persistSession(session)
+			}
 
 			return tokens
 		})
@@ -130,18 +176,13 @@ export async function logout() {
 		return
 	}
 
-	// A refresh already in flight may replace the token we need to revoke.
-	try {
-		await session.refreshing
+	setSession()
 
-		await request('/auth/logout', {
-			body: {
-				refreshToken: session.tokens.refreshToken,
-			} satisfies Schema['LogoutRequest'],
-		})
-	} finally {
-		if (current === session) {
-			setSession()
-		}
-	}
+	// A refresh already in flight may replace the token we need to revoke.
+	await session.refreshing
+	await request('/auth/logout', {
+		body: {
+			refreshToken: session.tokens.refreshToken,
+		} satisfies Schema['LogoutRequest'],
+	})
 }
