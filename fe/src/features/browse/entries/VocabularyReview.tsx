@@ -1,7 +1,7 @@
 import { Button } from '@heroui/react'
 import { Copy } from 'lucide-react'
 import { type ReactNode, type Ref, useId, useState } from 'react'
-import { Icon } from './Icon'
+import { Icon } from '../../../ui/icons/Icon'
 import '@fontsource-variable/literata'
 import './vocabulary-review.css'
 

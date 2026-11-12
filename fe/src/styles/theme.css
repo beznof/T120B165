@@ -1,0 +1,204 @@
+.bloom-theme {
+	--background: var(--bloom-page);
+	--surface: var(--bloom-surface);
+	--foreground: var(--bloom-text);
+	--muted: var(--bloom-muted);
+	--border: var(--bloom-rule);
+	--accent: var(--primary);
+	--accent-foreground: #fff;
+	--focus: var(--bloom-accent-text);
+	--danger: var(--bloom-danger-text);
+	--overlay: var(--surface);
+	--overlay-foreground: var(--foreground);
+	--default: var(--bloom-wash);
+	--default-hover: var(--bloom-hover);
+	--default-foreground: var(--foreground);
+	--field-background: var(--bloom-wash);
+	--field-foreground: var(--foreground);
+	--field-placeholder: var(--muted);
+	--field-border: var(--bloom-field-border);
+	color: var(--foreground);
+	color-scheme: light;
+	font: 1rem / 1.45 var(--bloom-ui-font);
+}
+
+.bloom-theme[data-mode="dark"] {
+	color-scheme: dark;
+	line-height: 1.5;
+}
+
+.bloom-theme :where(a, button, input, textarea, [tabindex]):focus-visible {
+	outline: 2px solid var(--focus);
+	outline-offset: 3px;
+}
+
+.bloom-theme .button {
+	min-height: var(--bloom-button-height);
+	height: auto;
+	gap: 8px;
+	padding: 8px 14px;
+	border: 1px solid transparent;
+	border-radius: var(--bloom-field-radius);
+	box-shadow: none;
+	font: 640 0.9375rem / 1.2 var(--bloom-ui-font);
+	white-space: normal;
+	transition:
+		background-color 160ms ease,
+		color 160ms ease,
+		border-color 160ms ease;
+}
+
+.bloom-theme .button--icon-only {
+	width: var(--bloom-button-height);
+	flex: 0 0 var(--bloom-button-height);
+	padding-inline: 0;
+}
+
+.bloom-theme .button--primary {
+	background: var(--primary);
+	color: var(--accent-foreground);
+}
+
+.bloom-theme .button--secondary {
+	background: var(--bloom-wash);
+	color: var(--foreground);
+}
+
+.bloom-theme .button--outline {
+	border-color: var(--field-border);
+	background: transparent;
+	color: var(--foreground);
+}
+
+.bloom-theme .button--ghost {
+	background: transparent;
+	color: var(--foreground);
+}
+
+.bloom-theme .button:is(.button--ghost, .button--outline, .button--secondary):hover:not(:disabled) {
+	background: var(--bloom-hover);
+}
+
+.bloom-theme .button--primary:hover:not(:disabled) {
+	background: color-mix(in srgb, var(--primary) 88%, var(--foreground));
+}
+
+.bloom-theme .button--lime {
+	background: var(--secondary);
+	color: var(--bloom-lime-text);
+}
+
+.bloom-theme .button--lime:hover:not(:disabled) {
+	background: var(--bloom-lime-hover);
+}
+
+.bloom-theme .button:disabled {
+	opacity: 0.48;
+}
+
+.bloom-theme .label {
+	color: var(--muted);
+	font: 630 0.8125rem / 1.25 var(--bloom-ui-font);
+}
+
+.bloom-theme :is(.input, .textarea, .select__trigger) {
+	width: 100%;
+	min-height: var(--bloom-button-height);
+	padding: 9px 12px;
+	border: 1px solid var(--field-border);
+	border-radius: var(--bloom-field-radius);
+	background: var(--field-background);
+	color: var(--field-foreground);
+	box-shadow: none;
+	font: inherit;
+}
+
+.bloom-theme :is(.input, .textarea)::placeholder {
+	color: var(--field-placeholder);
+	opacity: 0.86;
+}
+
+.bloom-theme :is(.input, .textarea, .select__trigger) {
+	outline: 1px solid transparent;
+	outline-offset: 0;
+	transition: outline-color 140ms cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.bloom-theme :is(.input, .textarea, .select__trigger):is(:focus-visible, [aria-expanded="true"]) {
+	outline-color: var(--focus);
+	transition-duration: 0s;
+}
+
+@media (hover: hover) {
+	.bloom-theme
+		:is(.input, .textarea, .select__trigger):hover:not(
+			:focus,
+			:disabled,
+			[aria-disabled="true"],
+			[aria-expanded="true"]
+		) {
+		outline-color: color-mix(in srgb, var(--foreground) 30%, transparent);
+		transition-delay: 60ms;
+	}
+}
+
+.bloom-theme .radio {
+	--accent: var(--secondary);
+	--accent-foreground: var(--bloom-lime-text);
+	--accent-hover: var(--bloom-lime-hover);
+}
+
+.bloom-theme .radio__control {
+	border-width: 1px;
+}
+
+.bloom-theme .choice-group {
+	flex-wrap: wrap;
+	gap: 4px 16px;
+}
+
+.bloom-theme .choice-group > .label {
+	flex-basis: 100%;
+}
+
+.bloom-theme .radio__content {
+	min-height: var(--bloom-button-height);
+}
+
+.app-menu {
+	max-width: calc(100vw - 32px);
+	padding: 6px;
+	border: 1px solid var(--border);
+	border-radius: var(--bloom-field-radius);
+	background: var(--surface);
+	box-shadow: 0 10px 28px #1a161526;
+}
+
+.app-menu :is(.list-box-item, .dropdown-item) {
+	min-height: var(--bloom-button-height);
+	gap: 8px;
+	border-radius: var(--bloom-field-radius);
+	color: var(--foreground);
+	overflow-wrap: anywhere;
+}
+
+.app-menu
+	:is(.list-box-item, .dropdown-item):is([data-hovered="true"], [data-focus-visible="true"]) {
+	background: var(--bloom-hover);
+}
+
+.app-menu :is(.list-box-item, .dropdown-item)[data-selected="true"] {
+	background: var(--bloom-selected);
+}
+
+.app-menu .danger-text,
+.form-error {
+	color: var(--danger);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.bloom-theme .button,
+	.bloom-theme :is(.input, .textarea, .select__trigger) {
+		transition: none;
+	}
+}

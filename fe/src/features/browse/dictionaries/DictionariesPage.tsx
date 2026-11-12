@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
-import type { Schema } from '../../api/client'
-import { type AppContext, PageHeader } from '../../ui/AppFrame'
-import { CollectionCard } from '../../ui/CollectionCard'
+import type { Schema } from '../../../api/client'
+import { CollectionCard } from '../../../ui/collections/CollectionCard'
+import { type AppContext, PageHeader } from '../../../ui/layout/AppFrame'
 import {
 	type BrowseSearch,
 	canEditDictionary,
@@ -11,21 +11,21 @@ import {
 	languagePath,
 	pagedQuery,
 	resourceQuery,
-} from '../browse/api'
+} from '../api'
+import { AddRecordButton, RecordActions, useResourceEditor } from '../editor/ResourceEditor'
 import {
 	Breadcrumbs,
 	BrowseLoadError,
 	BrowseResults,
 	BrowseSearchBar,
 	countLabel,
-} from '../browse/BrowseControls'
+} from '../results/BrowseControls'
 import {
 	BrowseHeaderSkeleton,
 	BrowseLoading,
 	BrowseSearchSkeleton,
 	DictionaryShelfSkeleton,
-} from '../browse/BrowseSkeletons'
-import { AddRecordButton, RecordActions, useResourceEditor } from '../browse/ResourceEditor'
+} from '../results/BrowseSkeletons'
 
 export function DictionariesPage({
 	context,

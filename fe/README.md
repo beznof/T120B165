@@ -23,4 +23,8 @@ The router context and React Query provider share one query client, so route loa
 
 Run `npm run check` for lint, formatting, and TypeScript checks, or `npm run format` to apply formatting. Run `npm run build` to produce `dist/`, then `npm run preview` to serve the production build locally.
 
-Render Lucide glyphs through `src/ui/Icon.tsx`, for example `<Icon icon={ArrowRight} size={18} />`. It defaults to 20px and a 1.75 stroke and accepts Lucide SVG props. Label icon-only buttons on the button itself.
+The language, dictionary, and entry screens live under `src/features/browse/` alongside the library layout, search and pagination controls, loading states, and editor. `src/features/auth/` holds sign-in, registration, and session handling.
+
+`src/ui/` groups the app layout, navbar, collection components, and icons. Theme tokens and shared component styles live in `src/styles/`. Feature styles sit alongside their components.
+
+Render Lucide glyphs through `src/ui/icons/Icon.tsx`, for example `<Icon icon={ArrowRight} size={18} />`. It defaults to 20px and a 1.75 stroke and accepts Lucide SVG props. Label icon-only buttons on the button itself.

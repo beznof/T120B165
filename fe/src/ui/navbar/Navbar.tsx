@@ -2,9 +2,9 @@ import { Button } from '@heroui/react'
 import { Link } from '@tanstack/react-router'
 import { House, LogOut, Menu, Moon, Sun, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import type { Account } from '../features/auth/session'
-import type { ColorMode } from './AppShell'
-import { Icon } from './Icon'
+import type { Account } from '../../features/auth/session'
+import { Icon } from '../icons/Icon'
+import type { ColorMode } from '../layout/AppShell'
 import './navbar.css'
 
 type NavbarProps = {

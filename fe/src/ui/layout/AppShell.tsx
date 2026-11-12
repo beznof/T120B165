@@ -1,10 +1,11 @@
 import { type ReactNode, useState } from 'react'
-import type { Account } from '../features/auth/session'
-import { Icon } from './Icon'
-import { Navbar } from './Navbar'
+import type { Account } from '../../features/auth/session'
+import { Icon } from '../icons/Icon'
+import { Navbar } from '../navbar/Navbar'
 import '@fontsource-variable/atkinson-hyperlegible-next'
-import './app.css'
-import { Github } from './github-icon'
+import '../../styles/theme.css'
+import './app-layout.css'
+import { Github } from '../icons/github-icon'
 
 export type ColorMode = 'light' | 'dark'
 

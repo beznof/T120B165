@@ -10,7 +10,7 @@ import {
 } from '@heroui/react'
 import { Eye, EyeOff } from 'lucide-react'
 import { type FormEvent, type ReactNode, useEffect, useRef, useState } from 'react'
-import { Icon } from '../../ui/Icon'
+import { Icon } from '../../ui/icons/Icon'
 import { AuthLayout } from './AuthLayout'
 
 export type AccountScreen = 'sign-in' | 'register'

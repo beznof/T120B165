@@ -7,38 +7,42 @@
     <list default="true" id="dd6e273d-e50f-4daf-b0da-9afc56190950" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/features/auth/CatalogAuthLayout.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/features/auth/CatalogRegister.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/features/auth/CatalogSignIn.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/features/auth/session.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/auth/session.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/features/catalog/CatalogBrowse.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/features/catalog/CatalogEditor.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/features/catalog/CatalogFrame.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/features/catalog/CollectionDisplay.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/features/catalog/api.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/features/languages/DictionariesPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/languages/DictionariesPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/features/languages/EntriesPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/languages/EntriesPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/features/languages/LanguagesPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/languages/LanguagesPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routeTree.gen.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/routeTree.gen.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/auth/AuthForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/auth/AuthForm.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/auth/AuthLayout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/auth/AuthLayout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/browse/BrowseControls.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/browse/BrowseLayout.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/browse/BrowseSkeletons.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/browse/LibrarySidebar.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/browse/ResourceEditor.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/browse/browse-context.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/browse/browse-layout.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/browse/browse-skeletons.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/languages/DictionariesPage.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/languages/EntriesPage.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/languages/LanguagesPage.tsx" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/routes/__root.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/__root.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/index.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/languages.$languageId.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/languages.$languageId_.dictionaries.$dictionaryId.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/_browse.index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/_browse.index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/_browse.languages.$languageId.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/_browse.languages.$languageId.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/_browse.languages.$languageId_.dictionaries.$dictionaryId.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/_browse.languages.$languageId_.dictionaries.$dictionaryId.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/_browse.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/_browse.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/routes/login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/login.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/routes/register.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/register.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ui/CatalogCover.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ui/CatalogNavbar.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ui/CatalogShell.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ui/ChoiceGroup.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/ChoiceGroup.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ui/CollectionCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/CollectionCard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ui/VocabularyReview.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/VocabularyReview.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ui/bloom-tokens.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/bloom-tokens.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ui/catalog-cover.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ui/catalog-navbar.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ui/catalog.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ui/collection-card.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/collection-card.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ui/vocabulary-review.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/vocabulary-review.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/styles.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ui/AppFrame.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ui/AppShell.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ui/ChoiceGroup.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ui/CollectionCard.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ui/CoverImage.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ui/Icon.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ui/Navbar.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ui/VocabularyReview.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ui/app.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ui/bloom-tokens.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ui/collection-card.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ui/cover-image.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ui/github-icon.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ui/navbar.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ui/vocabulary-review.css" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,61 +54,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0624788032012755" />
-      <entry key="MS500" value="3.74624379353737" />
-      <entry key="S2" value="15.50857995260224" />
-      <entry key="S5" value="29.568107838600337" />
-      <entry key="S10" value="43.15127031121074" />
-      <entry key="S30" value="70.01932332127213" />
-      <entry key="S60" value="93.09062239458699" />
-      <entry key="M2" value="114.75915684033374" />
-      <entry key="M5" value="133.7535596518897" />
-      <entry key="M10" value="141.46430189503798" />
-      <entry key="M15" value="144.2851534017445" />
-      <entry key="M30" value="151.06861349569414" />
-      <entry key="H1" value="182.17316149682665" />
-      <entry key="H2" value="253.5852274183858" />
-      <entry key="H4" value="347.1012058873794" />
-      <entry key="D1" value="558.0356533375345" />
-      <entry key="W1" value="630.8857106124638" />
+      <entry key="MS100" value="1.9888943664363474" />
+      <entry key="MS500" value="4.636233214683163" />
+      <entry key="S2" value="10.566110794448168" />
+      <entry key="S5" value="21.43216196318635" />
+      <entry key="S10" value="32.814711754926805" />
+      <entry key="S30" value="49.406951109493704" />
+      <entry key="S60" value="55.94840142323284" />
+      <entry key="M2" value="59.761356976792584" />
+      <entry key="M5" value="62.24999691546983" />
+      <entry key="M10" value="63.11560130778836" />
+      <entry key="M15" value="63.408365905678295" />
+      <entry key="M30" value="63.81321414689271" />
+      <entry key="H1" value="68.76999991491348" />
+      <entry key="H2" value="105.59408574156456" />
+      <entry key="H4" value="204.66408457206492" />
+      <entry key="D1" value="544.0612714085926" />
+      <entry key="W1" value="681.4658919988976" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="0.0" />
-      <entry key="S2" value="0.0" />
-      <entry key="S5" value="0.0" />
-      <entry key="S10" value="0.0" />
-      <entry key="S30" value="0.0" />
-      <entry key="S60" value="0.0" />
-      <entry key="M2" value="0.0" />
-      <entry key="M5" value="0.0" />
-      <entry key="M10" value="0.0" />
-      <entry key="M15" value="0.0" />
-      <entry key="M30" value="0.0" />
-      <entry key="H1" value="0.0" />
-      <entry key="H2" value="0.0" />
-      <entry key="H4" value="0.0" />
-      <entry key="D1" value="0.0" />
-      <entry key="W1" value="0.0" />
+      <entry key="MS100" value="9.469364484974986E-38" />
+      <entry key="MS500" value="3.9532138776679625E-8" />
+      <entry key="S2" value="0.017604990020526505" />
+      <entry key="S5" value="0.28612881383384503" />
+      <entry key="S10" value="0.7493904182094546" />
+      <entry key="S30" value="1.4387927107355085" />
+      <entry key="S60" value="1.6958916018987062" />
+      <entry key="M2" value="1.8415563963507724" />
+      <entry key="M5" value="1.9350181425344584" />
+      <entry key="M10" value="1.9672355208715746" />
+      <entry key="M15" value="1.9780957609087702" />
+      <entry key="M30" value="1.989017137099683" />
+      <entry key="H1" value="1.9945008607217327" />
+      <entry key="H2" value="1.9972485006481608" />
+      <entry key="H4" value="1.9986237675510052" />
+      <entry key="D1" value="1.9997705608440572" />
+      <entry key="W1" value="1.999967221334538" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.14769948014207596" />
-      <entry key="MS500" value="3.172480980554374" />
-      <entry key="S2" value="15.169558135100155" />
-      <entry key="S5" value="29.36614363753462" />
-      <entry key="S10" value="43.021001413183356" />
-      <entry key="S30" value="69.95647873674044" />
-      <entry key="S60" value="93.05059383855253" />
-      <entry key="M2" value="114.7350451197995" />
-      <entry key="M5" value="133.74246682769447" />
-      <entry key="M10" value="141.45846035018346" />
-      <entry key="M15" value="144.28118743902394" />
-      <entry key="M30" value="151.0665527434665" />
-      <entry key="H1" value="182.17194676624024" />
-      <entry key="H2" value="253.58439366249095" />
-      <entry key="H4" value="347.1006388179747" />
-      <entry key="D1" value="558.0355055896357" />
-      <entry key="W1" value="630.8856870039464" />
+      <entry key="MS100" value="1.7004167209036167" />
+      <entry key="MS500" value="4.477727121619708" />
+      <entry key="S2" value="10.502771996441158" />
+      <entry key="S5" value="21.63213812243981" />
+      <entry key="S10" value="33.47845331759989" />
+      <entry key="S30" value="50.79332150292549" />
+      <entry key="S60" value="57.61317480267783" />
+      <entry key="M2" value="61.5859104502392" />
+      <entry key="M5" value="64.17783527161154" />
+      <entry key="M10" value="65.07918095403625" />
+      <entry key="M15" value="65.38400953126092" />
+      <entry key="M30" value="65.80099621733223" />
+      <entry key="H1" value="70.76384931040272" />
+      <entry key="H2" value="107.59088743528116" />
+      <entry key="H4" value="206.66232345036116" />
+      <entry key="D1" value="546.0608890113792" />
+      <entry key="W1" value="683.4658324201292" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -152,7 +156,7 @@
       <workItem from="1794058780355" duration="10148000" />
       <workItem from="1794128463774" duration="12243000" />
       <workItem from="1794424578193" duration="1236000" />
-      <workItem from="1794491056232" duration="6498000" />
+      <workItem from="1794491056232" duration="7702000" />
     </task>
     <servers />
   </component>

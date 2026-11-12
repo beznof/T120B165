@@ -1,12 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
-import type { Schema } from '../../api/client'
-import { type AppContext, PageHeader } from '../../ui/AppFrame'
-import { CoverImage } from '../../ui/CoverImage'
-import { type BrowseSearch, languagePath, languagesPath, pagedQuery } from '../browse/api'
-import { BrowseResults, BrowseSearchBar, countLabel } from '../browse/BrowseControls'
-import { LanguageRowsSkeleton } from '../browse/BrowseSkeletons'
-import { AddRecordButton, RecordActions, useResourceEditor } from '../browse/ResourceEditor'
+import type { Schema } from '../../../api/client'
+import { CoverImage } from '../../../ui/collections/CoverImage'
+import { type AppContext, PageHeader } from '../../../ui/layout/AppFrame'
+import { type BrowseSearch, languagePath, languagesPath, pagedQuery } from '../api'
+import { AddRecordButton, RecordActions, useResourceEditor } from '../editor/ResourceEditor'
+import { BrowseResults, BrowseSearchBar, countLabel } from '../results/BrowseControls'
+import { LanguageRowsSkeleton } from '../results/BrowseSkeletons'
+import './language-rows.css'
 
 export function LanguagesPage({
 	context,

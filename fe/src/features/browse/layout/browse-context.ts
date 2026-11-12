@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react'
-import type { AppContext } from '../../ui/AppFrame'
+import type { AppContext } from '../../../ui/layout/AppFrame'
 
 export const BrowseContext = createContext<AppContext | null>(null)
 

@@ -32,8 +32,7 @@
 }
 
 .library-sidebar-languages,
-.library-sidebar-dictionaries,
-.language-rows {
+.library-sidebar-dictionaries {
 	list-style: none;
 	margin: 0;
 	padding: 0;
@@ -99,54 +98,6 @@
 	display: block;
 	padding: 8px 12px;
 	font-size: 0.875rem;
-}
-
-.language-rows > li {
-	display: grid;
-}
-
-.language-rows > li + li {
-	padding-block-start: 4px;
-	border-block-start: 1px solid var(--border);
-}
-
-.language-rows > li:not(:last-child) {
-	padding-block-end: 4px;
-}
-
-.language-row {
-	display: flex;
-	grid-area: 1 / 1;
-	align-items: center;
-	gap: 16px;
-	min-inline-size: 0;
-	padding: 12px;
-	border-radius: var(--bloom-field-radius);
-}
-
-.language-row[data-editable="true"] {
-	padding-inline-end: calc(var(--bloom-button-height) + 16px);
-}
-
-.language-row-actions {
-	grid-area: 1 / 1;
-	place-self: center end;
-	margin-inline-end: 8px;
-}
-
-a.language-row:hover {
-	background: var(--bloom-hover);
-}
-
-.language-label {
-	display: grid;
-	flex: 1;
-	min-inline-size: 0;
-	overflow-wrap: anywhere;
-}
-
-.language-label small {
-	color: var(--muted);
 }
 
 @container (max-width: 650px) {

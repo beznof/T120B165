@@ -1,16 +1,16 @@
 import { Toast } from '@heroui/react'
 import { Info, X } from 'lucide-react'
 import { type ReactNode, useState, useSyncExternalStore } from 'react'
-import { SignInScreen } from '../features/auth/SignInScreen'
+import { SignInScreen } from '../../features/auth/SignInScreen'
 import {
 	type Account,
 	getAccount,
 	logout,
 	onSessionChange,
 	signedIn,
-} from '../features/auth/session'
+} from '../../features/auth/session'
+import { Icon } from '../icons/Icon'
 import { AppShell, type ColorMode } from './AppShell'
-import { Icon } from './Icon'
 
 export type AppContext = {
 	mode: ColorMode

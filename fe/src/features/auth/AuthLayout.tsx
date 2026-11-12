@@ -1,6 +1,6 @@
 import { Check } from 'lucide-react'
 import { type ReactNode, useId } from 'react'
-import { Icon } from '../../ui/Icon'
+import { Icon } from '../../ui/icons/Icon'
 import './auth.css'
 
 export function AuthLayout({

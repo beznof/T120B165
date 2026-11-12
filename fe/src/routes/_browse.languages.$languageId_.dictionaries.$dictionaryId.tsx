@@ -1,7 +1,7 @@
 import { createFileRoute, notFound } from '@tanstack/react-router'
 import { entryPageSize, parseSearch, validId } from '../features/browse/api'
-import { useBrowseContext } from '../features/browse/browse-context'
-import { EntriesPage, type EntryReviewSearch } from '../features/languages/EntriesPage'
+import { EntriesPage, type EntryReviewSearch } from '../features/browse/entries/EntriesPage'
+import { useBrowseContext } from '../features/browse/layout/browse-context'
 
 export const Route = createFileRoute('/_browse/languages/$languageId_/dictionaries/$dictionaryId')({
 	validateSearch: (search: Record<string, unknown>): EntryReviewSearch => {

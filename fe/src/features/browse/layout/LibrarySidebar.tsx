@@ -3,11 +3,11 @@ import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import { BookOpen, ChevronDown, ChevronRight, Ellipsis } from 'lucide-react'
 import { useId, useMemo, useState } from 'react'
-import type { Schema } from '../../api/client'
-import { Icon } from '../../ui/Icon'
-import { dictionariesPath, languagesPath, pagedQuery } from './api'
-import { countLabel } from './BrowseControls'
-import { LibraryRowsSkeleton } from './BrowseSkeletons'
+import type { Schema } from '../../../api/client'
+import { Icon } from '../../../ui/icons/Icon'
+import { dictionariesPath, languagesPath, pagedQuery } from '../api'
+import { countLabel } from '../results/BrowseControls'
+import { LibraryRowsSkeleton } from '../results/BrowseSkeletons'
 
 const languageLimit = 8
 const dictionaryLimit = 4

@@ -1,6 +1,6 @@
 import { createFileRoute, Navigate } from '@tanstack/react-router'
 import { SignInScreen } from '../features/auth/SignInScreen'
-import { AppFrame } from '../ui/AppFrame'
+import { AppFrame } from '../ui/layout/AppFrame'
 
 export const Route = createFileRoute('/login')({
 	component: () => (

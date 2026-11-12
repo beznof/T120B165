@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { parseSearch } from '../features/browse/api'
-import { useBrowseContext } from '../features/browse/browse-context'
-import { LanguagesPage } from '../features/languages/LanguagesPage'
+import { LanguagesPage } from '../features/browse/languages/LanguagesPage'
+import { useBrowseContext } from '../features/browse/layout/browse-context'
 
 export const Route = createFileRoute('/_browse/')({
 	validateSearch: parseSearch,

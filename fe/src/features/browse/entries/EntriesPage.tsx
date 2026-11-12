@@ -1,15 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import { useEffect, useRef } from 'react'
-import type { Schema } from '../../api/client'
-import { type AppContext, PageHeader } from '../../ui/AppFrame'
-import {
-	ReviewFilters,
-	ReviewPrompt,
-	ReviewQueue,
-	ReviewQueueEntry,
-	ReviewStepper,
-} from '../../ui/VocabularyReview'
+import type { Schema } from '../../../api/client'
+import { type AppContext, PageHeader } from '../../../ui/layout/AppFrame'
 import {
 	canEditDictionary,
 	dictionaryPath,
@@ -19,21 +12,28 @@ import {
 	pageCount,
 	pagedQuery,
 	resourceQuery,
-} from '../browse/api'
+} from '../api'
+import { AddRecordButton, RecordMenu, useResourceEditor } from '../editor/ResourceEditor'
 import {
 	Breadcrumbs,
 	BrowseLoadError,
 	BrowseResults,
 	BrowseSearchForm,
-} from '../browse/BrowseControls'
+} from '../results/BrowseControls'
 import {
 	BrowseHeaderSkeleton,
 	BrowseLoading,
 	EntryReviewSkeleton,
 	ReviewRowsSkeleton,
 	ReviewStageSkeleton,
-} from '../browse/BrowseSkeletons'
-import { AddRecordButton, RecordMenu, useResourceEditor } from '../browse/ResourceEditor'
+} from '../results/BrowseSkeletons'
+import {
+	ReviewFilters,
+	ReviewPrompt,
+	ReviewQueue,
+	ReviewQueueEntry,
+	ReviewStepper,
+} from './VocabularyReview'
 
 export type EntryReviewSearch = Omit<EntrySearch, 'pageSize'> & { position?: number }
 

@@ -2,11 +2,12 @@ import { Button, Input, Label, ListBox, Pagination, Select, TextField } from '@h
 import type { UseQueryResult } from '@tanstack/react-query'
 import { Check, ChevronDown, ChevronLeft, ChevronRight, CircleAlert, Search, X } from 'lucide-react'
 import { Children, isValidElement, type ReactNode, useRef, useState } from 'react'
-import { ApiError } from '../../api/client'
-import type { ColorMode } from '../../ui/AppShell'
-import { Icon } from '../../ui/Icon'
-import { type BrowseSearch, pageSize as defaultPageSize, pageCount, pageSizeOptions } from './api'
+import { ApiError } from '../../../api/client'
+import { Icon } from '../../../ui/icons/Icon'
+import type { ColorMode } from '../../../ui/layout/AppShell'
+import { type BrowseSearch, pageSize as defaultPageSize, pageCount, pageSizeOptions } from '../api'
 import { BrowseLoading } from './BrowseSkeletons'
+import './browse-controls.css'
 
 const sizeOptions = pageSizeOptions.map((size) => ({ value: String(size), label: String(size) }))
 

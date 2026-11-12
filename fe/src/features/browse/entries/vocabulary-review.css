@@ -1,3 +1,9 @@
+.entry-review {
+	margin-block-start: 18px;
+	padding-block-start: 18px;
+	border-block-start: 1px solid var(--border);
+}
+
 .review-layout {
 	display: grid;
 	grid-template-columns: minmax(0, 1.8fr) minmax(0, 1fr);

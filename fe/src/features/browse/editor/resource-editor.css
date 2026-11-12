@@ -1,0 +1,84 @@
+.editor-overlay {
+	background: #1514128c;
+}
+
+.editor-dialog {
+	width: min(calc(100vw - 32px), 34rem);
+	max-width: 34rem;
+	max-height: calc(100dvh - 40px);
+	padding: clamp(16px, 4vw, 28px);
+	overflow: auto;
+	border: 1px solid var(--border);
+	border-radius: var(--bloom-card-radius);
+	background: var(--surface);
+	color: var(--foreground);
+}
+
+.editor-dialog .modal__header {
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 0 0 12px;
+}
+
+.editor-dialog .modal__heading {
+	font-size: 1.625rem;
+	font-weight: 650;
+	line-height: 1.2;
+	overflow-wrap: anywhere;
+}
+
+.editor-form {
+	display: grid;
+	gap: 14px;
+	overflow-wrap: anywhere;
+}
+
+.editor-form .modal__footer {
+	flex-wrap: wrap;
+	gap: 8px;
+	padding: 0;
+}
+
+.editor-cover-preview {
+	width: min(100%, 15rem);
+	max-width: 100%;
+	aspect-ratio: 2.15;
+	border-radius: var(--bloom-field-radius);
+	object-fit: cover;
+}
+
+.editor-file {
+	display: grid;
+	gap: 4px;
+	color: var(--muted);
+	font-size: 0.875rem;
+	font-weight: 630;
+}
+
+.editor-file input {
+	width: 100%;
+	min-height: var(--bloom-button-height);
+	padding: 4px;
+	border: 1px solid var(--field-border);
+	border-radius: var(--bloom-field-radius);
+	background: var(--field-background);
+	color: var(--foreground);
+}
+
+.editor-file input::file-selector-button {
+	min-height: 34px;
+	margin-inline-end: 8px;
+	padding-inline: 10px;
+	border: 0;
+	border-radius: 6px;
+	background: var(--bloom-hover);
+	color: var(--foreground);
+	cursor: pointer;
+}
+
+.editor-field-help {
+	color: var(--muted);
+	font-size: 0.875rem;
+}
