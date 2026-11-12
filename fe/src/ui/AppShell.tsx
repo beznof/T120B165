@@ -1,13 +1,14 @@
 import { type ReactNode, useState } from 'react'
-import { CatalogNavbar } from './CatalogNavbar'
+import type { Account } from '../features/auth/session'
 import { Icon } from './Icon'
+import { Navbar } from './Navbar'
 import '@fontsource-variable/atkinson-hyperlegible-next'
-import './catalog.css'
+import './app.css'
 import { Github } from './github-icon'
 
 export type ColorMode = 'light' | 'dark'
 
-const modeKey = 'catalog-color-mode'
+const modeKey = 'saitynai-color-mode'
 
 function initialMode(): ColorMode {
 	try {
@@ -23,12 +24,14 @@ function initialMode(): ColorMode {
 	return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
 }
 
-export function CatalogShell({
+export function AppShell({
 	authenticated,
+	account,
 	onSignOut,
 	children,
 }: {
 	authenticated: boolean
+	account: Account | null
 	onSignOut: () => Promise<void>
 	children: (mode: ColorMode) => ReactNode
 }) {
@@ -46,21 +49,22 @@ export function CatalogShell({
 	}
 
 	return (
-		<div className="bloom-theme catalog-shell" data-mode={mode} lang="en">
-			<a className="catalog-skip-link" href="#catalog-content">
+		<div className="bloom-theme app-shell" data-mode={mode} lang="en">
+			<a className="app-skip-link" href="#app-content">
 				Skip to content
 			</a>
-			<CatalogNavbar
+			<Navbar
 				mode={mode}
 				onToggleMode={toggleMode}
 				authenticated={authenticated}
+				account={account}
 				onSignOut={onSignOut}
 			/>
-			<main id="catalog-content" className="catalog-container catalog-main" tabIndex={-1}>
+			<main id="app-content" className="app-container app-main" tabIndex={-1}>
 				{children(mode)}
 			</main>
-			<footer className="catalog-footer">
-				<div className="catalog-container catalog-footer-inner">
+			<footer className="app-footer">
+				<div className="app-container app-footer-inner">
 					<p>Look up words and phrases in other languages.</p>
 					<a href="https://github.com/beznof/T120B165" target="_blank" rel="noreferrer">
 						<Icon icon={Github} size={18} /> GitHub

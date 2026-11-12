@@ -1,23 +1,23 @@
-.catalog-cover {
+.cover-image {
 	position: relative;
 	display: block;
 	flex: none;
 	inline-size: 100%;
-	aspect-ratio: var(--catalog-cover-ratio, 2.15);
+	aspect-ratio: var(--cover-ratio, 2.15);
 	overflow: clip;
 	background: color-mix(in srgb, var(--highlight) 24%, var(--surface));
 	color: var(--accent);
 }
 
-.catalog-cover[data-fallback="true"] {
+.cover-image[data-fallback="true"] {
 	display: grid;
 	place-items: center;
 	aspect-ratio: auto;
-	min-block-size: calc(100cqi / var(--catalog-cover-ratio, 2.15));
-	padding: 16px var(--catalog-card-gutter, 18px);
+	min-block-size: calc(100cqi / var(--cover-ratio, 2.15));
+	padding: 16px var(--cover-gutter, 18px);
 }
 
-.catalog-cover img {
+.cover-image img {
 	position: absolute;
 	inset: 0;
 	inline-size: 100%;
@@ -26,7 +26,7 @@
 	object-fit: cover;
 }
 
-.catalog-cover-name {
+.cover-image-name {
 	min-width: 0;
 	max-inline-size: 100%;
 	font-size: clamp(1.25rem, 10cqi, 2.125rem);
@@ -38,6 +38,20 @@
 	overflow-wrap: anywhere;
 }
 
-.catalog-cover-name[data-long="true"] {
+.cover-image-name[data-long="true"] {
 	font-size: clamp(0.75rem, 4.6cqi, 1.25rem);
+}
+
+.cover-image[data-thumbnail="true"] {
+	inline-size: 64px;
+	block-size: 64px;
+	min-block-size: 64px;
+	max-block-size: 64px;
+	padding: 6px;
+	border-radius: var(--bloom-field-radius);
+}
+
+.cover-image[data-thumbnail="true"] .cover-image-name {
+	color: var(--bloom-accent-text);
+	font-size: 1.75rem;
 }

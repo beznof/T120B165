@@ -1,0 +1,176 @@
+.auth {
+	display: grid;
+	justify-items: center;
+	padding-block-end: 24px;
+}
+
+.app-main > .auth {
+	padding-block-start: clamp(12px, 4vw, 44px);
+}
+
+.auth-card {
+	inline-size: min(100%, 29rem);
+	padding: clamp(20px, 4vw, 32px);
+	border: 1px solid var(--border);
+	border-radius: var(--bloom-card-radius);
+	background: var(--surface);
+}
+
+.bloom-theme .auth-card h1 {
+	font-size: clamp(1.65rem, 4vw, 2.05rem);
+	font-weight: 700;
+	letter-spacing: -0.03em;
+	line-height: 1.2;
+}
+
+.auth-form {
+	display: grid;
+	gap: 16px;
+	margin-block-start: 20px;
+}
+
+.auth-form > .button,
+.auth-success > .button {
+	inline-size: 100%;
+}
+
+.auth-form .text-field {
+	display: grid;
+	gap: 6px;
+}
+
+.bloom-theme .auth-card .label {
+	color: var(--foreground);
+	font-size: 0.875rem;
+}
+
+.bloom-theme .auth-card .description {
+	color: var(--muted);
+	font-size: 0.8125rem;
+	line-height: 1.4;
+}
+
+.bloom-theme .auth-card .field-error {
+	color: var(--danger);
+	font-size: 0.8125rem;
+}
+
+.bloom-theme .auth-card .input[aria-invalid="true"] {
+	border-color: var(--danger);
+}
+
+.auth-password {
+	position: relative;
+}
+
+.bloom-theme .auth-password .input {
+	padding-inline-end: calc(var(--bloom-button-height) + 6px);
+}
+
+.bloom-theme .auth-password .button {
+	position: absolute;
+	inset-block-start: 0;
+	inset-inline-end: 1px;
+	color: var(--muted);
+}
+
+.auth-types {
+	display: grid;
+	gap: 8px;
+}
+
+.auth-role-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 8px;
+}
+
+.auth-role {
+	min-inline-size: 0;
+	padding: 12px;
+	border: 1px solid var(--field-border);
+	border-radius: var(--bloom-field-radius);
+	background: var(--surface);
+}
+
+.auth-role[data-hovered] {
+	background: var(--bloom-hover);
+}
+
+.auth-role[data-selected] {
+	background: var(--bloom-selected);
+}
+
+.auth-role[data-focus-visible] {
+	outline: 2px solid var(--focus);
+	outline-offset: 2px;
+}
+
+.auth-role .radio__content {
+	align-items: start;
+}
+
+.bloom-theme .auth-role .description {
+	display: block;
+	margin-block-start: 4px;
+}
+
+.auth-switch {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+	column-gap: 8px;
+	margin-block-start: 14px;
+	padding-block-start: 10px;
+	border-block-start: 1px solid var(--border);
+	color: var(--muted);
+	font-size: 0.875rem;
+}
+
+.auth-switch a {
+	display: inline-flex;
+	align-items: center;
+	min-block-size: var(--bloom-button-height);
+	font-weight: 640;
+}
+
+.bloom-theme .auth-switch :is(a, .button) {
+	padding-inline: 6px;
+	color: var(--bloom-accent-text);
+	text-decoration: underline;
+	text-underline-offset: 0.18em;
+}
+
+.auth-success {
+	display: grid;
+	gap: 18px;
+	margin-block-start: 14px;
+}
+
+.auth-success p {
+	color: var(--muted);
+}
+
+.auth-success > a.button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.auth-check {
+	display: grid;
+	place-items: center;
+	inline-size: var(--bloom-button-height);
+	block-size: var(--bloom-button-height);
+	margin-block-end: 16px;
+	border-radius: var(--bloom-field-radius);
+	background: var(--secondary);
+	color: var(--bloom-lime-text);
+}
+
+@media (max-width: 400px) {
+	.auth-role-grid {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}

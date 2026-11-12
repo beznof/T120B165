@@ -13,7 +13,7 @@ export function ChoiceGroup({
 }) {
 	return (
 		<RadioGroup
-			className="catalog-choices"
+			className="choice-group"
 			name={name}
 			defaultValue={defaultValue}
 			orientation="horizontal"

@@ -1,13 +1,13 @@
 import { createFileRoute, Navigate } from '@tanstack/react-router'
-import { CatalogSignIn } from '../features/auth/CatalogSignIn'
-import { CatalogFrame } from '../features/catalog/CatalogFrame'
+import { SignInScreen } from '../features/auth/SignInScreen'
+import { AppFrame } from '../ui/AppFrame'
 
 export const Route = createFileRoute('/login')({
 	component: () => (
-		<CatalogFrame requireSignIn={false}>
+		<AppFrame requireSignIn={false}>
 			{({ authenticated }) =>
-				authenticated ? <Navigate to="/" replace /> : <CatalogSignIn notice="" />
+				authenticated ? <Navigate to="/" replace /> : <SignInScreen notice="" />
 			}
-		</CatalogFrame>
+		</AppFrame>
 	),
 })

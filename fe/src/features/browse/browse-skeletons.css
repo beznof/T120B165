@@ -1,0 +1,46 @@
+.bloom-theme .browse-skeleton {
+	background: var(--bloom-rule);
+}
+
+.browse-skeleton-lines {
+	display: grid;
+	gap: 8px;
+}
+
+.browse-skeleton-control {
+	block-size: var(--bloom-button-height);
+	border-radius: var(--bloom-field-radius);
+}
+
+.browse-skeleton-search {
+	inline-size: 86px;
+}
+
+@container (max-width: 340px) {
+	.browse-skeleton-search {
+		inline-size: var(--bloom-button-height);
+	}
+}
+
+.library-skeleton-row,
+.review-skeleton-row {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	min-block-size: var(--bloom-button-height);
+	padding-inline: 10px;
+}
+
+.review-prompt.browse-skeleton-prompt {
+	background: var(--bloom-wash);
+}
+
+.browse-skeleton-prompt .review-answer {
+	border-color: var(--bloom-rule);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.browse-skeleton {
+		animation: none;
+	}
+}

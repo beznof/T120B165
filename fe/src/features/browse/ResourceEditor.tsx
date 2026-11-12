@@ -3,11 +3,11 @@ import { useQueryClient } from '@tanstack/react-query'
 import { Ellipsis, ImagePlus, Pencil, Plus, Trash2, X } from 'lucide-react'
 import { type FormEvent, useEffect, useState } from 'react'
 import { ApiError, type Schema } from '../../api/client'
-import type { ColorMode } from '../../ui/CatalogShell'
+import type { AppContext } from '../../ui/AppFrame'
+import type { ColorMode } from '../../ui/AppShell'
 import { ChoiceGroup } from '../../ui/ChoiceGroup'
 import { Icon } from '../../ui/Icon'
-import { catalogKey, removeResource, saveEntry, saveName, uploadCover } from './api'
-import type { CatalogContext } from './CatalogFrame'
+import { browseQueryKey, removeResource, saveEntry, saveName, uploadCover } from './api'
 
 type Resource = 'language' | 'dictionary' | 'entry'
 type Entry = Schema['GetOneEntryOutput']
@@ -85,13 +85,13 @@ async function submitAction(action: EditorAction, form: FormData) {
 	}
 }
 
-export function useCatalogEditor({ mode, notify }: Pick<CatalogContext, 'mode' | 'notify'>) {
+export function useResourceEditor({ mode, notify }: Pick<AppContext, 'mode' | 'notify'>) {
 	const [action, setAction] = useState<EditorAction | null>(null)
 
 	return {
 		open: setAction,
 		dialog: action && (
-			<CatalogEditor
+			<ResourceEditor
 				action={action}
 				mode={mode}
 				onClose={() => setAction(null)}
@@ -104,7 +104,7 @@ export function useCatalogEditor({ mode, notify }: Pick<CatalogContext, 'mode' |
 	}
 }
 
-function CatalogEditor({
+function ResourceEditor({
 	action,
 	mode,
 	onClose,
@@ -130,7 +130,7 @@ function CatalogEditor({
 		setError('')
 		try {
 			const message = await submitAction(action, form)
-			void queryClient.invalidateQueries({ queryKey: catalogKey })
+			void queryClient.invalidateQueries({ queryKey: browseQueryKey })
 			onSaved(message)
 		} catch (failure) {
 			setError(
@@ -154,13 +154,13 @@ function CatalogEditor({
 			}}
 		>
 			<Modal.Backdrop
-				className="bloom-theme catalog-overlay"
+				className="bloom-theme editor-overlay"
 				data-mode={mode}
 				isDismissable={!pending}
 				isKeyboardDismissDisabled={pending}
 			>
 				<Modal.Container placement="center">
-					<Modal.Dialog className="catalog-dialog">
+					<Modal.Dialog className="editor-dialog">
 						<Modal.Header>
 							<Modal.Heading>{actionTitle(action)}</Modal.Heading>
 							<Button
@@ -174,10 +174,10 @@ function CatalogEditor({
 							</Button>
 						</Modal.Header>
 						<Modal.Body>
-							<form className="catalog-editor-form" onSubmit={submit}>
+							<form className="editor-form" onSubmit={submit}>
 								<EditorFields action={action} />
 								{error && (
-									<p className="catalog-form-error" role="alert">
+									<p className="form-error" role="alert">
 										{error}
 									</p>
 								)}
@@ -292,12 +292,12 @@ function CoverFields({ record }: { record: RecordSummary }) {
 		<>
 			{source && (
 				<img
-					className="catalog-cover-preview"
+					className="editor-cover-preview"
 					src={source}
 					alt={`Cover for ${record.name}`}
 				/>
 			)}
-			<label className="catalog-file">
+			<label className="editor-file">
 				Image file
 				<input
 					type="file"
@@ -313,7 +313,7 @@ function CoverFields({ record }: { record: RecordSummary }) {
 					}}
 				/>
 			</label>
-			<p className="catalog-field-help">
+			<p className="editor-field-help">
 				JPEG or PNG, at least 500 × 500 pixels and up to 5 MiB.
 			</p>
 		</>
@@ -348,7 +348,7 @@ export function RecordActions({
 	open: (action: EditorAction) => void
 }) {
 	return (
-		<CatalogRecordMenu
+		<RecordMenu
 			mode={mode}
 			label={`${record.name} actions`}
 			open={open}
@@ -369,7 +369,7 @@ export function RecordActions({
 
 const actionIcons = { name: Pencil, entry: Pencil, cover: ImagePlus, delete: Trash2 }
 
-export function CatalogRecordMenu({
+export function RecordMenu({
 	mode,
 	label,
 	items,
@@ -385,7 +385,7 @@ export function CatalogRecordMenu({
 			<Button variant="ghost" isIconOnly aria-label={label}>
 				<Icon icon={Ellipsis} />
 			</Button>
-			<Dropdown.Popover className="bloom-theme catalog-menu" data-mode={mode}>
+			<Dropdown.Popover className="bloom-theme app-menu" data-mode={mode}>
 				<Dropdown.Menu
 					aria-label={label}
 					onAction={(key) => {
@@ -400,7 +400,7 @@ export function CatalogRecordMenu({
 							key={label}
 							id={label}
 							textValue={label}
-							className={action.kind === 'delete' ? 'catalog-danger-text' : undefined}
+							className={action.kind === 'delete' ? 'danger-text' : undefined}
 						>
 							<Icon icon={actionIcons[action.kind]} size={17} />
 							<span>{label}</span>

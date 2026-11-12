@@ -1,32 +1,19 @@
-import {
-	Button,
-	Input,
-	Label,
-	ListBox,
-	Pagination,
-	Select,
-	Spinner,
-	TextField,
-} from '@heroui/react'
+import { Button, Input, Label, ListBox, Pagination, Select, TextField } from '@heroui/react'
 import type { UseQueryResult } from '@tanstack/react-query'
 import { Check, ChevronDown, ChevronLeft, ChevronRight, CircleAlert, Search, X } from 'lucide-react'
 import { Children, isValidElement, type ReactNode, useRef, useState } from 'react'
 import { ApiError } from '../../api/client'
-import type { ColorMode } from '../../ui/CatalogShell'
+import type { ColorMode } from '../../ui/AppShell'
 import { Icon } from '../../ui/Icon'
-import {
-	type CatalogSearch,
-	catalogPageCount,
-	pageSize as defaultPageSize,
-	pageSizeOptions,
-} from './api'
+import { type BrowseSearch, pageSize as defaultPageSize, pageCount, pageSizeOptions } from './api'
+import { BrowseLoading } from './BrowseSkeletons'
 
 const sizeOptions = pageSizeOptions.map((size) => ({ value: String(size), label: String(size) }))
 
-export function CatalogTrail({ children }: { children: ReactNode }) {
+export function Breadcrumbs({ children }: { children: ReactNode }) {
 	const items = Children.toArray(children)
 	return (
-		<nav className="catalog-trail" aria-label="Breadcrumbs">
+		<nav className="breadcrumbs" aria-label="Breadcrumbs">
 			<ol>
 				{items.map((item, index) => (
 					<li key={isValidElement(item) ? item.key : String(item)}>
@@ -39,7 +26,7 @@ export function CatalogTrail({ children }: { children: ReactNode }) {
 	)
 }
 
-function CatalogSelect({
+function BrowseSelect({
 	mode,
 	label,
 	value,
@@ -54,7 +41,7 @@ function CatalogSelect({
 }) {
 	return (
 		<Select
-			className="catalog-filter"
+			className="browse-filter"
 			value={value}
 			onChange={(key) => {
 				if (typeof key === 'string') {
@@ -62,14 +49,21 @@ function CatalogSelect({
 				}
 			}}
 		>
-			<Label>{label}</Label>
+			<Label className="sr-only">{label}</Label>
 			<Select.Trigger>
-				<Select.Value />
+				<Select.Value>
+					{({ selectedText }) => (
+						<>
+							{selectedText}
+							<span aria-hidden="true"> / page</span>
+						</>
+					)}
+				</Select.Value>
 				<Select.Indicator>
 					<Icon icon={ChevronDown} />
 				</Select.Indicator>
 			</Select.Trigger>
-			<Select.Popover className="bloom-theme catalog-menu" data-mode={mode}>
+			<Select.Popover className="bloom-theme app-menu" data-mode={mode}>
 				<ListBox>
 					{options.map((option) => (
 						<ListBox.Item id={option.value} key={option.value} textValue={option.label}>
@@ -85,40 +79,39 @@ function CatalogSelect({
 	)
 }
 
-export function CatalogStatus({
+export function BrowseStatus({
 	title,
 	children,
 	icon,
-	heading: Heading = 'h2',
 }: {
 	title: string
 	children?: ReactNode
 	icon?: ReactNode
-	heading?: 'h1' | 'h2'
 }) {
 	return (
-		<div className="catalog-status">
-			<span className="catalog-state-icon">
+		<div className="browse-status">
+			<span className="browse-state-icon">
 				{icon ?? <Icon icon={CircleAlert} size={22} />}
 			</span>
-			<Heading>{title}</Heading>
+			<h2>{title}</h2>
 			{children}
 		</div>
 	)
 }
 
-export function CatalogLoadError({ error, retry }: { error: Error; retry: () => void }) {
+export function BrowseLoadError({ error, retry }: { error: Error; retry: () => void }) {
 	if (error instanceof ApiError && error.status === 404) {
 		return (
-			<CatalogStatus title="Not found">
+			<BrowseStatus title="Not found">
 				<p>
-					This item may have been removed. Use the breadcrumbs to return to the catalog.
+					This item may have been removed. Use the breadcrumbs to return to the previous
+					list.
 				</p>
-			</CatalogStatus>
+			</BrowseStatus>
 		)
 	}
 	return (
-		<CatalogStatus title="Couldn’t load this page">
+		<BrowseStatus title="Couldn’t load this page">
 			<p role="alert">
 				{error instanceof ApiError && error.status === 403
 					? 'Your account does not have access to this resource.'
@@ -127,19 +120,11 @@ export function CatalogLoadError({ error, retry }: { error: Error; retry: () => 
 			<Button variant="secondary" onPress={retry}>
 				Try again
 			</Button>
-		</CatalogStatus>
+		</BrowseStatus>
 	)
 }
 
-export function CatalogLoading({ label }: { label: string }) {
-	return (
-		<div className="catalog-loading" role="status">
-			<Spinner color="accent" /> {label}
-		</div>
-	)
-}
-
-export function CatalogSearchBar({
+export function BrowseSearchBar({
 	search,
 	label,
 	onSearch,
@@ -147,7 +132,7 @@ export function CatalogSearchBar({
 	pageSize,
 	onPageSizeChange,
 	placeholder,
-	displayControl,
+	action,
 }: {
 	mode: ColorMode
 	pageSize?: number
@@ -156,7 +141,40 @@ export function CatalogSearchBar({
 	search: string
 	label: string
 	onSearch: (search: string) => void
-	displayControl?: ReactNode
+	action?: ReactNode
+}) {
+	return (
+		<div className="browse-controls">
+			<div className="browse-query">
+				<BrowseSearchForm
+					search={search}
+					label={label}
+					placeholder={placeholder}
+					onSearch={onSearch}
+				/>
+				<BrowseSelect
+					mode={mode}
+					label="Results per page"
+					value={String(pageSize ?? defaultPageSize)}
+					options={sizeOptions}
+					onChange={(value) => onPageSizeChange(Number(value))}
+				/>
+			</div>
+			{action}
+		</div>
+	)
+}
+
+export function BrowseSearchForm({
+	search,
+	label,
+	placeholder,
+	onSearch,
+}: {
+	search: string
+	label: string
+	placeholder: string
+	onSearch: (search: string) => void
 }) {
 	const [input, setInput] = useState({ search, draft: search })
 	const field = useRef<HTMLInputElement>(null)
@@ -166,61 +184,51 @@ export function CatalogSearchBar({
 	}
 
 	return (
-		<div className="catalog-query" data-display-control={Boolean(displayControl)}>
-			<search>
-				<form
-					className="catalog-search"
-					onSubmit={(event) => {
-						event.preventDefault()
-						const next = draft.trim()
-						setInput({ search, draft: next })
-						onSearch(next)
-					}}
-				>
-					<div className="catalog-search-box" data-clear={Boolean(draft || search)}>
-						<TextField
-							name="q"
-							value={draft}
-							onChange={(next) => setInput({ search, draft: next })}
+		<search>
+			<form
+				className="browse-search"
+				onSubmit={(event) => {
+					event.preventDefault()
+					const next = draft.trim()
+					setInput({ search, draft: next })
+					onSearch(next)
+				}}
+			>
+				<div className="browse-search-box" data-clear={Boolean(draft || search)}>
+					<TextField
+						name="q"
+						value={draft}
+						onChange={(next) => setInput({ search, draft: next })}
+					>
+						<Label className="sr-only">{label}</Label>
+						<Input
+							ref={field}
+							type="search"
+							maxLength={500}
+							placeholder={placeholder}
+						/>
+					</TextField>
+					{(draft || search) && (
+						<Button
+							variant="ghost"
+							isIconOnly
+							aria-label="Clear search"
+							onPress={() => {
+								setInput({ search, draft: '' })
+								onSearch('')
+								field.current?.focus()
+							}}
 						>
-							<Label className="sr-only">{label}</Label>
-							<Input
-								ref={field}
-								type="search"
-								maxLength={500}
-								placeholder={placeholder}
-							/>
-						</TextField>
-						{(draft || search) && (
-							<Button
-								variant="ghost"
-								isIconOnly
-								aria-label="Clear search"
-								onPress={() => {
-									setInput({ search, draft: '' })
-									onSearch('')
-									field.current?.focus()
-								}}
-							>
-								<Icon icon={X} size={17} />
-							</Button>
-						)}
-					</div>
-					<Button type="submit" aria-label="Search">
-						<Icon icon={Search} size={17} />
-						<span>Search</span>
-					</Button>
-				</form>
-			</search>
-			<CatalogSelect
-				mode={mode}
-				label="Per page"
-				value={String(pageSize ?? defaultPageSize)}
-				options={sizeOptions}
-				onChange={(value) => onPageSizeChange(Number(value))}
-			/>
-			{displayControl}
-		</div>
+							<Icon icon={X} size={17} />
+						</Button>
+					)}
+				</div>
+				<Button className="button--lime" type="submit" aria-label="Search">
+					<Icon icon={Search} size={17} />
+					<span>Search</span>
+				</Button>
+			</form>
+		</search>
 	)
 }
 
@@ -231,25 +239,29 @@ export function countLabel(count: number | string, singular: string, plural: str
 	return `${numberFormat.format(value)} ${value === 1 ? singular : plural}`
 }
 
-export function CatalogResults<T>({
+export function BrowseResults<T>({
 	query,
 	search,
 	names,
 	onPageChange,
+	paginationLabel,
 	onClear,
+	skeleton,
 	children,
 }: {
 	query: UseQueryResult<{ items: T[]; totalCount: number | string; pageSize: number | string }>
-	search: CatalogSearch
+	search: BrowseSearch
 	names: { singular: string; plural: string }
 	onPageChange: (page: number) => void
+	paginationLabel?: string
 	onClear?: () => void
+	skeleton: ReactNode
 	children: (items: T[]) => ReactNode
 }) {
 	const results = useRef<HTMLElement>(null)
 	const page = search.page ?? 1
 	const data = query.data
-	const totalPages = data ? catalogPageCount(data.totalCount, data.pageSize) : 1
+	const totalPages = data ? pageCount(data.totalCount, data.pageSize) : 1
 	const start = (page - 1) * Number(data?.pageSize ?? defaultPageSize) + 1
 	const end = start + (data?.items.length ?? 0) - 1
 	const shown =
@@ -263,53 +275,54 @@ export function CatalogResults<T>({
 		results.current?.scrollIntoView({ block: 'nearest' })
 	}
 
+	const clearFiltersButton = onClear && (
+		<Button
+			variant="secondary"
+			onPress={() => {
+				onClear()
+				results.current?.focus({ preventScroll: true })
+			}}
+		>
+			Clear filters
+		</Button>
+	)
+
 	return (
 		<section
-			className="catalog-results"
+			className="browse-results"
 			aria-label={names.plural}
 			aria-busy={query.isRefetching || undefined}
 			ref={results}
 			tabIndex={-1}
 		>
 			{query.isPending ? (
-				<CatalogLoading label={`Loading ${names.plural}…`} />
+				<BrowseLoading label={`Loading ${names.plural}…`}>{skeleton}</BrowseLoading>
 			) : query.isError ? (
-				<CatalogLoadError error={query.error} retry={() => void query.refetch()} />
+				<BrowseLoadError error={query.error} retry={() => void query.refetch()} />
 			) : page > totalPages ? (
-				<CatalogStatus title="This page is out of range">
+				<BrowseStatus title="This page is out of range">
 					<Button variant="secondary" onPress={() => changePage(1)}>
 						Go to first page
 					</Button>
-				</CatalogStatus>
+				</BrowseStatus>
 			) : !data?.items.length ? (
-				<CatalogStatus
-					title={onClear ? `No matching ${names.plural}` : `No ${names.plural} yet`}
-					icon={<Icon icon={Search} size={22} />}
-				>
-					{onClear && (
-						<Button
-							variant="secondary"
-							onPress={() => {
-								onClear()
-								results.current?.focus({ preventScroll: true })
-							}}
-						>
-							Clear filters
-						</Button>
-					)}
-				</CatalogStatus>
+				<div className="browse-empty">
+					<p role="status">No {names.plural} were found.</p>
+					{clearFiltersButton}
+				</div>
 			) : (
 				children(data.items)
 			)}
 			{data && data.items.length > 0 && !query.isError && page <= totalPages && (
-				<div className="catalog-pagination">
+				<div className="browse-pagination">
 					<p aria-live="polite">
 						{shown} of {countLabel(data.totalCount, names.singular, names.plural)}
 					</p>
 					{totalPages > 1 && (
-						<CatalogPagination
+						<BrowsePagination
 							page={page}
 							totalPages={totalPages}
+							label={paginationLabel}
 							onPageChange={changePage}
 						/>
 					)}
@@ -319,11 +332,13 @@ export function CatalogResults<T>({
 	)
 }
 
-function CatalogPagination({
+export function BrowsePagination({
+	label = 'Result pages',
 	page,
 	totalPages,
 	onPageChange,
 }: {
+	label?: string
 	page: number
 	totalPages: number
 	onPageChange: (page: number) => void
@@ -331,7 +346,7 @@ function CatalogPagination({
 	const first = Math.max(1, Math.min(page - 1, totalPages - 2))
 	const pages = Array.from({ length: Math.min(3, totalPages) }, (_, index) => first + index)
 	return (
-		<Pagination aria-label="Catalog pages">
+		<Pagination aria-label={label}>
 			<Pagination.Content>
 				<Pagination.Item>
 					<Pagination.Previous

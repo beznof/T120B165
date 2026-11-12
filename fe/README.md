@@ -7,7 +7,7 @@ npm ci
 npm run dev
 ```
 
-The `/` route opens the languages catalog. Use `/register` to create a learner or teacher account and `/login` to sign in. Choose a language and dictionary from the cover grids to open vocabulary review. Select an entry or use Previous and Next to review entries across pages. Search, pagination, and word or phrase filters use the API.
+The `/` route opens the list of languages. Use `/register` to create a learner or teacher account and `/login` to sign in. Choose a language from the list and a dictionary from the shelf to open vocabulary review. Select an entry or use Previous and Next to review entries across pages. Search, pagination, and word or phrase filters use the API.
 
 Admins can manage languages, dictionaries, and entries. Teachers can create dictionaries and manage their own dictionaries and entries. The API enforces these permissions. The session module stores tokens in memory and clears cached queries when the session changes.
 

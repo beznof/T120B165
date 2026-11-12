@@ -9,15 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as BrowseRouteImport } from './routes/_browse'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as RegisterRouteImport } from './routes/register'
-import { Route as LanguagesLanguageIdRouteImport } from './routes/languages.$languageId'
-import { Route as LanguagesLanguageIdDictionariesDictionaryIdRouteImport } from './routes/languages.$languageId_.dictionaries.$dictionaryId'
+import { Route as BrowseIndexRouteImport } from './routes/_browse.index'
+import { Route as BrowseLanguagesLanguageIdRouteImport } from './routes/_browse.languages.$languageId'
+import { Route as BrowseLanguagesLanguageIdDictionariesDictionaryIdRouteImport } from './routes/_browse.languages.$languageId_.dictionaries.$dictionaryId'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const BrowseRoute = BrowseRouteImport.update({
+  id: '/_browse',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -30,39 +30,46 @@ const RegisterRoute = RegisterRouteImport.update({
   path: '/register',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LanguagesLanguageIdRoute = LanguagesLanguageIdRouteImport.update({
-  id: '/languages/$languageId',
-  path: '/languages/$languageId',
-  getParentRoute: () => rootRouteImport,
+const BrowseIndexRoute = BrowseIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => BrowseRoute,
 } as any)
-const LanguagesLanguageIdDictionariesDictionaryIdRoute =
-  LanguagesLanguageIdDictionariesDictionaryIdRouteImport.update({
+const BrowseLanguagesLanguageIdRoute =
+  BrowseLanguagesLanguageIdRouteImport.update({
+    id: '/languages/$languageId',
+    path: '/languages/$languageId',
+    getParentRoute: () => BrowseRoute,
+  } as any)
+const BrowseLanguagesLanguageIdDictionariesDictionaryIdRoute =
+  BrowseLanguagesLanguageIdDictionariesDictionaryIdRouteImport.update({
     id: '/languages/$languageId_/dictionaries/$dictionaryId',
     path: '/languages/$languageId/dictionaries/$dictionaryId',
-    getParentRoute: () => rootRouteImport,
+    getParentRoute: () => BrowseRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof BrowseIndexRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
-  '/languages/$languageId': typeof LanguagesLanguageIdRoute
-  '/languages/$languageId/dictionaries/$dictionaryId': typeof LanguagesLanguageIdDictionariesDictionaryIdRoute
+  '/languages/$languageId': typeof BrowseLanguagesLanguageIdRoute
+  '/languages/$languageId/dictionaries/$dictionaryId': typeof BrowseLanguagesLanguageIdDictionariesDictionaryIdRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
-  '/languages/$languageId': typeof LanguagesLanguageIdRoute
-  '/languages/$languageId/dictionaries/$dictionaryId': typeof LanguagesLanguageIdDictionariesDictionaryIdRoute
+  '/': typeof BrowseIndexRoute
+  '/languages/$languageId': typeof BrowseLanguagesLanguageIdRoute
+  '/languages/$languageId/dictionaries/$dictionaryId': typeof BrowseLanguagesLanguageIdDictionariesDictionaryIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/_browse': typeof BrowseRouteWithChildren
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
-  '/languages/$languageId': typeof LanguagesLanguageIdRoute
-  '/languages/$languageId_/dictionaries/$dictionaryId': typeof LanguagesLanguageIdDictionariesDictionaryIdRoute
+  '/_browse/': typeof BrowseIndexRoute
+  '/_browse/languages/$languageId': typeof BrowseLanguagesLanguageIdRoute
+  '/_browse/languages/$languageId_/dictionaries/$dictionaryId': typeof BrowseLanguagesLanguageIdDictionariesDictionaryIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -74,35 +81,34 @@ export interface FileRouteTypes {
     | '/languages/$languageId/dictionaries/$dictionaryId'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
     | '/login'
     | '/register'
+    | '/'
     | '/languages/$languageId'
     | '/languages/$languageId/dictionaries/$dictionaryId'
   id:
     | '__root__'
-    | '/'
+    | '/_browse'
     | '/login'
     | '/register'
-    | '/languages/$languageId'
-    | '/languages/$languageId_/dictionaries/$dictionaryId'
+    | '/_browse/'
+    | '/_browse/languages/$languageId'
+    | '/_browse/languages/$languageId_/dictionaries/$dictionaryId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  BrowseRoute: typeof BrowseRouteWithChildren
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
-  LanguagesLanguageIdRoute: typeof LanguagesLanguageIdRoute
-  LanguagesLanguageIdDictionariesDictionaryIdRoute: typeof LanguagesLanguageIdDictionariesDictionaryIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
+    '/_browse': {
+      id: '/_browse'
+      path: ''
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+      preLoaderRoute: typeof BrowseRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -119,30 +125,50 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/languages/$languageId': {
-      id: '/languages/$languageId'
+    '/_browse/': {
+      id: '/_browse/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof BrowseIndexRouteImport
+      parentRoute: typeof BrowseRoute
+    }
+    '/_browse/languages/$languageId': {
+      id: '/_browse/languages/$languageId'
       path: '/languages/$languageId'
       fullPath: '/languages/$languageId'
-      preLoaderRoute: typeof LanguagesLanguageIdRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof BrowseLanguagesLanguageIdRouteImport
+      parentRoute: typeof BrowseRoute
     }
-    '/languages/$languageId_/dictionaries/$dictionaryId': {
-      id: '/languages/$languageId_/dictionaries/$dictionaryId'
+    '/_browse/languages/$languageId_/dictionaries/$dictionaryId': {
+      id: '/_browse/languages/$languageId_/dictionaries/$dictionaryId'
       path: '/languages/$languageId/dictionaries/$dictionaryId'
       fullPath: '/languages/$languageId/dictionaries/$dictionaryId'
-      preLoaderRoute: typeof LanguagesLanguageIdDictionariesDictionaryIdRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof BrowseLanguagesLanguageIdDictionariesDictionaryIdRouteImport
+      parentRoute: typeof BrowseRoute
     }
   }
 }
 
+interface BrowseRouteChildren {
+  BrowseIndexRoute: typeof BrowseIndexRoute
+  BrowseLanguagesLanguageIdRoute: typeof BrowseLanguagesLanguageIdRoute
+  BrowseLanguagesLanguageIdDictionariesDictionaryIdRoute: typeof BrowseLanguagesLanguageIdDictionariesDictionaryIdRoute
+}
+
+const BrowseRouteChildren: BrowseRouteChildren = {
+  BrowseIndexRoute: BrowseIndexRoute,
+  BrowseLanguagesLanguageIdRoute: BrowseLanguagesLanguageIdRoute,
+  BrowseLanguagesLanguageIdDictionariesDictionaryIdRoute:
+    BrowseLanguagesLanguageIdDictionariesDictionaryIdRoute,
+}
+
+const BrowseRouteWithChildren =
+  BrowseRoute._addFileChildren(BrowseRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  BrowseRoute: BrowseRouteWithChildren,
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
-  LanguagesLanguageIdRoute: LanguagesLanguageIdRoute,
-  LanguagesLanguageIdDictionariesDictionaryIdRoute:
-    LanguagesLanguageIdDictionariesDictionaryIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

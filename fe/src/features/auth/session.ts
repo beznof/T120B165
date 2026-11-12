@@ -1,7 +1,7 @@
 import { ApiError, request, requireData, type Schema } from '../../api/client'
 
 type Tokens = Schema['AuthTokensOutput']
-export type Account = { id: number; role: 'Learner' | 'Teacher' | 'Admin' }
+export type Account = { id: number; username: string; role: 'Learner' | 'Teacher' | 'Admin' }
 type Session = {
 	tokens: Tokens
 	account: Account | null
@@ -16,16 +16,21 @@ export const signedIn = () => Boolean(current)
 export const getAccount = () => current?.account ?? null
 
 // Claims guide the UI. The API still authorizes every request.
-function readAccount(token: string): Account | null {
+function readAccount(token: string, fallbackUsername: string): Account | null {
 	try {
 		const payload = token.split('.')[1]
 		if (!payload) {
 			return null
 		}
-		const { sub, role } = JSON.parse(atob(payload.replaceAll('-', '+').replaceAll('_', '/')))
+		const bytes = Uint8Array.from(
+			atob(payload.replaceAll('-', '+').replaceAll('_', '/')),
+			(char) => char.charCodeAt(0),
+		)
+		const { sub, name, role } = JSON.parse(new TextDecoder().decode(bytes))
 		const id = Number(sub)
+		const username = typeof name === 'string' && name.trim() ? name : fallbackUsername
 		return Number.isInteger(id) && id > 0 && ['Learner', 'Teacher', 'Admin'].includes(role)
-			? { id, role }
+			? { id, username, role }
 			: null
 	} catch {
 		return null
@@ -49,7 +54,7 @@ function setSession(value?: Session) {
 export async function login(body: Schema['LoginRequest']) {
 	const tokens = requireData(await request<Tokens>('/auth/login', { body }))
 
-	setSession({ tokens, account: readAccount(tokens.accessToken) })
+	setSession({ tokens, account: readAccount(tokens.accessToken, body.username) })
 }
 
 function refresh(session: Session) {

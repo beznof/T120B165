@@ -1,5 +1,5 @@
 import { Button } from '@heroui/react'
-import { ArrowLeft, ArrowRight, Copy } from 'lucide-react'
+import { Copy } from 'lucide-react'
 import { type ReactNode, type Ref, useId, useState } from 'react'
 import { Icon } from './Icon'
 import '@fontsource-variable/literata'
@@ -16,80 +16,166 @@ export function ReviewPrompt({
 	term,
 	actions,
 	ref,
+	flip = false,
 	...answer
 }: Answer & {
 	entryKey: number | string
-	term: ReactNode
+	term: string
 	actions?: ReactNode
 	ref?: Ref<HTMLElement>
+	flip?: boolean
 }) {
 	const title = useId()
 
 	return (
-		<article className="review-prompt" aria-labelledby={title} tabIndex={-1} ref={ref}>
-			<div className="review-word">
-				<h2 id={title} aria-live="polite">
-					{term}
-				</h2>
-				{actions}
-			</div>
-			<ReviewAnswer key={entryKey} {...answer} />
+		<article
+			className="review-prompt"
+			data-flip={flip}
+			aria-labelledby={title}
+			tabIndex={-1}
+			ref={ref}
+		>
+			<ReviewContent
+				key={entryKey}
+				title={title}
+				term={term}
+				actions={actions}
+				flip={flip}
+				{...answer}
+			/>
 		</article>
 	)
 }
 
-function ReviewAnswer({ translation, pronunciation, notify }: Answer) {
+function ReviewContent({
+	title,
+	term,
+	actions,
+	flip,
+	translation,
+	pronunciation,
+	notify,
+}: Answer & {
+	title: string
+	term: string
+	actions?: ReactNode
+	flip: boolean
+}) {
 	const [revealed, setRevealed] = useState(false)
 	const answerId = useId()
 
+	const heading = (
+		<>
+			<h2 id={title} aria-live="polite">
+				<bdi>{term}</bdi>
+			</h2>
+			<ReviewCopyButton value={term} label="Entry" notify={notify} />
+		</>
+	)
+	const meaning = (
+		<dl className="review-meaning">
+			<div>
+				<dt>Translation</dt>
+				<dd>
+					<bdi>{translation}</bdi>
+					<ReviewCopyButton value={translation} label="Translation" notify={notify} />
+				</dd>
+			</div>
+			{pronunciation && (
+				<div>
+					<dt>Pronunciation</dt>
+					<dd>
+						<bdi>{pronunciation}</bdi>
+					</dd>
+				</div>
+			)}
+		</dl>
+	)
+	const reveal = (
+		<Button
+			variant={revealed ? 'ghost' : 'primary'}
+			className={revealed ? undefined : 'button--lime'}
+			aria-expanded={revealed}
+			aria-controls={answerId}
+			onPress={() => setRevealed(!revealed)}
+		>
+			{revealed ? 'Hide translation' : 'Show translation'}
+		</Button>
+	)
+
+	if (flip) {
+		return (
+			<>
+				{actions && <div className="review-card-actions">{actions}</div>}
+				<div className="review-card-perspective" data-actions={Boolean(actions)}>
+					<div className="review-card-turn" data-revealed={revealed}>
+						<div
+							className="review-word review-card-face"
+							aria-hidden={revealed}
+							inert={revealed}
+						>
+							{heading}
+						</div>
+						<div
+							className="review-card-face review-card-translation"
+							id={answerId}
+							aria-hidden={!revealed}
+							inert={!revealed}
+						>
+							{meaning}
+						</div>
+					</div>
+				</div>
+				<div className="review-answer">
+					{reveal}
+					<span className="sr-only" aria-live="polite">
+						{revealed ? `Translation: ${translation}` : ''}
+					</span>
+				</div>
+			</>
+		)
+	}
+
+	return (
+		<>
+			<div className="review-word">
+				{heading}
+				{actions && <div className="review-word-actions">{actions}</div>}
+			</div>
+			<div className="review-answer">
+				<div id={answerId} aria-live="polite">
+					{revealed && meaning}
+				</div>
+				{reveal}
+			</div>
+		</>
+	)
+}
+
+function ReviewCopyButton({
+	value,
+	label,
+	notify,
+}: {
+	value: string
+	label: 'Entry' | 'Translation'
+	notify: Answer['notify']
+}) {
+	const name = label.toLowerCase()
+
 	async function copy() {
 		try {
-			await navigator.clipboard.writeText(translation)
-			notify('Translation copied.')
+			await navigator.clipboard.writeText(value)
+			notify(`${label} copied.`)
 		} catch {
-			notify('Could not copy. Select the translation to copy it.')
+			notify(`Could not copy. Select the ${name} to copy it.`)
 		}
 	}
 
 	return (
-		<div className="review-answer">
-			<div id={answerId} aria-live="polite">
-				{revealed && (
-					<dl className="review-meaning">
-						<div>
-							<dt>Translation</dt>
-							<dd>
-								<bdi>{translation}</bdi>
-								<Button
-									variant="ghost"
-									isIconOnly
-									aria-label="Copy translation"
-									onPress={copy}
-								>
-									<Icon icon={Copy} size={17} />
-								</Button>
-							</dd>
-						</div>
-						{pronunciation && (
-							<div>
-								<dt>Pronunciation</dt>
-								<dd>
-									<bdi>{pronunciation}</bdi>
-								</dd>
-							</div>
-						)}
-					</dl>
-				)}
-			</div>
-			<Button
-				className="review-reveal"
-				aria-expanded={revealed}
-				aria-controls={answerId}
-				onPress={() => setRevealed(!revealed)}
-			>
-				{revealed ? 'Hide translation' : 'Show translation'}
-			</Button>
-		</div>
+		<Button variant="ghost" isIconOnly aria-label={`Copy ${name}`} onPress={copy}>
+			<Icon icon={Copy} size={17} />
+		</Button>
 	)
 }
 
@@ -107,7 +193,6 @@ export function ReviewStepper({
 	return (
 		<nav className="review-stepper" aria-label="Browse entries in order">
 			<Button variant="outline" isDisabled={!onPrevious} onPress={onPrevious}>
-				<Icon icon={ArrowLeft} size={17} />
 				Previous
 			</Button>
 			<span aria-live="polite">
@@ -115,7 +200,6 @@ export function ReviewStepper({
 			</span>
 			<Button variant="outline" isDisabled={!onNext} onPress={onNext}>
 				Next
-				<Icon icon={ArrowRight} size={17} />
 			</Button>
 		</nav>
 	)

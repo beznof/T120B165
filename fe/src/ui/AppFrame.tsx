@@ -1,24 +1,30 @@
 import { Toast } from '@heroui/react'
 import { Info, X } from 'lucide-react'
 import { type ReactNode, useState, useSyncExternalStore } from 'react'
-import { CatalogShell, type ColorMode } from '../../ui/CatalogShell'
-import { Icon } from '../../ui/Icon'
-import { CatalogSignIn } from '../auth/CatalogSignIn'
-import { type Account, getAccount, logout, onSessionChange, signedIn } from '../auth/session'
+import { SignInScreen } from '../features/auth/SignInScreen'
+import {
+	type Account,
+	getAccount,
+	logout,
+	onSessionChange,
+	signedIn,
+} from '../features/auth/session'
+import { AppShell, type ColorMode } from './AppShell'
+import { Icon } from './Icon'
 
-export type CatalogContext = {
+export type AppContext = {
 	mode: ColorMode
 	account: Account | null
 	authenticated: boolean
 	notify: (message: string) => void
 }
 
-export function CatalogFrame({
+export function AppFrame({
 	requireSignIn = true,
 	children,
 }: {
 	requireSignIn?: boolean
-	children: (context: CatalogContext) => ReactNode
+	children: (context: AppContext) => ReactNode
 }) {
 	const authenticated = useSyncExternalStore(onSessionChange, signedIn)
 	const account = useSyncExternalStore(onSessionChange, getAccount)
@@ -41,21 +47,17 @@ export function CatalogFrame({
 	}
 
 	return (
-		<CatalogShell authenticated={authenticated} onSignOut={signOut}>
+		<AppShell authenticated={authenticated} account={account} onSignOut={signOut}>
 			{(mode) => (
 				<>
 					{requireSignIn && !authenticated ? (
-						<CatalogSignIn title="Sign in to browse" notice={notice} />
+						<SignInScreen title="Sign in to browse" notice={notice} />
 					) : (
 						children({ mode, account, authenticated, notify })
 					)}
 					<Toast.Provider queue={notifications} width="min(390px, calc(100vw - 32px))">
 						{({ toast }) => (
-							<Toast
-								toast={toast}
-								className="bloom-theme catalog-toast"
-								data-mode={mode}
-							>
+							<Toast toast={toast} className="bloom-theme app-toast" data-mode={mode}>
 								<Toast.Indicator>
 									<Icon icon={Info} size={18} />
 								</Toast.Indicator>
@@ -70,15 +72,15 @@ export function CatalogFrame({
 					</Toast.Provider>
 				</>
 			)}
-		</CatalogShell>
+		</AppShell>
 	)
 }
 
-export function CatalogPageHeader({ title, actions }: { title: string; actions?: ReactNode }) {
+export function PageHeader({ title, actions }: { title: string; actions?: ReactNode }) {
 	return (
-		<header className="catalog-page-header">
+		<header className="page-header">
 			<h1>{title}</h1>
-			{actions && <div className="catalog-page-actions">{actions}</div>}
+			{actions && <div className="page-actions">{actions}</div>}
 		</header>
 	)
 }

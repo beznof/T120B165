@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import { useEffect, useRef } from 'react'
 import type { Schema } from '../../api/client'
+import { type AppContext, PageHeader } from '../../ui/AppFrame'
 import {
 	ReviewFilters,
 	ReviewPrompt,
@@ -11,25 +12,30 @@ import {
 } from '../../ui/VocabularyReview'
 import {
 	canEditDictionary,
-	catalogPageCount,
-	catalogQuery,
 	dictionaryPath,
 	type EntrySearch,
 	entriesPath,
+	entryPageSize,
+	pageCount,
 	pagedQuery,
-	pageSize,
-} from '../catalog/api'
+	resourceQuery,
+} from '../browse/api'
 import {
-	CatalogLoadError,
-	CatalogLoading,
-	CatalogResults,
-	CatalogSearchBar,
-	CatalogTrail,
-} from '../catalog/CatalogBrowse'
-import { AddRecordButton, CatalogRecordMenu, useCatalogEditor } from '../catalog/CatalogEditor'
-import { type CatalogContext, CatalogPageHeader } from '../catalog/CatalogFrame'
+	Breadcrumbs,
+	BrowseLoadError,
+	BrowseResults,
+	BrowseSearchForm,
+} from '../browse/BrowseControls'
+import {
+	BrowseHeaderSkeleton,
+	BrowseLoading,
+	EntryReviewSkeleton,
+	ReviewRowsSkeleton,
+	ReviewStageSkeleton,
+} from '../browse/BrowseSkeletons'
+import { AddRecordButton, RecordMenu, useResourceEditor } from '../browse/ResourceEditor'
 
-export type EntryReviewSearch = EntrySearch & { position?: number }
+export type EntryReviewSearch = Omit<EntrySearch, 'pageSize'> & { position?: number }
 
 export function EntriesPage({
 	context,
@@ -40,10 +46,9 @@ export function EntriesPage({
 	onFilter,
 	onClear,
 	onPageChange,
-	onPageSizeChange,
 	onPositionChange,
 }: {
-	context: CatalogContext
+	context: AppContext
 	languageId: string
 	dictionaryId: string
 	search: EntryReviewSearch
@@ -51,23 +56,23 @@ export function EntriesPage({
 	onFilter: (type: EntrySearch['type']) => void
 	onClear: () => void
 	onPageChange: (page: number) => void
-	onPageSizeChange: (size: number) => void
 	onPositionChange: (page: number, position: number) => void
 }) {
 	const dictionary = useQuery(
-		catalogQuery<Schema['GetOneDictionaryOutput']>(dictionaryPath(languageId, dictionaryId)),
+		resourceQuery<Schema['GetOneDictionaryOutput']>(dictionaryPath(languageId, dictionaryId)),
 	)
 	const path = entriesPath(languageId, dictionaryId)
-	const query = useQuery(pagedQuery<Schema['GetManyEntriesOutput']>(path, search))
-	const editor = useCatalogEditor(context)
+	const query = useQuery(
+		pagedQuery<Schema['GetManyEntriesOutput']>(path, { ...search, pageSize: entryPageSize }),
+	)
+	const editor = useResourceEditor(context)
 	const prompt = useRef<HTMLElement>(null)
 	const focusOnPage = useRef<number | null>(null)
 
 	const page = search.page ?? 1
 	const data = query.isSuccess ? query.data : undefined
-	const size = Number(data?.pageSize ?? search.pageSize ?? pageSize)
 	const total = Number(data?.totalCount ?? 0)
-	const pages = catalogPageCount(total, size)
+	const pages = pageCount(total, entryPageSize)
 	const count = data?.items.length ?? 0
 	const index = Math.min(search.position ?? 1, count) - 1
 	const entry = data?.items[index]
@@ -90,7 +95,7 @@ export function EntriesPage({
 
 		const adjacentPage = page + direction
 		focusOnPage.current = adjacentPage
-		onPositionChange(adjacentPage, direction === 1 ? 1 : size)
+		onPositionChange(adjacentPage, direction === 1 ? 1 : entryPageSize)
 	}
 
 	function choose(position: number) {
@@ -101,22 +106,22 @@ export function EntriesPage({
 
 	return (
 		<>
-			<CatalogTrail>
+			<Breadcrumbs>
 				<Link to="/">Languages</Link>
 				<Link to="/languages/$languageId" params={{ languageId }}>
 					<bdi>{dictionary.data?.language.name ?? 'Dictionaries'}</bdi>
 				</Link>
-			</CatalogTrail>
+			</Breadcrumbs>
 			{dictionary.isPending ? (
-				<CatalogLoading label="Loading dictionary…" />
+				<BrowseLoading label="Loading dictionary and entries…">
+					<BrowseHeaderSkeleton />
+					<EntryReviewSkeleton />
+				</BrowseLoading>
 			) : dictionary.isError ? (
-				<CatalogLoadError
-					error={dictionary.error}
-					retry={() => void dictionary.refetch()}
-				/>
+				<BrowseLoadError error={dictionary.error} retry={() => void dictionary.refetch()} />
 			) : (
 				<>
-					<CatalogPageHeader
+					<PageHeader
 						title={dictionary.data.name}
 						actions={
 							canEdit && (
@@ -127,19 +132,21 @@ export function EntriesPage({
 							)
 						}
 					/>
-					<div className="catalog-review review-layout">
+					<div className="entry-review review-layout">
+						{query.isPending && <ReviewStageSkeleton />}
 						{entry && (
 							<div className="review-stage">
 								<ReviewPrompt
+									flip
 									ref={prompt}
 									entryKey={entry.id}
-									term={<bdi>{entry.text}</bdi>}
+									term={entry.text}
 									translation={entry.translation}
 									pronunciation={entry.phoneticTranscription}
 									notify={context.notify}
 									actions={
 										canEdit && (
-											<CatalogRecordMenu
+											<RecordMenu
 												mode={context.mode}
 												label="Entry actions"
 												open={editor.open}
@@ -167,7 +174,7 @@ export function EntriesPage({
 									}
 								/>
 								<ReviewStepper
-									position={(page - 1) * size + index + 1}
+									position={(page - 1) * entryPageSize + index + 1}
 									total={total}
 									onPrevious={page > 1 || index > 0 ? () => step(-1) : undefined}
 									onNext={
@@ -181,10 +188,7 @@ export function EntriesPage({
 						<ReviewQueue
 							tools={
 								<>
-									<CatalogSearchBar
-										mode={context.mode}
-										pageSize={search.pageSize}
-										onPageSizeChange={onPageSizeChange}
+									<BrowseSearchForm
 										placeholder="Find a term"
 										label="Search entries"
 										search={search.q ?? ''}
@@ -194,8 +198,9 @@ export function EntriesPage({
 								</>
 							}
 						>
-							<CatalogResults
+							<BrowseResults
 								query={query}
+								skeleton={<ReviewRowsSkeleton />}
 								search={search}
 								names={{ singular: 'entry', plural: 'entries' }}
 								onPageChange={onPageChange}
@@ -214,7 +219,7 @@ export function EntriesPage({
 										))}
 									</ul>
 								)}
-							</CatalogResults>
+							</BrowseResults>
 						</ReviewQueue>
 					</div>
 					{editor.dialog}
